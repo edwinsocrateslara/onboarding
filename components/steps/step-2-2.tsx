@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import type { ScheduleValue, WorkModalityValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
+import { AssistantQuestion, PillButton, OptionCard, SegmentedControl, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
 
 const SCHEDULE_OPTIONS: { label: string; value: ScheduleValue }[] = [
   { label: "Full-time",  value: "full_time"  },
@@ -115,13 +115,13 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
 
       <div className="space-y-2">
         <FieldLabel>Work setting</FieldLabel>
-        <div className="flex flex-wrap gap-2">
+        <div className="space-y-2">
           {MODALITY_OPTIONS.map(opt => (
-            <PillButton
+            <OptionCard
               key={opt.value}
               label={opt.label}
               selected={modality === opt.value}
-              disabled={advancing}
+              disabled={advancing && modality !== opt.value}
               onClick={() => { if (!advancing) setModality(opt.value) }}
             />
           ))}
@@ -145,15 +145,12 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
             style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
             aria-label="Minimum pay amount"
           />
-          {PAY_UNIT_OPTIONS.map(opt => (
-            <PillButton
-              key={opt.value}
-              label={opt.label}
-              selected={payUnit === opt.value}
-              disabled={advancing}
-              onClick={() => { if (!advancing) setPayUnit(opt.value) }}
-            />
-          ))}
+          <SegmentedControl
+            options={PAY_UNIT_OPTIONS}
+            value={payUnit}
+            onChange={setPayUnit}
+            disabled={advancing}
+          />
         </div>
       </div>
 

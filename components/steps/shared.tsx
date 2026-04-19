@@ -204,3 +204,43 @@ export function FieldLabel({ children }: { children: React.ReactNode }) {
     </p>
   )
 }
+
+export function SegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+  disabled,
+}: {
+  options: readonly { label: string; value: T }[]
+  value: T | null
+  onChange: (v: T) => void
+  disabled?: boolean
+}) {
+  return (
+    <div
+      className="inline-flex rounded-lg overflow-hidden"
+      style={{ border: `1px solid ${C.border}` }}
+    >
+      {options.map((opt, i) => {
+        const isSelected = value === opt.value
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => { if (!disabled) onChange(opt.value) }}
+            disabled={disabled}
+            className="px-5 py-2.5 text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1] min-h-[40px] disabled:opacity-50"
+            style={{
+              background: isSelected ? C.accent : C.surface,
+              color:      isSelected ? "#ffffff" : C.subtle,
+              borderLeft: i > 0 ? `1px solid ${C.border}` : "none",
+            }}
+            aria-pressed={isSelected}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}

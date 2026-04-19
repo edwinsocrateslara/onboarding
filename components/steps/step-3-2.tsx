@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import type { AvailabilityValue, FinancialConstraintValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, OptionCard, PillButton, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
+import { AssistantQuestion, OptionCard, SegmentedControl, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
 
 const AVAILABILITY_OPTIONS: { label: string; value: AvailabilityValue }[] = [
   { label: "Less than 10 hours",                   value: "less_than_10" },
@@ -69,15 +69,12 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
           style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
           aria-label={ariaLabel}
         />
-        {PAY_UNIT_OPTIONS.map(opt => (
-          <PillButton
-            key={opt.value}
-            label={opt.label}
-            selected={unit === opt.value}
-            disabled={advancing}
-            onClick={() => { if (!advancing) onUnit(opt.value) }}
-          />
-        ))}
+        <SegmentedControl
+          options={PAY_UNIT_OPTIONS}
+          value={unit}
+          onChange={onUnit}
+          disabled={advancing}
+        />
       </div>
     </div>
   )

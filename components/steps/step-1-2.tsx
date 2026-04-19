@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type { Q1Option, CareerStageValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton, ContinueButton, FOCUS_RING } from "./shared"
+import { AssistantQuestion, OptionCard, ContinueButton, FOCUS_RING } from "./shared"
 
 const QUESTION: Record<Q1Option, string> = {
   a: "What role are you looking for?",
@@ -80,9 +80,9 @@ export function Step12({
       )}
 
       {q1Selection === "c" && (
-        <div className="flex flex-wrap gap-2 pt-1">
+        <div className="space-y-2">
           {CAREER_STAGE_OPTIONS.map((opt) => (
-            <PillButton
+            <OptionCard
               key={opt.value}
               label={opt.label}
               selected={selectedStage === opt.value}

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type { CareerStageValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton } from "./shared"
+import { AssistantQuestion, OptionCard } from "./shared"
 
 const OPTIONS: { label: string; value: CareerStageValue }[] = [
   { label: "Working",        value: "working"     },
@@ -29,9 +29,9 @@ export function Step13({ initialValue, onAdvance }: Props) {
   return (
     <div className="space-y-5">
       <AssistantQuestion text="One more thing — are you currently working, in school, or between things?" />
-      <div className="flex flex-wrap gap-2.5 pt-1">
+      <div className="space-y-2">
         {OPTIONS.map((opt) => (
-          <PillButton
+          <OptionCard
             key={opt.value}
             label={opt.label}
             selected={selected === opt.value}

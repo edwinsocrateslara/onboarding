@@ -1,43 +1,27 @@
 "use client"
 
+import { useState, useCallback } from "react"
 import { useOnboarding, getPreviousAnswer, getStageForStep } from "@/hooks/use-onboarding"
-import type { Q1Option } from "@/hooks/use-onboarding"
+import type {
+  ScheduleValue, WorkModalityValue, PayUnitValue,
+  ApplicationDiagnosticsValue, TimelineValue, AvailabilityValue,
+  FinancialConstraintValue, ExperienceContextType, CareerAreaInterestValue,
+  CareerStageValue,
+} from "@/hooks/use-onboarding"
+import type { GoalClarity, CareerStageSignal } from "@/lib/types"
+import { useConversation } from "@/hooks/use-conversation"
+import { CONV_SPECS } from "@/lib/extraction-specs"
 import { Stepper } from "@/components/stepper"
 import { BackButton, PreviousAnswer } from "@/components/steps/shared"
 import { InputBar } from "@/components/input-bar"
-import { Step11 } from "@/components/steps/step-1-1"
-import { Step12 } from "@/components/steps/step-1-2"
-import { Step13 } from "@/components/steps/step-1-3"
-import { Step21 } from "@/components/steps/step-2-1"
-import { Step22 } from "@/components/steps/step-2-2"
-import { Step23 } from "@/components/steps/step-2-3"
-import { Step24 } from "@/components/steps/step-2-4"
-import { Step31 } from "@/components/steps/step-3-1"
-import { Step33 } from "@/components/steps/step-3-3"
-import { Step32 } from "@/components/steps/step-3-2"
+import { ConversationalScreen } from "@/components/conversational-screen"
+import { EditModal } from "@/components/edit-modal"
 import { Step41 } from "@/components/steps/step-4-1"
-
-function getBarConfig(step: string, q1Selection: Q1Option | null) {
-  if (step === "1.2" && (q1Selection === "a" || q1Selection === "b")) {
-    return {
-      isPrimary: true,
-      placeholder: q1Selection === "a"
-        ? "What role are you looking for?"
-        : "What field or area are you interested in?",
-    }
-  }
-  if (step === "2.3") {
-    return { isPrimary: false, placeholder: "Or describe it in your own words…" }
-  }
-  return { isPrimary: false, placeholder: "Or tell me in your own words…" }
-}
 
 export default function OnboardingPage() {
   const {
     state,
-    advanceFrom11,
-    advanceFrom12Text,
-    advanceFrom12Stage,
+    advanceFrom11Conv,
     advanceFrom13,
     advanceFrom22,
     advanceFrom23,
@@ -48,6 +32,8 @@ export default function OnboardingPage() {
     back,
     jumpToStage,
   } = useOnboarding()
+
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const currentStage = getStageForStep(state.step)
   const completedStages: (1 | 2 | 3 | 4)[] = []
@@ -60,102 +46,112 @@ export default function OnboardingPage() {
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
 
-  const stepKey = `${state.step}-${state.q1Selection ?? ""}`
-  const barConfig = getBarConfig(state.step, state.q1Selection)
+  const persona = state.classification?.persona ?? null
+  const spec = CONV_SPECS[state.step]
 
-  function handleBarSubmit(text: string) {
-    if (state.step === "1.2" && (state.q1Selection === "a" || state.q1Selection === "b")) {
-      advanceFrom12Text(text)
-    }
-  }
-
-  function renderStep() {
+  // Route extracted data to the correct advance function
+  const handleConvComplete = useCallback((extracted: Record<string, unknown>) => {
     switch (state.step) {
       case "1.1":
-        return (
-          <Step11
-            initialValue={state.q1Selection}
-            onAdvance={advanceFrom11}
-          />
-        )
-      case "1.2":
-        return (
-          <Step12
-            q1Selection={state.q1Selection!}
-            initialCareerStage={state.followUpCareerStage}
-            onAdvanceCareerStage={advanceFrom12Stage}
-          />
-        )
+        advanceFrom11Conv({
+          goalClarity:       (extracted.goalClarity as GoalClarity) ?? "exploring",
+          goal:              (extracted.goal as string | null) ?? null,
+          careerStageSignal: (extracted.careerStageSignal as CareerStageSignal) ?? "unknown",
+          followUpText:      (extracted.goal as string) ?? "",
+        })
+        break
+
       case "1.3":
-        return (
-          <Step13
-            initialValue={state.bridgingAnswer}
-            onAdvance={advanceFrom13}
-          />
-        )
-      case "2.1":
-        return <Step21 />
+        advanceFrom13((extracted.careerStageSignal as CareerStageValue) ?? "not_working")
+        break
+
       case "2.2":
-        return (
-          <Step22
-            initialSchedule={state.schedulePreference}
-            initialModality={state.workModality}
-            initialPayAmount={state.payAmount}
-            initialPayUnit={state.payUnit}
-            onAdvance={advanceFrom22}
-          />
-        )
+        advanceFrom22({
+          schedule:  ((extracted.schedulePreference as ScheduleValue[]) ?? []).filter(Boolean),
+          modality:  (extracted.workModality as WorkModalityValue) ?? "no_preference",
+          payAmount: String(extracted.payAmount ?? ""),
+          payUnit:   (extracted.payUnit as PayUnitValue) ?? "hourly",
+        })
+        break
+
       case "2.3":
-        return (
-          <Step23
-            initialFrom={state.currentRoleOrField}
-            initialTo={state.targetCareer}
-            initialTimeline={state.targetTimeline}
-            onAdvance={advanceFrom23}
-          />
-        )
+        advanceFrom23({
+          currentRoleOrField: String(extracted.currentRoleOrField ?? ""),
+          targetCareer:       String(extracted.targetCareer ?? ""),
+          targetTimeline:     (extracted.targetTimeline as TimelineValue) ?? "no_timeline",
+        })
+        break
+
       case "2.4":
-        return (
-          <Step24
-            initialExperiences={state.eceExperiences}
-            initialNoneSelected={state.eceNoneSelected}
-            onAdvance={advanceFrom24}
-          />
-        )
+        advanceFrom24({
+          experiences:      ((extracted.experiences as { type: ExperienceContextType; detail: string }[]) ?? []),
+          noneSelected:     extracted.noneSelected === true,
+          employmentStatus: (extracted.employmentStatus as "student" | "employed" | "unemployed") ?? "unemployed",
+        })
+        break
+
       case "3.1":
-        return (
-          <Step31
-            initialValue={state.applicationDiagnostics}
-            onAdvance={advanceFrom31}
-          />
-        )
+        advanceFrom31((extracted.applicationDiagnostics as ApplicationDiagnosticsValue) ?? "not_started")
+        break
+
       case "3.2":
-        return (
-          <Step32
-            initialAvailability={state.ccAvailability}
-            initialFinancial={state.ccFinancialConstraint}
-            initialPayMin={state.ccPayMin}
-            initialPayMinUnit={state.ccPayMinUnit}
-            initialPayTarget={state.ccPayTarget}
-            initialPayTargetUnit={state.ccPayTargetUnit}
-            onAdvance={advanceFrom32}
-          />
-        )
+        advanceFrom32({
+          availability:       (extracted.availability as AvailabilityValue)           ?? "less_than_10",
+          financialConstraint:(extracted.financialConstraint as FinancialConstraintValue) ?? "needs_income",
+          payMin:             String(extracted.payMin    ?? ""),
+          payMinUnit:         (extracted.payMinUnit    as PayUnitValue) ?? "hourly",
+          payTarget:          String(extracted.payTarget ?? ""),
+          payTargetUnit:      (extracted.payTargetUnit as PayUnitValue) ?? "hourly",
+        })
+        break
+
       case "3.3":
-        return (
-          <Step33
-            initialInterests={state.eceCareerInterests}
-            onAdvance={advanceFrom33}
-          />
-        )
-      case "4.1":
-        return <Step41 />
+        advanceFrom33(((extracted.careerInterests as CareerAreaInterestValue[]) ?? []))
+        break
     }
+  }, [state.step, advanceFrom11Conv, advanceFrom13, advanceFrom22, advanceFrom23, advanceFrom24, advanceFrom31, advanceFrom32, advanceFrom33])
+
+  const { convState, submit, updateExtracted } = useConversation({
+    stepKey:    state.step,
+    step:       state.step,
+    persona,
+    spec:       spec ?? CONV_SPECS["1.1"],
+    onComplete: handleConvComplete,
+  })
+
+  // InputBar key: changes on step change OR after each LLM turn (refocuses input for follow-ups)
+  const inputBarKey = `${state.step}-${convState.turnIndex}`
+
+  // Placeholder adapts based on follow-up state
+  const placeholder = spec
+    ? (convState.status === "follow_up" && spec.followUpPlaceholder)
+      ? spec.followUpPlaceholder
+      : spec.placeholder
+    : "Tell me more…"
+
+  function renderStep() {
+    if (state.step === "4.1") return <Step41 />
+
+    if (!spec) {
+      return (
+        <p className="text-[15px]" style={{ color: "#87867f" }}>
+          Loading…
+        </p>
+      )
+    }
+
+    return (
+      <ConversationalScreen
+        spec={spec}
+        state={convState}
+        onEdit={() => setShowEditModal(true)}
+      />
+    )
   }
 
   return (
     <div className="flex flex-col h-dvh" style={{ background: "rgb(var(--color-bg))" }}>
-      {/* Top row: back button + stepper + spacer */}
+      {/* Top row */}
       <div
         className="shrink-0 border-b"
         style={{ borderColor: "#e8e6dc", background: "rgb(var(--color-surface))" }}
@@ -186,13 +182,28 @@ export default function OnboardingPage() {
         </div>
       </main>
 
-      {/* Persistent input bar */}
-      <InputBar
-        stepKey={stepKey}
-        isPrimary={barConfig.isPrimary}
-        placeholder={barConfig.placeholder}
-        onSubmit={handleBarSubmit}
-      />
+      {/* Persistent input bar — always primary */}
+      {state.step !== "4.1" && (
+        <InputBar
+          stepKey={inputBarKey}
+          isPrimary={true}
+          placeholder={placeholder}
+          onSubmit={submit}
+        />
+      )}
+
+      {/* Edit modal */}
+      {showEditModal && spec && (
+        <EditModal
+          step={state.step}
+          extracted={convState.extracted}
+          onSave={(updated) => {
+            updateExtracted(updated)
+            setShowEditModal(false)
+          }}
+          onClose={() => setShowEditModal(false)}
+        />
+      )}
     </div>
   )
 }

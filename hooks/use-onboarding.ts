@@ -131,6 +131,7 @@ type Action =
   | { type: "ADVANCE_1_2_TEXT"; text: string }
   | { type: "ADVANCE_1_2_STAGE"; stage: CareerStageValue }
   | { type: "ADVANCE_1_3"; stage: CareerStageValue }
+  | { type: "ADVANCE_1_CONV"; goalClarity: GoalClarity; goal: string | null; careerStageSignal: CareerStageSignal; followUpText: string }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
   | { type: "ADVANCE_2_4"; experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean; employmentStatus: "student" | "employed" | "unemployed" }
@@ -256,6 +257,37 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
       }
     }
 
+    case "ADVANCE_1_CONV": {
+      const { goalClarity, goal, careerStageSignal, followUpText } = action
+      if (careerStageSignal && careerStageSignal !== "unknown") {
+        const classification = classify(goalClarity, careerStageSignal)
+        return {
+          ...state,
+          step: nextStep2(classification.persona),
+          direction: "forward",
+          goalClarity,
+          goal,
+          careerStageSignal,
+          followUpText,
+          classification,
+          usedBridging: false,
+          ...STAGE_2_CLEAR,
+        }
+      }
+      return {
+        ...state,
+        step: "1.3",
+        direction: "forward",
+        goalClarity,
+        goal,
+        careerStageSignal: null,
+        followUpText,
+        classification: null,
+        usedBridging: false,
+        ...STAGE_2_CLEAR,
+      }
+    }
+
     case "ADVANCE_2_2": {
       return {
         ...state,
@@ -333,15 +365,15 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
 
     case "BACK": {
       const persona = state.classification?.persona
-      const s13Back: Step = state.usedBridging ? "1.3" : "1.2"
+      const stage2Back: Step = state.usedBridging ? "1.3" : "1.1"
       const prev: Record<Step, Step | null> = {
         "1.1": null,
         "1.2": "1.1",
-        "1.3": "1.2",
-        "2.1": s13Back,
-        "2.2": s13Back,
-        "2.3": s13Back,
-        "2.4": s13Back,
+        "1.3": "1.1",
+        "2.1": stage2Back,
+        "2.2": stage2Back,
+        "2.3": stage2Back,
+        "2.4": stage2Back,
         "3.1": "2.2",
         "3.2": "2.3",
         "3.3": "2.4",
@@ -435,6 +467,8 @@ export function useOnboarding() {
   return {
     state,
     advanceFrom11: (q1: Q1Option) => dispatch({ type: "ADVANCE_1_1", q1 }),
+    advanceFrom11Conv: (data: { goalClarity: GoalClarity; goal: string | null; careerStageSignal: CareerStageSignal; followUpText: string }) =>
+      dispatch({ type: "ADVANCE_1_CONV", ...data }),
     advanceFrom12Text: (text: string) => dispatch({ type: "ADVANCE_1_2_TEXT", text }),
     advanceFrom12Stage: (stage: CareerStageValue) => dispatch({ type: "ADVANCE_1_2_STAGE", stage }),
     advanceFrom13: (stage: CareerStageValue) => dispatch({ type: "ADVANCE_1_3", stage }),

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
 import type { ExperienceContextType } from "@/hooks/use-onboarding"
-import { AssistantQuestion, ContinueButton } from "./shared"
+import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
 
 const REGULAR_OPTIONS = [
   { id: "student",   type: "student"   as ExperienceContextType, label: "I'm currently a student",                         placeholder: "What are you studying?" },
@@ -13,8 +13,6 @@ const REGULAR_OPTIONS = [
   { id: "courses",   type: "courses"   as ExperienceContextType, label: "I've taken online courses or certifications",     placeholder: "In what area?" },
   { id: "hobby",     type: "hobby"     as ExperienceContextType, label: "I have a hobby or side project I'm serious about",placeholder: "What is it?" },
 ]
-
-const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 type SelectionMap = Record<string, { checked: boolean; text: string }>
 
@@ -65,23 +63,23 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
+      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
       style={
         checked
-          ? { background: "rgba(67,8,159,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(67,8,159,0.5)", color: "#000000" }
-          : { background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }
+          ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: "#111827" }
+          : { background: "#ffffff", border: "1px solid #e5e7eb", color: "#111827" }
       }
       aria-pressed={checked}
     >
       <span className="flex items-start gap-3">
         <span
-          className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
+          className="mt-[3px] h-[18px] w-[18px] shrink-0 rounded-[4px] border-2 flex items-center justify-center transition-colors"
           style={{
-            borderColor: checked ? "#43089f" : "#dad4c8",
-            background: checked ? "#43089f" : "transparent",
+            borderColor: checked ? "#6366f1" : "#e5e7eb",
+            background:  checked ? "#6366f1" : "transparent",
           }}
         >
-          {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+          {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
         </span>
         {label}
       </span>
@@ -99,9 +97,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
       if (id === "none") {
         const nowChecked = !prev.none.checked
         const next: SelectionMap = { none: { checked: nowChecked, text: "" } }
-        for (const opt of REGULAR_OPTIONS) {
-          next[opt.id] = { checked: false, text: "" }
-        }
+        for (const opt of REGULAR_OPTIONS) next[opt.id] = { checked: false, text: "" }
         return next
       }
       return {
@@ -129,7 +125,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far." />
-        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#9f9b93" }}>Check all that apply</p>
+        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>Check all that apply</p>
       </div>
 
       <div className="space-y-2">
@@ -149,11 +145,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
                   placeholder={opt.placeholder}
                   autoFocus
                   className="w-full rounded-lg px-4 py-3 text-[14px] focus:outline-none transition-shadow"
-                  style={{
-                    background: "#ffffff",
-                    color: "#000000",
-                    border: "1px solid #dad4c8",
-                  }}
+                  style={{ background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
                   onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
                   onBlur={e => (e.currentTarget.style.boxShadow = "none")}
                   aria-label={opt.placeholder}

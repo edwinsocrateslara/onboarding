@@ -2,27 +2,25 @@
 
 import { useState, useEffect, useRef } from "react"
 import type { AvailabilityValue, FinancialConstraintValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, OptionCard, PillButton } from "./shared"
+import { AssistantQuestion, OptionCard, PillButton, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
 
 const AVAILABILITY_OPTIONS: { label: string; value: AvailabilityValue }[] = [
-  { label: "Less than 10 hours",                    value: "less_than_10" },
-  { label: "10–20 hours",                            value: "10_to_20"    },
-  { label: "20–30 hours",                            value: "20_to_30"    },
-  { label: "30+ hours / I'm doing this full-time",  value: "30_plus"     },
+  { label: "Less than 10 hours",                   value: "less_than_10" },
+  { label: "10–20 hours",                           value: "10_to_20"    },
+  { label: "20–30 hours",                           value: "20_to_30"    },
+  { label: "30+ hours / I'm doing this full-time", value: "30_plus"     },
 ]
 
 const FINANCIAL_OPTIONS: { label: string; value: FinancialConstraintValue }[] = [
-  { label: "I need to keep earning — can't afford unpaid training",       value: "needs_income"  },
-  { label: "I have some savings — can handle a short gap (1–3 months)",  value: "some_savings"  },
-  { label: "I have runway — can invest in longer training if needed",     value: "has_runway"    },
+  { label: "I need to keep earning — can't afford unpaid training",      value: "needs_income" },
+  { label: "I have some savings — can handle a short gap (1–3 months)", value: "some_savings" },
+  { label: "I have runway — can invest in longer training if needed",    value: "has_runway"   },
 ]
 
 const PAY_UNIT_OPTIONS: { label: string; value: PayUnitValue }[] = [
   { label: "Hourly", value: "hourly" },
   { label: "Yearly", value: "yearly" },
 ]
-
-const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 function formatWithCommas(value: string): string {
   if (!value) return ""
@@ -45,26 +43,19 @@ function filterPayInput(value: string): string {
   return parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : stripped
 }
 
-interface PayRowProps {
-  caption: string
-  value: string
-  unit: PayUnitValue | null
-  advancing: boolean
-  onChange: (v: string) => void
-  onUnit: (u: PayUnitValue) => void
-  onBlurNormalize: (normalized: string) => void
-  ariaLabel: string
-}
-
-function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNormalize, ariaLabel }: PayRowProps) {
+function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNormalize, ariaLabel }: {
+  caption: string; value: string; unit: PayUnitValue | null; advancing: boolean
+  onChange: (v: string) => void; onUnit: (u: PayUnitValue) => void
+  onBlurNormalize: (normalized: string) => void; ariaLabel: string
+}) {
   const [focused, setFocused] = useState(false)
   const display = focused ? value : formatWithCommas(value)
 
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px]" style={{ color: "#9f9b93" }}>{caption}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#6b7280" }}>{caption}</p>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[15px] font-medium shrink-0" style={{ color: "#55534e" }}>$</span>
+        <span className="text-[15px] font-medium shrink-0" style={{ color: "#374151" }}>$</span>
         <input
           type="text"
           inputMode="decimal"
@@ -75,7 +66,7 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
           disabled={advancing}
           placeholder="0"
           className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-          style={{ width: "160px", background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }}
+          style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
           aria-label={ariaLabel}
         />
         {PAY_UNIT_OPTIONS.map(opt => (
@@ -95,45 +86,30 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
 function isComplete(
   availability: AvailabilityValue | null,
   financial: FinancialConstraintValue | null,
-  payMin: string,
-  payMinUnit: PayUnitValue | null,
-  payTarget: string,
-  payTargetUnit: PayUnitValue | null,
+  payMin: string, payMinUnit: PayUnitValue | null,
+  payTarget: string, payTargetUnit: PayUnitValue | null,
 ): boolean {
   return (
-    availability !== null &&
-    financial !== null &&
+    availability !== null && financial !== null &&
     payMin.trim() !== "" && Number(payMin) > 0 && payMinUnit !== null &&
     payTarget.trim() !== "" && Number(payTarget) > 0 && payTargetUnit !== null
   )
 }
 
-const DIVIDER = <div className="w-full h-px" style={{ background: "#dad4c8" }} />
-
 interface Props {
   initialAvailability: AvailabilityValue | null
   initialFinancial: FinancialConstraintValue | null
-  initialPayMin: string
-  initialPayMinUnit: PayUnitValue | null
-  initialPayTarget: string
-  initialPayTargetUnit: PayUnitValue | null
+  initialPayMin: string; initialPayMinUnit: PayUnitValue | null
+  initialPayTarget: string; initialPayTargetUnit: PayUnitValue | null
   onAdvance: (data: {
-    availability: AvailabilityValue
-    financialConstraint: FinancialConstraintValue
-    payMin: string
-    payMinUnit: PayUnitValue
-    payTarget: string
-    payTargetUnit: PayUnitValue
+    availability: AvailabilityValue; financialConstraint: FinancialConstraintValue
+    payMin: string; payMinUnit: PayUnitValue; payTarget: string; payTargetUnit: PayUnitValue
   }) => void
 }
 
 export function Step32({
-  initialAvailability,
-  initialFinancial,
-  initialPayMin,
-  initialPayMinUnit,
-  initialPayTarget,
-  initialPayTargetUnit,
+  initialAvailability, initialFinancial,
+  initialPayMin, initialPayMinUnit, initialPayTarget, initialPayTargetUnit,
   onAdvance,
 }: Props) {
   const [availability, setAvailability] = useState<AvailabilityValue | null>(initialAvailability)
@@ -151,31 +127,26 @@ export function Step32({
     if (advancing) return
     if (timerRef.current) clearTimeout(timerRef.current)
     if (!isComplete(availability, financial, payMin, payMinUnit, payTarget, payTargetUnit)) return
-
     timerRef.current = setTimeout(() => {
       setAdvancing(true)
       onAdvanceRef.current({
-        availability: availability!,
-        financialConstraint: financial!,
-        payMin: normalizeRaw(payMin),
-        payMinUnit: payMinUnit!,
-        payTarget: normalizeRaw(payTarget),
-        payTargetUnit: payTargetUnit!,
+        availability: availability!, financialConstraint: financial!,
+        payMin: normalizeRaw(payMin), payMinUnit: payMinUnit!,
+        payTarget: normalizeRaw(payTarget), payTargetUnit: payTargetUnit!,
       })
     }, 800)
-
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [availability, financial, payMin, payMinUnit, payTarget, payTargetUnit])
 
+  const ready = isComplete(availability, financial, payMin, payMinUnit, payTarget, payTargetUnit)
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <AssistantQuestion text="Let's make sure any plan I suggest is realistic for your situation." />
 
       <div className="space-y-2">
-        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
-          How many hours per week can you put toward this transition?
-        </p>
-        <div className="space-y-2.5">
+        <FieldLabel>How many hours per week can you put toward this transition?</FieldLabel>
+        <div className="space-y-2">
           {AVAILABILITY_OPTIONS.map(opt => (
             <OptionCard
               key={opt.value}
@@ -188,13 +159,11 @@ export function Step32({
         </div>
       </div>
 
-      {DIVIDER}
+      <div className="w-full h-px" style={{ background: "#e5e7eb" }} />
 
       <div className="space-y-2">
-        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
-          What&apos;s your financial situation for this change?
-        </p>
-        <div className="space-y-2.5">
+        <FieldLabel>What&apos;s your financial situation for this change?</FieldLabel>
+        <div className="space-y-2">
           {FINANCIAL_OPTIONS.map(opt => (
             <OptionCard
               key={opt.value}
@@ -207,33 +176,34 @@ export function Step32({
         </div>
       </div>
 
-      {DIVIDER}
+      <div className="w-full h-px" style={{ background: "#e5e7eb" }} />
 
       <div className="space-y-3">
-        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
-          What pay range works?
-        </p>
+        <FieldLabel>What pay range works?</FieldLabel>
         <PayRow
           caption="Minimum you need now"
-          value={payMin}
-          unit={payMinUnit}
-          advancing={advancing}
-          onChange={setPayMin}
-          onUnit={setPayMinUnit}
-          onBlurNormalize={setPayMin}
+          value={payMin} unit={payMinUnit} advancing={advancing}
+          onChange={setPayMin} onUnit={setPayMinUnit} onBlurNormalize={setPayMin}
           ariaLabel="Minimum pay you need now"
         />
         <PayRow
           caption="Targeting longer-term"
-          value={payTarget}
-          unit={payTargetUnit}
-          advancing={advancing}
-          onChange={setPayTarget}
-          onUnit={setPayTargetUnit}
-          onBlurNormalize={setPayTarget}
+          value={payTarget} unit={payTargetUnit} advancing={advancing}
+          onChange={setPayTarget} onUnit={setPayTargetUnit} onBlurNormalize={setPayTarget}
           ariaLabel="Target pay amount"
         />
       </div>
+
+      <ContinueButton onClick={() => {
+        if (!ready || advancing) return
+        if (timerRef.current) clearTimeout(timerRef.current)
+        setAdvancing(true)
+        onAdvance({
+          availability: availability!, financialConstraint: financial!,
+          payMin: normalizeRaw(payMin), payMinUnit: payMinUnit!,
+          payTarget: normalizeRaw(payTarget), payTargetUnit: payTargetUnit!,
+        })
+      }} disabled={!ready || advancing} />
     </div>
   )
 }

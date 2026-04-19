@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import type { ScheduleValue, WorkModalityValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton } from "./shared"
+import { AssistantQuestion, PillButton, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
 
 const SCHEDULE_OPTIONS: { label: string; value: ScheduleValue }[] = [
   { label: "Full-time",  value: "full_time"  },
@@ -12,10 +12,10 @@ const SCHEDULE_OPTIONS: { label: string; value: ScheduleValue }[] = [
 ]
 
 const MODALITY_OPTIONS: { label: string; value: WorkModalityValue }[] = [
-  { label: "On-site",      value: "on_site"       },
-  { label: "Remote",       value: "remote"        },
-  { label: "Hybrid",       value: "hybrid"        },
-  { label: "No preference",value: "no_preference" },
+  { label: "On-site",       value: "on_site"       },
+  { label: "Remote",        value: "remote"        },
+  { label: "Hybrid",        value: "hybrid"        },
+  { label: "No preference", value: "no_preference" },
 ]
 
 const PAY_UNIT_OPTIONS: { label: string; value: PayUnitValue }[] = [
@@ -55,8 +55,6 @@ function normalizeRaw(raw: string): string {
   return parts.length > 1 ? `${intVal}.${parts[1]}` : String(intVal)
 }
 
-const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
-
 export function Step22({ initialSchedule, initialModality, initialPayAmount, initialPayUnit, onAdvance }: Props) {
   const [schedule, setSchedule] = useState<ScheduleValue[]>(initialSchedule)
   const [modality, setModality] = useState<WorkModalityValue | null>(initialModality)
@@ -83,41 +81,25 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
     setPayRaw(cleaned)
   }
 
-  const handlePayFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    setPayFocused(true)
-    e.currentTarget.style.boxShadow = FOCUS_RING
-  }
-
-  const handlePayBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const normalized = normalizeRaw(payRaw)
-    setPayRaw(normalized)
-    setPayFocused(false)
-    e.currentTarget.style.boxShadow = "none"
-  }
-
   useEffect(() => {
     if (advancing) return
     if (timerRef.current) clearTimeout(timerRef.current)
     if (!isComplete(schedule, modality, payRaw, payUnit)) return
-
     timerRef.current = setTimeout(() => {
       setAdvancing(true)
       onAdvanceRef.current({ schedule, modality: modality!, payAmount: normalizeRaw(payRaw), payUnit: payUnit! })
     }, 800)
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [schedule, modality, payRaw, payUnit])
+
+  const ready = isComplete(schedule, modality, payRaw, payUnit)
 
   return (
     <div className="space-y-7">
       <AssistantQuestion text="To find jobs that actually work for you, I need a few quick details." />
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
-          Schedule
-        </p>
+        <FieldLabel>Schedule</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {SCHEDULE_OPTIONS.map(opt => (
             <PillButton
@@ -132,9 +114,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
-          Work setting
-        </p>
+        <FieldLabel>Work setting</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {MODALITY_OPTIONS.map(opt => (
             <PillButton
@@ -149,27 +129,20 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
-          Minimum pay you&apos;d accept
-        </p>
+        <FieldLabel>Minimum pay you&apos;d accept</FieldLabel>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-medium shrink-0" style={{ color: "#55534e" }}>$</span>
+          <span className="text-[15px] font-medium shrink-0" style={{ color: "#374151" }}>$</span>
           <input
             type="text"
             inputMode="decimal"
             value={payDisplay}
             onChange={handlePayChange}
-            onFocus={handlePayFocus}
-            onBlur={handlePayBlur}
+            onFocus={e => { setPayFocused(true); e.currentTarget.style.boxShadow = FOCUS_RING }}
+            onBlur={e => { setPayFocused(false); e.currentTarget.style.boxShadow = "none"; setPayRaw(normalizeRaw(payRaw)) }}
             disabled={advancing}
             placeholder="0"
             className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-            style={{
-              width: "160px",
-              background: "#ffffff",
-              color: "#000000",
-              border: "1px solid #dad4c8",
-            }}
+            style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
             aria-label="Minimum pay amount"
           />
           {PAY_UNIT_OPTIONS.map(opt => (
@@ -183,6 +156,12 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
           ))}
         </div>
       </div>
+
+      <ContinueButton onClick={() => {
+        if (!ready || advancing) return
+        setAdvancing(true)
+        onAdvance({ schedule, modality: modality!, payAmount: normalizeRaw(payRaw), payUnit: payUnit! })
+      }} disabled={!ready || advancing} />
     </div>
   )
 }

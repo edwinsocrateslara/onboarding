@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
 import type { CareerAreaInterestValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, ContinueButton } from "./shared"
+import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
 
 const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
   { value: "building_fixing",    main: "Building or fixing things",              sub: "e.g. construction, manufacturing, IT support, repair"       },
@@ -18,7 +18,6 @@ const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
 ]
 
 const MUTUAL_EXCLUSION = "needs_assessment"
-const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 function TwoLineCard({
   main,
@@ -35,27 +34,27 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
+      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
       style={
         selected
-          ? { background: "rgba(67,8,159,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(67,8,159,0.5)", color: "#000000" }
-          : { background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }
+          ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: "#111827" }
+          : { background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }
       }
       aria-pressed={selected}
     >
       <span className="flex items-start gap-3">
         <span
-          className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
+          className="mt-[3px] h-[18px] w-[18px] shrink-0 rounded-[4px] border-2 flex items-center justify-center transition-colors"
           style={{
-            borderColor: selected ? "#43089f" : "#dad4c8",
-            background: selected ? "#43089f" : "transparent",
+            borderColor: selected ? "#6366f1" : "#e5e7eb",
+            background:  selected ? "#6366f1" : "transparent",
           }}
         >
-          {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+          {selected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
         </span>
         <span>
           <span className="block font-medium">{main}</span>
-          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#55534e" : "#9f9b93" }}>{sub}</span>
+          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#374151" : "#9ca3af" }}>{sub}</span>
         </span>
       </span>
     </button>
@@ -105,7 +104,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="What kinds of work feel most interesting or natural to you?" />
-        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#9f9b93" }}>Check all that apply</p>
+        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>Check all that apply</p>
       </div>
 
       <div className="space-y-2">

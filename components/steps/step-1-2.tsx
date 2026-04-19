@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type { Q1Option, CareerStageValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton } from "./shared"
+import { AssistantQuestion, PillButton, ContinueButton, FOCUS_RING } from "./shared"
 
 const QUESTION: Record<Q1Option, string> = {
   a: "What role are you looking for?",
@@ -19,15 +19,20 @@ const CAREER_STAGE_OPTIONS: { label: string; value: CareerStageValue }[] = [
 interface Props {
   q1Selection: Q1Option
   initialCareerStage: CareerStageValue | null
+  initialText: string
   onAdvanceCareerStage: (stage: CareerStageValue) => void
+  onAdvanceText: (text: string) => void
 }
 
 export function Step12({
   q1Selection,
   initialCareerStage,
+  initialText,
   onAdvanceCareerStage,
+  onAdvanceText,
 }: Props) {
   const [selectedStage, setSelectedStage] = useState<CareerStageValue | null>(initialCareerStage)
+  const [text, setText] = useState(initialText)
   const [pending, setPending] = useState(false)
 
   const handleStageSelect = (stage: CareerStageValue) => {
@@ -37,12 +42,45 @@ export function Step12({
     setTimeout(() => onAdvanceCareerStage(stage), 300)
   }
 
+  const handleTextSubmit = () => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    onAdvanceText(trimmed)
+  }
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <AssistantQuestion text={QUESTION[q1Selection]} />
 
+      {(q1Selection === "a" || q1Selection === "b") && (
+        <div className="space-y-4">
+          <input
+            type="text"
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") handleTextSubmit() }}
+            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+            onBlur={e => (e.currentTarget.style.boxShadow = "none")}
+            placeholder={
+              q1Selection === "a"
+                ? "e.g. Software Engineer, Nurse, Teacher…"
+                : "e.g. Healthcare, Technology, Finance…"
+            }
+            autoFocus
+            className="w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow"
+            style={{
+              background: "#ffffff",
+              color: "#111827",
+              border: "1px solid #e5e7eb",
+            }}
+            aria-label={QUESTION[q1Selection]}
+          />
+          <ContinueButton onClick={handleTextSubmit} disabled={!text.trim()} />
+        </div>
+      )}
+
       {q1Selection === "c" && (
-        <div className="flex flex-wrap gap-2.5 pt-1">
+        <div className="flex flex-wrap gap-2 pt-1">
           {CAREER_STAGE_OPTIONS.map((opt) => (
             <PillButton
               key={opt.value}

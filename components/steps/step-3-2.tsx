@@ -22,8 +22,8 @@ const PAY_UNIT_OPTIONS: { label: string; value: PayUnitValue }[] = [
   { label: "Yearly", value: "yearly" },
 ]
 
-const INPUT_SHADOW = "0px 0px 0px 1px #e8e6dc"
-const FOCUS_SHADOW = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)"
+const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
+const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(20, 110, 245)`
 
 function formatWithCommas(value: string): string {
   if (!value) return ""
@@ -63,20 +63,20 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
 
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px]" style={{ color: "#a8a69e" }}>{caption}</p>
+      <p className="text-[11px]" style={{ color: "#9f9b93" }}>{caption}</p>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[15px] font-medium shrink-0" style={{ color: "#5e5d59" }}>$</span>
+        <span className="text-[15px] font-medium shrink-0" style={{ color: "#55534e" }}>$</span>
         <input
           type="text"
           inputMode="decimal"
           value={display}
           onChange={e => { if (!advancing) onChange(filterPayInput(e.target.value)) }}
           onFocus={e => { setFocused(true); e.currentTarget.style.boxShadow = FOCUS_SHADOW }}
-          onBlur={e => { onBlurNormalize(normalizeRaw(value)); setFocused(false); e.currentTarget.style.boxShadow = INPUT_SHADOW }}
+          onBlur={e => { onBlurNormalize(normalizeRaw(value)); setFocused(false); e.currentTarget.style.boxShadow = CLAY_SHADOW }}
           disabled={advancing}
           placeholder="0"
           className="shrink-0 rounded-xl px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-          style={{ width: "160px", background: "#ffffff", color: "#141413", boxShadow: INPUT_SHADOW }}
+          style={{ width: "160px", background: "#ffffff", color: "#000000", boxShadow: CLAY_SHADOW, border: "1px solid #dad4c8" }}
           aria-label={ariaLabel}
         />
         {PAY_UNIT_OPTIONS.map(opt => (
@@ -109,7 +109,7 @@ function isComplete(
   )
 }
 
-const DIVIDER = <div className="w-full h-px" style={{ background: "#e8e6dc" }} />
+const DIVIDER = <div className="w-full h-px" style={{ background: "#dad4c8" }} />
 
 interface Props {
   initialAvailability: AvailabilityValue | null
@@ -172,9 +172,8 @@ export function Step32({
     <div className="space-y-5">
       <AssistantQuestion text="Let's make sure any plan I suggest is realistic for your situation." />
 
-      {/* Availability */}
       <div className="space-y-2">
-        <p className="text-[12px] font-medium" style={{ color: "#87867f" }}>
+        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
           How many hours per week can you put toward this transition?
         </p>
         <div className="space-y-2.5">
@@ -192,9 +191,8 @@ export function Step32({
 
       {DIVIDER}
 
-      {/* Financial situation */}
       <div className="space-y-2">
-        <p className="text-[12px] font-medium" style={{ color: "#87867f" }}>
+        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
           What&apos;s your financial situation for this change?
         </p>
         <div className="space-y-2.5">
@@ -212,9 +210,8 @@ export function Step32({
 
       {DIVIDER}
 
-      {/* Pay range */}
       <div className="space-y-3">
-        <p className="text-[12px] font-medium" style={{ color: "#87867f" }}>
+        <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>
           What pay range works?
         </p>
         <PayRow

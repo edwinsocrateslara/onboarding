@@ -55,6 +55,9 @@ function normalizeRaw(raw: string): string {
   return parts.length > 1 ? `${intVal}.${parts[1]}` : String(intVal)
 }
 
+const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
+const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(20, 110, 245)`
+
 export function Step22({ initialSchedule, initialModality, initialPayAmount, initialPayUnit, onAdvance }: Props) {
   const [schedule, setSchedule] = useState<ScheduleValue[]>(initialSchedule)
   const [modality, setModality] = useState<WorkModalityValue | null>(initialModality)
@@ -83,14 +86,14 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
 
   const handlePayFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setPayFocused(true)
-    e.currentTarget.style.boxShadow = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)"
+    e.currentTarget.style.boxShadow = FOCUS_SHADOW
   }
 
   const handlePayBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const normalized = normalizeRaw(payRaw)
     setPayRaw(normalized)
     setPayFocused(false)
-    e.currentTarget.style.boxShadow = "0px 0px 0px 1px #e8e6dc"
+    e.currentTarget.style.boxShadow = CLAY_SHADOW
   }
 
   useEffect(() => {
@@ -113,7 +116,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       <AssistantQuestion text="To find jobs that actually work for you, I need a few quick details." />
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Schedule
         </p>
         <div className="flex flex-wrap gap-2">
@@ -130,7 +133,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Work setting
         </p>
         <div className="flex flex-wrap gap-2">
@@ -147,11 +150,11 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Minimum pay you&apos;d accept
         </p>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-medium shrink-0" style={{ color: "#5e5d59" }}>$</span>
+          <span className="text-[15px] font-medium shrink-0" style={{ color: "#55534e" }}>$</span>
           <input
             type="text"
             inputMode="decimal"
@@ -165,8 +168,9 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
             style={{
               width: "160px",
               background: "#ffffff",
-              color: "#141413",
-              boxShadow: "0px 0px 0px 1px #e8e6dc",
+              color: "#000000",
+              boxShadow: CLAY_SHADOW,
+              border: "1px solid #dad4c8",
             }}
             aria-label="Minimum pay amount"
           />

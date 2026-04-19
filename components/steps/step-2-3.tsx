@@ -18,6 +18,9 @@ interface Props {
   onAdvance: (data: { currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }) => void
 }
 
+const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
+const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(20, 110, 245)`
+
 export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: Props) {
   const [from, setFrom] = useState(initialFrom)
   const [to, setTo] = useState(initialTo)
@@ -65,16 +68,19 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
 
   const inputClass =
     "w-full rounded-xl px-4 py-3.5 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-  const inputStyle = { background: "#ffffff", color: "#141413", boxShadow: "0px 0px 0px 1px #e8e6dc" }
-  const focusShadow = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)"
-  const blurShadow = "0px 0px 0px 1px #e8e6dc"
+  const inputStyle = {
+    background: "#ffffff",
+    color: "#000000",
+    boxShadow: CLAY_SHADOW,
+    border: "1px solid #dad4c8",
+  }
 
   return (
     <div className="space-y-7">
       <AssistantQuestion text="Tell me about the change you're making." />
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           What you&apos;re doing now
         </p>
         <input
@@ -85,14 +91,14 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
-          onFocus={e => (e.currentTarget.style.boxShadow = focusShadow)}
-          onBlur={e => (e.currentTarget.style.boxShadow = blurShadow)}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
+          onBlur={e => (e.currentTarget.style.boxShadow = CLAY_SHADOW)}
           aria-label="What you're doing now"
         />
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Where you want to go
         </p>
         <input
@@ -102,14 +108,14 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
-          onFocus={e => (e.currentTarget.style.boxShadow = focusShadow)}
-          onBlur={e => (e.currentTarget.style.boxShadow = blurShadow)}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
+          onBlur={e => (e.currentTarget.style.boxShadow = CLAY_SHADOW)}
           aria-label="Where you want to go"
         />
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           How soon do you want to make the switch?
         </p>
         <div className="space-y-2.5">

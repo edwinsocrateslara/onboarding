@@ -18,6 +18,7 @@ const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
 ]
 
 const MUTUAL_EXCLUSION = "needs_assessment"
+const CLAY_SHADOW = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
 
 function TwoLineCard({
   main,
@@ -34,11 +35,11 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
       style={
         selected
-          ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-          : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
+          ? { background: "rgba(7,138,82,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(7,138,82,0.5)", color: "#000000" }
+          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000", border: "1px solid #dad4c8" }
       }
       aria-pressed={selected}
     >
@@ -46,15 +47,15 @@ function TwoLineCard({
         <span
           className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
           style={{
-            borderColor: selected ? "#c96442" : "#c2c0b6",
-            background: selected ? "#c96442" : "transparent",
+            borderColor: selected ? "#078a52" : "#dad4c8",
+            background: selected ? "#078a52" : "transparent",
           }}
         >
           {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
         </span>
         <span>
           <span className="block font-medium">{main}</span>
-          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#6b6860" : "#87867f" }}>{sub}</span>
+          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#55534e" : "#9f9b93" }}>{sub}</span>
         </span>
       </span>
     </button>
@@ -104,7 +105,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="What kinds of work feel most interesting or natural to you?" />
-        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#87867f" }}>Check all that apply</p>
+        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#9f9b93" }}>Check all that apply</p>
       </div>
 
       <div className="space-y-2">

@@ -35,10 +35,10 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
-          ? { background: "rgba(7,138,82,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(7,138,82,0.5)", color: "#000000" }
+          ? { background: "rgba(67,8,159,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(67,8,159,0.5)", color: "#000000" }
           : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000", border: "1px solid #dad4c8" }
       }
       aria-pressed={selected}
@@ -47,8 +47,8 @@ function TwoLineCard({
         <span
           className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
           style={{
-            borderColor: selected ? "#078a52" : "#dad4c8",
-            background: selected ? "#078a52" : "transparent",
+            borderColor: selected ? "#43089f" : "#dad4c8",
+            background: selected ? "#43089f" : "transparent",
           }}
         >
           {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}

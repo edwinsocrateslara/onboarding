@@ -19,7 +19,7 @@ interface Props {
 }
 
 const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(20, 110, 245)`
+const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
 
 export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: Props) {
   const [from, setFrom] = useState(initialFrom)

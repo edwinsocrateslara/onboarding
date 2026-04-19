@@ -33,7 +33,7 @@ export function Stepper({ currentStage, completedStages, onStageClick }: Stepper
               onClick={() => isClickable && onStageClick(stage.num)}
               disabled={!isClickable}
               className={cn(
-                "flex items-center gap-1.5 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)] rounded-sm",
+                "flex items-center gap-1.5 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)] rounded-sm",
                 isClickable && "hover:opacity-75 transition-opacity",
                 !isClickable && "cursor-default",
               )}
@@ -44,7 +44,7 @@ export function Stepper({ currentStage, completedStages, onStageClick }: Stepper
                 className="h-6 w-6 rounded-full flex items-center justify-center shrink-0 text-[11px] font-semibold transition-colors"
                 style={
                   isCompleted || isCurrent
-                    ? { background: "#078a52", color: "#ffffff" }
+                    ? { background: "#43089f", color: "#ffffff" }
                     : { background: "transparent", color: "#dad4c8", border: "1.5px solid #dad4c8" }
                 }
               >
@@ -68,7 +68,7 @@ export function Stepper({ currentStage, completedStages, onStageClick }: Stepper
             {i < STAGES.length - 1 && (
               <div
                 className="flex-1 h-px mx-2 min-w-[8px]"
-                style={{ background: isCompleted ? "#078a52" : "#dad4c8" }}
+                style={{ background: isCompleted ? "#43089f" : "#dad4c8" }}
               />
             )}
           </div>

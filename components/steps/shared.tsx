@@ -9,9 +9,9 @@ const C = {
   muted:        "#9f9b93",
   border:       "#dad4c8",
   surface:      "#ffffff",
-  matcha:       "#078a52",
-  matchaLight:  "rgba(7,138,82,0.08)",
-  matchaBorder: "rgba(7,138,82,0.5)",
+  matcha:       "#43089f",
+  matchaLight:  "rgba(67,8,159,0.08)",
+  matchaBorder: "rgba(67,8,159,0.5)",
   lemon:        "#fbbd41",
   clayShadow:   "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px",
 }
@@ -49,7 +49,7 @@ export function BackButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Go back"
-      className="btn-clay h-8 w-8 flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
+      className="btn-clay h-8 w-8 flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={{ color: C.muted }}
     >
       <ArrowLeft className="h-[18px] w-[18px]" />
@@ -63,7 +63,7 @@ export function ContinueButton({ onClick, disabled }: { onClick: () => void; dis
       type="button"
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
-      className="btn-clay min-h-[44px] px-6 rounded-full text-[15px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
+      className="btn-clay min-h-[44px] px-6 rounded-full text-[15px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         disabled
           ? { background: C.border, color: C.muted, cursor: "default" }
@@ -91,7 +91,7 @@ export function OptionCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
           ? {
@@ -140,7 +140,7 @@ export function PillButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="btn-clay rounded-full px-4 py-2.5 text-[14px] font-medium transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(20,110,245)]"
+      className="btn-clay rounded-full px-4 py-2.5 text-[14px] font-medium transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
           ? { background: C.matcha, color: C.surface, boxShadow: C.clayShadow }

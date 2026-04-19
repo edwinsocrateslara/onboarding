@@ -22,8 +22,7 @@ const PAY_UNIT_OPTIONS: { label: string; value: PayUnitValue }[] = [
   { label: "Yearly", value: "yearly" },
 ]
 
-const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 function formatWithCommas(value: string): string {
   if (!value) return ""
@@ -71,12 +70,12 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
           inputMode="decimal"
           value={display}
           onChange={e => { if (!advancing) onChange(filterPayInput(e.target.value)) }}
-          onFocus={e => { setFocused(true); e.currentTarget.style.boxShadow = FOCUS_SHADOW }}
-          onBlur={e => { onBlurNormalize(normalizeRaw(value)); setFocused(false); e.currentTarget.style.boxShadow = CLAY_SHADOW }}
+          onFocus={e => { setFocused(true); e.currentTarget.style.boxShadow = FOCUS_RING }}
+          onBlur={e => { onBlurNormalize(normalizeRaw(value)); setFocused(false); e.currentTarget.style.boxShadow = "none" }}
           disabled={advancing}
           placeholder="0"
-          className="shrink-0 rounded-xl px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-          style={{ width: "160px", background: "#ffffff", color: "#000000", boxShadow: CLAY_SHADOW, border: "1px solid #dad4c8" }}
+          className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
+          style={{ width: "160px", background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }}
           aria-label={ariaLabel}
         />
         {PAY_UNIT_OPTIONS.map(opt => (

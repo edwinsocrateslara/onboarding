@@ -18,8 +18,7 @@ interface Props {
   onAdvance: (data: { currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }) => void
 }
 
-const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: Props) {
   const [from, setFrom] = useState(initialFrom)
@@ -67,11 +66,10 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
   }, [from, to, timeline])
 
   const inputClass =
-    "w-full rounded-xl px-4 py-3.5 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
+    "w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
   const inputStyle = {
     background: "#ffffff",
     color: "#000000",
-    boxShadow: CLAY_SHADOW,
     border: "1px solid #dad4c8",
   }
 
@@ -91,8 +89,8 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
-          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
-          onBlur={e => (e.currentTarget.style.boxShadow = CLAY_SHADOW)}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+          onBlur={e => (e.currentTarget.style.boxShadow = "none")}
           aria-label="What you're doing now"
         />
       </div>
@@ -108,8 +106,8 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
-          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
-          onBlur={e => (e.currentTarget.style.boxShadow = CLAY_SHADOW)}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+          onBlur={e => (e.currentTarget.style.boxShadow = "none")}
           aria-label="Where you want to go"
         />
       </div>

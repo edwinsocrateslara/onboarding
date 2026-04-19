@@ -18,7 +18,7 @@ const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
 ]
 
 const MUTUAL_EXCLUSION = "needs_assessment"
-const CLAY_SHADOW = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 function TwoLineCard({
   main,
@@ -35,11 +35,11 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
+      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
           ? { background: "rgba(67,8,159,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(67,8,159,0.5)", color: "#000000" }
-          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000", border: "1px solid #dad4c8" }
+          : { background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }
       }
       aria-pressed={selected}
     >

@@ -13,7 +13,6 @@ const C = {
   matchaLight:  "rgba(67,8,159,0.08)",
   matchaBorder: "rgba(67,8,159,0.5)",
   lemon:        "#fbbd41",
-  clayShadow:   "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px",
 }
 
 export function AssistantQuestion({ text }: { text: string }) {
@@ -21,7 +20,7 @@ export function AssistantQuestion({ text }: { text: string }) {
     <div className="flex gap-3 items-start">
       <div
         className="mt-1 shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-semibold"
-        style={{ background: C.lemon, color: C.ink, fontFeatureSettings: '"ss01","ss03","ss10","ss11","ss12"' }}
+        style={{ background: C.matcha, color: C.surface, fontFeatureSettings: '"ss01","ss03","ss10","ss11","ss12"' }}
       >
         F
       </div>
@@ -67,7 +66,7 @@ export function ContinueButton({ onClick, disabled }: { onClick: () => void; dis
       style={
         disabled
           ? { background: C.border, color: C.muted, cursor: "default" }
-          : { background: C.matcha, color: C.surface, cursor: "pointer", boxShadow: C.clayShadow }
+          : { background: C.lemon, color: C.ink, cursor: "pointer" }
       }
     >
       Continue
@@ -91,19 +90,18 @@ export function OptionCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
+      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
           ? {
               background: C.matchaLight,
-              boxShadow: `0px 0px 0px 1.5px ${C.matchaBorder}`,
+              border: `1.5px solid ${C.matchaBorder}`,
               color: C.ink,
             }
           : {
               background: disabled ? "transparent" : C.surface,
-              boxShadow: disabled ? "none" : C.clayShadow,
+              border: disabled ? "1px solid transparent" : `1px solid ${C.border}`,
               color: disabled ? C.muted : C.ink,
-              border: disabled ? "none" : `1px solid ${C.border}`,
             }
       }
       aria-pressed={selected}
@@ -143,8 +141,8 @@ export function PillButton({
       className="btn-clay rounded-full px-4 py-2.5 text-[14px] font-medium transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         selected
-          ? { background: C.matcha, color: C.surface, boxShadow: C.clayShadow }
-          : { background: C.surface, color: C.ink, border: `1px solid ${C.border}`, boxShadow: C.clayShadow }
+          ? { background: C.matcha, color: C.surface }
+          : { background: C.surface, color: C.ink, border: `1px solid ${C.border}` }
       }
       aria-pressed={selected}
     >

@@ -14,8 +14,7 @@ const REGULAR_OPTIONS = [
   { id: "hobby",     type: "hobby"     as ExperienceContextType, label: "I have a hobby or side project I'm serious about",placeholder: "What is it?" },
 ]
 
-const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 type SelectionMap = Record<string, { checked: boolean; text: string }>
 
@@ -66,11 +65,11 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
+      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)]"
       style={
         checked
           ? { background: "rgba(67,8,159,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(67,8,159,0.5)", color: "#000000" }
-          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000", border: "1px solid #dad4c8" }
+          : { background: "#ffffff", color: "#000000", border: "1px solid #dad4c8" }
       }
       aria-pressed={checked}
     >
@@ -149,15 +148,14 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
                   onChange={e => updateText(opt.id, e.target.value)}
                   placeholder={opt.placeholder}
                   autoFocus
-                  className="w-full rounded-xl px-4 py-3 text-[14px] focus:outline-none transition-shadow"
+                  className="w-full rounded-lg px-4 py-3 text-[14px] focus:outline-none transition-shadow"
                   style={{
                     background: "#ffffff",
                     color: "#000000",
-                    boxShadow: CLAY_SHADOW,
                     border: "1px solid #dad4c8",
                   }}
-                  onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
-                  onBlur={e => (e.currentTarget.style.boxShadow = CLAY_SHADOW)}
+                  onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+                  onBlur={e => (e.currentTarget.style.boxShadow = "none")}
                   aria-label={opt.placeholder}
                 />
               </div>

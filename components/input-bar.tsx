@@ -9,8 +9,7 @@ interface InputBarProps {
   onSubmit:    (text: string) => void
 }
 
-const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 export function InputBar({ stepKey, isPrimary, placeholder, onSubmit }: InputBarProps) {
   const [value, setValue] = useState("")
@@ -41,12 +40,12 @@ export function InputBar({ stepKey, isPrimary, placeholder, onSubmit }: InputBar
 
   const setFocusShadow = () => {
     if (!containerRef.current) return
-    containerRef.current.style.boxShadow = isPrimary ? FOCUS_SHADOW : "0px 0px 0px 1px #eee9df"
+    containerRef.current.style.boxShadow = isPrimary ? FOCUS_RING : "none"
   }
 
   const setBlurShadow = () => {
     if (!containerRef.current) return
-    containerRef.current.style.boxShadow = isPrimary ? CLAY_SHADOW : "0px 0px 0px 1px #eee9df"
+    containerRef.current.style.boxShadow = "none"
   }
 
   return (
@@ -57,10 +56,9 @@ export function InputBar({ stepKey, isPrimary, placeholder, onSubmit }: InputBar
       <div className="mx-auto max-w-[640px]">
         <div
           ref={containerRef}
-          className="relative rounded-xl transition-shadow duration-150"
+          className="relative rounded-lg transition-shadow duration-150"
           style={{
             background: isPrimary ? "#ffffff" : "rgba(255,255,255,0.6)",
-            boxShadow:  isPrimary ? CLAY_SHADOW : "0px 0px 0px 1px #eee9df",
             border:     `1px solid #dad4c8`,
           }}
         >
@@ -82,7 +80,7 @@ export function InputBar({ stepKey, isPrimary, placeholder, onSubmit }: InputBar
             onFocus={setFocusShadow}
             onBlur={setBlurShadow}
             placeholder=""
-            className="w-full rounded-xl px-4 py-3.5 text-[15px] bg-transparent focus:outline-none"
+            className="w-full rounded-lg px-4 py-3.5 text-[15px] bg-transparent focus:outline-none"
             style={{ color: "#000000", opacity: isPrimary ? 1 : 0.45 }}
             aria-label="Type your response"
           />

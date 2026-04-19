@@ -4,7 +4,7 @@
 
 :root {
   /* Clay color tokens */
-  --color-bg:           250 249 247;   /* #faf9f7 warm cream */
+  --color-bg:           255 255 255;   /* #ffffff white */
   --color-surface:      255 255 255;   /* #ffffff */
   --color-ink:          0   0   0;     /* #000000 Clay Black */
   --color-subtle:       85  83  78;    /* #55534e Warm Charcoal */

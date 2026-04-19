@@ -55,8 +55,7 @@ function normalizeRaw(raw: string): string {
   return parts.length > 1 ? `${intVal}.${parts[1]}` : String(intVal)
 }
 
-const CLAY_SHADOW  = "rgba(0,0,0,0.10) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px"
-const FOCUS_SHADOW = `${CLAY_SHADOW}, 0px 0px 0px 2px rgb(67, 8, 159)`
+const FOCUS_RING = "0px 0px 0px 2px rgb(67, 8, 159)"
 
 export function Step22({ initialSchedule, initialModality, initialPayAmount, initialPayUnit, onAdvance }: Props) {
   const [schedule, setSchedule] = useState<ScheduleValue[]>(initialSchedule)
@@ -86,14 +85,14 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
 
   const handlePayFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setPayFocused(true)
-    e.currentTarget.style.boxShadow = FOCUS_SHADOW
+    e.currentTarget.style.boxShadow = FOCUS_RING
   }
 
   const handlePayBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const normalized = normalizeRaw(payRaw)
     setPayRaw(normalized)
     setPayFocused(false)
-    e.currentTarget.style.boxShadow = CLAY_SHADOW
+    e.currentTarget.style.boxShadow = "none"
   }
 
   useEffect(() => {
@@ -164,12 +163,11 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
             onBlur={handlePayBlur}
             disabled={advancing}
             placeholder="0"
-            className="shrink-0 rounded-xl px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
+            className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
             style={{
               width: "160px",
               background: "#ffffff",
               color: "#000000",
-              boxShadow: CLAY_SHADOW,
               border: "1px solid #dad4c8",
             }}
             aria-label="Minimum pay amount"

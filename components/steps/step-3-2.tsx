@@ -142,7 +142,7 @@ export function Step32({
       <AssistantQuestion text="Let's make sure any plan I suggest is realistic for your situation." />
 
       <div className="space-y-2">
-        <FieldLabel>How many hours per week can you put toward this transition?</FieldLabel>
+        <FieldLabel>How many hours per week can you put toward this transition? (training, applications, networking)</FieldLabel>
         <div className="space-y-2">
           {AVAILABILITY_OPTIONS.map(opt => (
             <OptionCard
@@ -178,13 +178,13 @@ export function Step32({
       <div className="space-y-3">
         <FieldLabel>What pay range works?</FieldLabel>
         <PayRow
-          caption="Minimum you need now"
+          caption="What I need now (minimum)"
           value={payMin} unit={payMinUnit} advancing={advancing}
           onChange={setPayMin} onUnit={setPayMinUnit} onBlurNormalize={setPayMin}
           ariaLabel="Minimum pay you need now"
         />
         <PayRow
-          caption="Targeting longer-term"
+          caption="What I'm targeting longer-term"
           value={payTarget} unit={payTargetUnit} advancing={advancing}
           onChange={setPayTarget} onUnit={setPayTargetUnit} onBlurNormalize={setPayTarget}
           ariaLabel="Target pay amount"

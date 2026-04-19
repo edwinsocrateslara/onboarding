@@ -6,15 +6,15 @@ import type { CareerAreaInterestValue } from "@/hooks/use-onboarding"
 import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
 
 const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
-  { value: "building_fixing",    main: "Building or fixing things",              sub: "e.g. construction, manufacturing, IT support, repair"       },
-  { value: "numbers_data",       main: "Working with numbers or data",            sub: "e.g. accounting, finance, analytics, research"              },
-  { value: "helping_people",     main: "Helping or caring for people",            sub: "e.g. healthcare, education, social work, customer service"  },
-  { value: "creating_content",   main: "Creating things — writing, design, media",sub: "e.g. graphic design, copywriting, video, photography"       },
-  { value: "technical_problems", main: "Solving technical problems",              sub: "e.g. software, engineering, IT, cybersecurity"              },
-  { value: "running_organizing", main: "Running or organizing operations",        sub: "e.g. project management, logistics, admin, event planning"  },
-  { value: "selling_persuading", main: "Selling or persuading",                   sub: "e.g. sales, marketing, recruiting, fundraising"             },
-  { value: "outdoors_hands",     main: "Working outdoors or with your hands",     sub: "e.g. landscaping, trades, agriculture, physical labor"      },
-  { value: "needs_assessment",   main: "I'm honestly not sure",                   sub: "That's okay — I'll help you figure it out"                  },
+  { value: "building_fixing",    main: "Building or fixing things",    sub: "e.g. engineering, trades, manufacturing"          },
+  { value: "numbers_data",       main: "Working with numbers or data", sub: "e.g. finance, analytics, accounting"              },
+  { value: "helping_people",     main: "Helping people directly",      sub: "e.g. healthcare, education, social work"          },
+  { value: "creating_content",   main: "Creating content or designs",  sub: "e.g. marketing, media, art, UX"                  },
+  { value: "technical_problems", main: "Solving technical problems",   sub: "e.g. IT, software, cybersecurity"                 },
+  { value: "running_organizing", main: "Running or organizing things", sub: "e.g. operations, logistics, project management"   },
+  { value: "selling_persuading", main: "Selling or persuading",        sub: "e.g. sales, business development, consulting"     },
+  { value: "outdoors_hands",     main: "Working outdoors or with your hands", sub: "e.g. agriculture, construction, environment" },
+  { value: "needs_assessment",   main: "I'm honestly not sure",        sub: "I'd like to try a career quiz or assessment"      },
 ]
 
 const MUTUAL_EXCLUSION = "needs_assessment"
@@ -103,8 +103,8 @@ export function Step33({ initialInterests, onAdvance }: Props) {
   return (
     <div className="space-y-5">
       <div>
-        <AssistantQuestion text="What kinds of work feel most interesting or natural to you?" />
-        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>Check all that apply</p>
+        <AssistantQuestion text="Which of these sound interesting to you?" />
+        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>pick as many as you like — there's no wrong answer</p>
       </div>
 
       <div className="space-y-2">

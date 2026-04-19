@@ -125,7 +125,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far." />
-        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>Check all that apply</p>
+        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>check all that apply</p>
       </div>
 
       <div className="space-y-2">

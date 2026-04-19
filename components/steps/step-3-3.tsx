@@ -6,14 +6,14 @@ import type { CareerAreaInterestValue } from "@/hooks/use-onboarding"
 import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
 
 const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
-  { value: "building_fixing",    main: "Building or fixing things",    sub: "e.g. engineering, trades, manufacturing"          },
-  { value: "numbers_data",       main: "Working with numbers or data", sub: "e.g. finance, analytics, accounting"              },
-  { value: "helping_people",     main: "Helping people directly",      sub: "e.g. healthcare, education, social work"          },
-  { value: "creating_content",   main: "Creating content or designs",  sub: "e.g. marketing, media, art, UX"                  },
-  { value: "technical_problems", main: "Solving technical problems",   sub: "e.g. IT, software, cybersecurity"                 },
-  { value: "running_organizing", main: "Running or organizing things", sub: "e.g. operations, logistics, project management"   },
-  { value: "selling_persuading", main: "Selling or persuading",        sub: "e.g. sales, business development, consulting"     },
-  { value: "outdoors_hands",     main: "Working outdoors or with your hands", sub: "e.g. agriculture, construction, environment" },
+  { value: "building_fixing",    main: "Building or fixing things",    sub: "engineering, trades, manufacturing"          },
+  { value: "numbers_data",       main: "Working with numbers or data", sub: "finance, analytics, accounting"              },
+  { value: "helping_people",     main: "Helping people directly",      sub: "healthcare, education, social work"          },
+  { value: "creating_content",   main: "Creating content or designs",  sub: "marketing, media, art, UX"                  },
+  { value: "technical_problems", main: "Solving technical problems",   sub: "IT, software, cybersecurity"                 },
+  { value: "running_organizing", main: "Running or organizing things", sub: "operations, logistics, project management"   },
+  { value: "selling_persuading", main: "Selling or persuading",        sub: "sales, business development, consulting"     },
+  { value: "outdoors_hands",     main: "Working outdoors or with your hands", sub: "agriculture, construction, environment" },
   { value: "needs_assessment",   main: "I'm honestly not sure",        sub: "I'd like to try a career quiz or assessment"      },
 ]
 

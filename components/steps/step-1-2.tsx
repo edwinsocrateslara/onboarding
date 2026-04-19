@@ -63,8 +63,8 @@ export function Step12({
             onBlur={e => (e.currentTarget.style.boxShadow = "none")}
             placeholder={
               q1Selection === "a"
-                ? "e.g. Software Engineer, Nurse, Teacher…"
-                : "e.g. Healthcare, Technology, Finance…"
+                ? "Software Engineer, Nurse, Teacher…"
+                : "Healthcare, Technology, Finance…"
             }
             autoFocus
             className="w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow"

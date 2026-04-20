@@ -3,7 +3,7 @@
 import { ArrowLeft, User } from "lucide-react"
 import { useOnboarding, getPreviousAnswer, getStageForStep } from "@/hooks/use-onboarding"
 import type { Q1Option } from "@/hooks/use-onboarding"
-import { PreviousAnswer } from "@/components/steps/shared"
+
 import { Step11 } from "@/components/steps/step-1-1"
 import { Step12 } from "@/components/steps/step-1-2"
 import { Step13 } from "@/components/steps/step-1-3"
@@ -201,7 +201,6 @@ export default function OnboardingPage() {
           key={state.step}
           className={`mx-auto max-w-[500px] px-5 sm:px-6 py-10 ${transitionClass}`}
         >
-          {previousAnswer && <PreviousAnswer answer={previousAnswer} />}
           {renderStep()}
         </div>
       </main>

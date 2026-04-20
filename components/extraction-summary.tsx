@@ -13,20 +13,20 @@ export function ExtractionSummary({ parts, advancing, onEdit }: ExtractionSummar
     <button
       type="button"
       onClick={advancing ? undefined : onEdit}
-      className="text-left text-[13px] leading-relaxed transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec] rounded"
+      className="text-left text-[13px] leading-relaxed transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5] rounded"
       style={{ cursor: advancing ? "default" : "pointer", opacity: advancing ? 0.7 : 1 }}
     >
-      <span style={{ color: "#87867f" }}>You said: </span>
+      <span style={{ color: "#9f9b93" }}>You said: </span>
       {parts.map((part, i) => (
         <span key={i}>
-          {i > 0 && <span style={{ color: "#c2c0b6" }}> · </span>}
-          <span style={{ color: "#5e5d59" }}>{part}</span>
+          {i > 0 && <span style={{ color: "#dad4c8" }}> · </span>}
+          <span style={{ color: "#000000" }}>{part}</span>
         </span>
       ))}
       {!advancing && (
         <span
           className="ml-2 text-[11px] underline underline-offset-2"
-          style={{ color: "#c2c0b6" }}
+          style={{ color: "#9f9b93" }}
         >
           Edit
         </span>

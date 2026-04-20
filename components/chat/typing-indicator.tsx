@@ -5,7 +5,7 @@ export function TypingIndicator() {
     <div className="flex gap-3 animate-slide-up">
       <div
         className="mt-0.5 shrink-0 h-[22px] w-[22px] rounded-full flex items-center justify-center text-[11px] font-semibold"
-        style={{ background: "rgba(201,100,66,0.12)", color: "#c96442" }}
+        style={{ background: "rgba(67,8,159,0.1)", color: "#43089f" }}
       >
         F
       </div>
@@ -15,7 +15,7 @@ export function TypingIndicator() {
             key={i}
             className="block h-[6px] w-[6px] rounded-full"
             style={{
-              background: "#c2c0b6",
+              background: "#dad4c8",
               animation: `dot-bounce 1.2s ease-in-out ${i * 0.18}s infinite`,
             }}
           />

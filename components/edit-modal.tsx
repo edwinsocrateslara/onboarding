@@ -9,13 +9,16 @@ import type {
   FinancialConstraintValue, ExperienceContextType, CareerAreaInterestValue,
 } from "@/hooks/use-onboarding"
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-
 function arr<T>(v: unknown): T[] { return Array.isArray(v) ? (v as T[]) : [] }
 function str(v: unknown): string { return typeof v === "string" ? v : "" }
 
-const INPUT_SHADOW = "0px 0px 0px 1px #e8e6dc"
-const FOCUS_SHADOW = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)"
+const BORDER       = "#dad4c8"
+const PRIMARY      = "#43089f"
+const PRIMARY_TINT = "rgba(67,8,159,0.06)"
+const PRIMARY_RING = "rgba(67,8,159,0.4)"
+const INPUT_REST   = `0px 0px 0px 1px ${BORDER}`
+const INPUT_FOCUS  = "0px 0px 0px 2px #146ef5"
+const CLAY_SHADOW  = `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px, 0px 0px 0px 1px ${BORDER}`
 
 function TextInput({ value, onChange, placeholder, label }: {
   value: string; onChange: (v: string) => void; placeholder: string; label: string
@@ -27,10 +30,10 @@ function TextInput({ value, onChange, placeholder, label }: {
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       aria-label={label}
-      className="w-full rounded-xl px-4 py-3 text-[14px] focus:outline-none transition-shadow"
-      style={{ background: "#fff", color: "#141413", boxShadow: INPUT_SHADOW }}
-      onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
-      onBlur={e => (e.currentTarget.style.boxShadow = INPUT_SHADOW)}
+      className="w-full rounded px-4 py-3 text-[14px] focus:outline-none transition-shadow"
+      style={{ background: "#fff", color: "#000000", boxShadow: INPUT_REST }}
+      onFocus={e => (e.currentTarget.style.boxShadow = INPUT_FOCUS)}
+      onBlur={e => (e.currentTarget.style.boxShadow = INPUT_REST)}
     />
   )
 }
@@ -46,16 +49,16 @@ function NumberInput({ value, onChange, placeholder, label }: {
       onChange={e => onChange(e.target.value.replace(/[^0-9.]/g, ""))}
       placeholder={placeholder}
       aria-label={label}
-      className="rounded-xl px-3 py-3 text-[14px] focus:outline-none transition-shadow"
-      style={{ width: "140px", background: "#fff", color: "#141413", boxShadow: INPUT_SHADOW }}
-      onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_SHADOW)}
-      onBlur={e => (e.currentTarget.style.boxShadow = INPUT_SHADOW)}
+      className="rounded px-3 py-3 text-[14px] focus:outline-none transition-shadow"
+      style={{ width: "140px", background: "#fff", color: "#000000", boxShadow: INPUT_REST }}
+      onFocus={e => (e.currentTarget.style.boxShadow = INPUT_FOCUS)}
+      onBlur={e => (e.currentTarget.style.boxShadow = INPUT_REST)}
     />
   )
 }
 
 function SectionLabel({ text }: { text: string }) {
-  return <p className="text-[12px] font-medium" style={{ color: "#87867f" }}>{text}</p>
+  return <p className="text-[12px] font-medium" style={{ color: "#9f9b93" }}>{text}</p>
 }
 
 function MultiChip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
@@ -63,16 +66,46 @@ function MultiChip({ label, selected, onClick }: { label: string; selected: bool
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-      style={
-        selected
-          ? { background: "#c96442", color: "#fff" }
-          : { background: "rgba(201,100,66,0.07)", color: "#4d4c48" }
-      }
+      className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
+      style={{
+        borderRadius: "1584px",
+        background: selected ? PRIMARY : "#ffffff",
+        color: selected ? "#ffffff" : "#000000",
+        boxShadow: selected ? `0px 0px 0px 1.5px ${PRIMARY_RING}` : `0px 0px 0px 1px ${BORDER}`,
+      }}
       aria-pressed={selected}
     >
       {selected && <Check className="h-3 w-3" strokeWidth={3} />}
       {label}
+    </button>
+  )
+}
+
+function CheckboxRow({ label, checked, onClick }: { label: string; checked: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[14px] leading-[1.5] transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
+      style={
+        checked
+          ? { background: PRIMARY_TINT, boxShadow: `0px 0px 0px 1.5px ${PRIMARY_RING}`, color: "#000000" }
+          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000" }
+      }
+      aria-pressed={checked}
+    >
+      <span className="flex items-start gap-3">
+        <span
+          className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
+          style={{
+            borderColor: checked ? PRIMARY : BORDER,
+            background: checked ? PRIMARY : "transparent",
+          }}
+        >
+          {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+        </span>
+        {label}
+      </span>
     </button>
   )
 }
@@ -144,9 +177,9 @@ function Edit22({ extracted, onChange }: { extracted: Record<string, unknown>; o
     { value: "shift_work", label: "Shift work" },
   ]
   const MODALITIES: { value: WorkModalityValue; label: string }[] = [
-    { value: "on_site",       label: "On-site"       },
-    { value: "remote",        label: "Remote"         },
-    { value: "hybrid",        label: "Hybrid"         },
+    { value: "on_site",       label: "On-site"      },
+    { value: "remote",        label: "Remote"        },
+    { value: "hybrid",        label: "Hybrid"        },
     { value: "no_preference", label: "No preference" },
   ]
   const schedule = arr<ScheduleValue>(extracted.schedulePreference)
@@ -175,7 +208,7 @@ function Edit22({ extracted, onChange }: { extracted: Record<string, unknown>; o
       <div className="space-y-2">
         <SectionLabel text="Minimum pay" />
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-medium shrink-0" style={{ color: "#5e5d59" }}>$</span>
+          <span className="text-[15px] font-medium shrink-0" style={{ color: "#9f9b93" }}>$</span>
           <NumberInput value={str(extracted.payAmount)} onChange={v => onChange("payAmount", v)} placeholder="0" label="Pay amount" />
           {(["hourly", "yearly"] as PayUnitValue[]).map(u => (
             <PillButton key={u} label={u === "hourly" ? "Hourly" : "Yearly"} selected={extracted.payUnit === u} onClick={() => onChange("payUnit", u)} />
@@ -188,10 +221,10 @@ function Edit22({ extracted, onChange }: { extracted: Record<string, unknown>; o
 
 function Edit23({ extracted, onChange }: { extracted: Record<string, unknown>; onChange: (k: string, v: unknown) => void }) {
   const TIMELINES: { value: TimelineValue; label: string }[] = [
-    { value: "immediate",             label: "As soon as possible"   },
-    { value: "within_3_months",       label: "Within 3 months"       },
-    { value: "within_6_to_12_months", label: "Within 6–12 months"    },
-    { value: "no_timeline",           label: "No rush / flexible"    },
+    { value: "immediate",             label: "As soon as possible"  },
+    { value: "within_3_months",       label: "Within 3 months"      },
+    { value: "within_6_to_12_months", label: "Within 6–12 months"   },
+    { value: "no_timeline",           label: "No rush / flexible"   },
   ]
   return (
     <div className="space-y-4">
@@ -255,25 +288,7 @@ function Edit24({ extracted, onChange }: { extracted: Record<string, unknown>; o
         const checked = !!exp
         return (
           <div key={opt.value}>
-            <button
-              type="button"
-              onClick={() => toggle(opt.value)}
-              className="w-full text-left rounded-xl px-4 py-3.5 text-[14px] leading-[1.5] transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-              style={
-                checked
-                  ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-                  : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
-              }
-              aria-pressed={checked}
-            >
-              <span className="flex items-start gap-3">
-                <span className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
-                  style={{ borderColor: checked ? "#c96442" : "#c2c0b6", background: checked ? "#c96442" : "transparent" }}>
-                  {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
-                </span>
-                {opt.label}
-              </span>
-            </button>
+            <CheckboxRow label={opt.label} checked={checked} onClick={() => toggle(opt.value)} />
             {checked && (
               <div className="pl-[44px] pt-1.5 pb-1 pr-1">
                 <TextInput value={exp?.detail ?? ""} onChange={v => setDetail(opt.value, v)} placeholder={opt.placeholder} label={opt.placeholder} />
@@ -282,35 +297,17 @@ function Edit24({ extracted, onChange }: { extracted: Record<string, unknown>; o
           </div>
         )
       })}
-      <button
-        type="button"
-        onClick={toggleNone}
-        className="w-full text-left rounded-xl px-4 py-3.5 text-[14px] leading-[1.5] transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-        style={
-          noneSelected
-            ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-            : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
-        }
-        aria-pressed={noneSelected}
-      >
-        <span className="flex items-start gap-3">
-          <span className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
-            style={{ borderColor: noneSelected ? "#c96442" : "#c2c0b6", background: noneSelected ? "#c96442" : "transparent" }}>
-            {noneSelected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
-          </span>
-          None of the above — I'm starting from scratch
-        </span>
-      </button>
+      <CheckboxRow label="None of the above — I'm starting from scratch" checked={noneSelected} onClick={toggleNone} />
     </div>
   )
 }
 
 function Edit31({ extracted, onChange }: { extracted: Record<string, unknown>; onChange: (k: string, v: unknown) => void }) {
   const OPTIONS: { value: ApplicationDiagnosticsValue; label: string }[] = [
-    { value: "not_started",               label: "Just getting started — haven't applied yet"          },
-    { value: "low_volume_no_response",    label: "Applied to some, but no responses"                   },
-    { value: "high_volume_few_interviews",label: "Lots of applications, very few interviews"           },
-    { value: "interviews_no_offers",      label: "Getting interviews but no offers"                    },
+    { value: "not_started",                label: "Just getting started — haven't applied yet"     },
+    { value: "low_volume_no_response",     label: "Applied to some, but no responses"              },
+    { value: "high_volume_few_interviews", label: "Lots of applications, very few interviews"      },
+    { value: "interviews_no_offers",       label: "Getting interviews but no offers"               },
   ]
   return (
     <div className="space-y-2">
@@ -330,9 +327,9 @@ function PayRow({ caption, amountKey, unitKey, extracted, onChange }: {
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-[11px]" style={{ color: "#a8a69e" }}>{caption}</p>
+      <p className="text-[11px]" style={{ color: "#9f9b93" }}>{caption}</p>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[15px] font-medium shrink-0" style={{ color: "#5e5d59" }}>$</span>
+        <span className="text-[15px] font-medium shrink-0" style={{ color: "#9f9b93" }}>$</span>
         <NumberInput value={str(extracted[amountKey])} onChange={v => onChange(amountKey, v)} placeholder="0" label={caption} />
         {(["hourly", "yearly"] as PayUnitValue[]).map(u => (
           <PillButton key={u} label={u === "hourly" ? "Hourly" : "Yearly"} selected={extracted[unitKey] === u} onClick={() => onChange(unitKey, u)} />
@@ -344,17 +341,17 @@ function PayRow({ caption, amountKey, unitKey, extracted, onChange }: {
 
 function Edit32({ extracted, onChange }: { extracted: Record<string, unknown>; onChange: (k: string, v: unknown) => void }) {
   const AVAIL: { value: AvailabilityValue; label: string }[] = [
-    { value: "less_than_10", label: "Less than 10 hours"                       },
-    { value: "10_to_20",     label: "10–20 hours"                              },
-    { value: "20_to_30",     label: "20–30 hours"                              },
-    { value: "30_plus",      label: "30+ hours / I'm doing this full-time"     },
+    { value: "less_than_10", label: "Less than 10 hours"                      },
+    { value: "10_to_20",     label: "10–20 hours"                             },
+    { value: "20_to_30",     label: "20–30 hours"                             },
+    { value: "30_plus",      label: "30+ hours / I'm doing this full-time"    },
   ]
   const FIN: { value: FinancialConstraintValue; label: string }[] = [
     { value: "needs_income", label: "I need to keep earning — can't afford unpaid training"      },
     { value: "some_savings", label: "I have some savings — can handle a short gap (1–3 months)" },
     { value: "has_runway",   label: "I have runway — can invest in longer training if needed"   },
   ]
-  const DIVIDER = <div className="w-full h-px" style={{ background: "#e8e6dc" }} />
+  const DIVIDER = <div className="w-full h-px" style={{ background: BORDER }} />
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -377,8 +374,8 @@ function Edit32({ extracted, onChange }: { extracted: Record<string, unknown>; o
       {DIVIDER}
       <div className="space-y-3">
         <SectionLabel text="Pay range" />
-        <PayRow caption="Minimum you need now"   amountKey="payMin"    unitKey="payMinUnit"    extracted={extracted} onChange={onChange} />
-        <PayRow caption="Targeting longer-term"  amountKey="payTarget" unitKey="payTargetUnit" extracted={extracted} onChange={onChange} />
+        <PayRow caption="Minimum you need now"  amountKey="payMin"    unitKey="payMinUnit"    extracted={extracted} onChange={onChange} />
+        <PayRow caption="Targeting longer-term" amountKey="payTarget" unitKey="payTargetUnit" extracted={extracted} onChange={onChange} />
       </div>
     </div>
   )
@@ -386,15 +383,15 @@ function Edit32({ extracted, onChange }: { extracted: Record<string, unknown>; o
 
 function Edit33({ extracted, onChange }: { extracted: Record<string, unknown>; onChange: (k: string, v: unknown) => void }) {
   const OPTIONS: { value: CareerAreaInterestValue; main: string }[] = [
-    { value: "building_fixing",    main: "Building or fixing things"              },
-    { value: "numbers_data",       main: "Working with numbers or data"           },
-    { value: "helping_people",     main: "Helping or caring for people"           },
+    { value: "building_fixing",    main: "Building or fixing things"               },
+    { value: "numbers_data",       main: "Working with numbers or data"            },
+    { value: "helping_people",     main: "Helping or caring for people"            },
     { value: "creating_content",   main: "Creating things — writing, design, media" },
-    { value: "technical_problems", main: "Solving technical problems"             },
-    { value: "running_organizing", main: "Running or organizing operations"       },
-    { value: "selling_persuading", main: "Selling or persuading"                  },
-    { value: "outdoors_hands",     main: "Working outdoors or with your hands"    },
-    { value: "needs_assessment",   main: "I'm honestly not sure"                  },
+    { value: "technical_problems", main: "Solving technical problems"              },
+    { value: "running_organizing", main: "Running or organizing operations"        },
+    { value: "selling_persuading", main: "Selling or persuading"                   },
+    { value: "outdoors_hands",     main: "Working outdoors or with your hands"     },
+    { value: "needs_assessment",   main: "I'm honestly not sure"                   },
   ]
   const interests = arr<CareerAreaInterestValue>(extracted.careerInterests)
   const toggle = (v: CareerAreaInterestValue) => {
@@ -411,26 +408,7 @@ function Edit33({ extracted, onChange }: { extracted: Record<string, unknown>; o
       {OPTIONS.map(opt => {
         const checked = interests.includes(opt.value)
         return (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => toggle(opt.value)}
-            className="w-full text-left rounded-xl px-4 py-3.5 text-[14px] leading-[1.5] transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-            style={
-              checked
-                ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-                : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
-            }
-            aria-pressed={checked}
-          >
-            <span className="flex items-start gap-3">
-              <span className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
-                style={{ borderColor: checked ? "#c96442" : "#c2c0b6", background: checked ? "#c96442" : "transparent" }}>
-                {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
-              </span>
-              {opt.main}
-            </span>
-          </button>
+          <CheckboxRow key={opt.value} label={opt.main} checked={checked} onClick={() => toggle(opt.value)} />
         )
       })}
     </div>
@@ -473,50 +451,45 @@ export function EditModal({ step, extracted, onSave, onClose }: EditModalProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
-      {/* backdrop */}
       <div
         className="absolute inset-0"
         style={{ background: "rgba(0,0,0,0.3)" }}
         onClick={onClose}
       />
 
-      {/* sheet */}
       <div
         className="relative rounded-t-2xl max-h-[85vh] flex flex-col"
-        style={{ background: "#faf9f5" }}
+        style={{ background: "#faf9f7" }}
       >
-        {/* header */}
         <div
           className="shrink-0 px-4 sm:px-6 py-4 flex items-center justify-between border-b"
-          style={{ borderColor: "#e8e6dc" }}
+          style={{ borderColor: BORDER }}
         >
-          <h2 className="text-[15px] font-semibold" style={{ color: "#141413" }}>Edit your answer</h2>
+          <h2 className="text-[15px] font-semibold" style={{ color: "#000000" }}>Edit your answer</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="h-8 w-8 flex items-center justify-center rounded-lg hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-            style={{ color: "#87867f" }}
+            className="h-8 w-8 flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
+            style={{ color: "#9f9b93" }}
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* scrollable body */}
         <div className="overflow-y-auto px-4 sm:px-6 py-5 space-y-5">
           <EditPanel step={step} extracted={local} onChange={handleChange} />
         </div>
 
-        {/* footer */}
         <div
           className="shrink-0 px-4 sm:px-6 py-4 border-t"
-          style={{ borderColor: "#e8e6dc" }}
+          style={{ borderColor: BORDER }}
         >
           <button
             type="button"
             onClick={() => { onSave(local); onClose() }}
-            className="min-h-[44px] px-6 rounded-full text-[15px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
-            style={{ background: "#c96442", color: "#fff", cursor: "pointer" }}
+            className="min-h-[44px] px-6 text-[16px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
+            style={{ borderRadius: "1584px", background: PRIMARY, color: "#ffffff", cursor: "pointer" }}
           >
             Done
           </button>

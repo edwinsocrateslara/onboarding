@@ -2,28 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-bg:           245 244 237;
-  --color-surface:      250 249 245;
-  --color-surface-2:    232 230 220;
-  --color-accent:       201 100  66;
-  --color-accent-2:     217 119  87;
-  --color-ink:           20  20  19;
-  --color-subtle:        94  93  89;
-  --color-muted:        135 134 127;
-  --color-charcoal:      77  76  72;
-
-  --border-cream:       #f0eee6;
-  --border-warm:        #e8e6dc;
-
-  --ring-warm:          0px 0px 0px 1px #d1cfc5;
-  --ring-deep:          0px 0px 0px 1px #c2c0b6;
-  --ring-terracotta:    0px 0px 0px 1px rgba(201, 100, 66, 0.35);
-  --ring-focus-blue:    0px 0px 0px 1px #3898ec,
-                        0px 0px 0px 3px rgba(56, 152, 236, 0.15);
-  --shadow-whisper:     rgba(0, 0, 0, 0.05) 0px 4px 24px;
-}
-
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
@@ -32,18 +10,19 @@ html {
 }
 
 body {
-  background-color: rgb(var(--color-bg));
-  color: rgb(var(--color-ink));
+  background-color: #faf9f7;
+  color: #000000;
   margin: 0;
+  font-feature-settings: "ss01" "ss03" "ss10" "ss11" "ss12";
 }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-accent), 0.25);
+  background: rgba(67, 8, 159, 0.25);
   border-radius: 2px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(var(--color-accent), 0.45); }
+::-webkit-scrollbar-thumb:hover { background: rgba(67, 8, 159, 0.45); }
 
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
@@ -77,7 +56,8 @@ body {
 .animate-screen-forward { animation: screen-forward 0.2s ease-out both; }
 .animate-screen-back    { animation: screen-back 0.2s ease-out both; }
 
-textarea::placeholder { color: #87867f; }
+textarea::placeholder { color: #9f9b93; }
+input::placeholder    { color: #9f9b93; }
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; }

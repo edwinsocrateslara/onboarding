@@ -134,7 +134,7 @@ export default function OnboardingPage() {
 
     if (!spec) {
       return (
-        <p className="text-[15px]" style={{ color: "#87867f" }}>
+        <p className="text-[15px]" style={{ color: "#9f9b93" }}>
           Loading…
         </p>
       )
@@ -150,11 +150,11 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex flex-col h-dvh" style={{ background: "rgb(var(--color-bg))" }}>
+    <div className="flex flex-col h-dvh" style={{ background: "#faf9f7" }}>
       {/* Top row */}
       <div
         className="shrink-0 border-b"
-        style={{ borderColor: "#e8e6dc", background: "rgb(var(--color-surface))" }}
+        style={{ borderColor: "#dad4c8", background: "#ffffff" }}
       >
         <div className="mx-auto max-w-[640px] px-3 py-3 flex items-center gap-1">
           <div className="shrink-0 w-8 flex items-center">

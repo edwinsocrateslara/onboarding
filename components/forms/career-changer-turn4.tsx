@@ -7,6 +7,12 @@ type Hours = "<10" | "10–20" | "20–30" | "30+"
 type Finance = "Need to keep earning" | "Some savings (1–3 mo)" | "Have runway"
 type PayPeriod = "per hour" | "per year"
 
+const PRIMARY      = "#43089f"
+const PRIMARY_RING = "rgba(67,8,159,0.4)"
+const BORDER       = "#dad4c8"
+const INPUT_REST   = `0px 0px 0px 1px ${BORDER}`
+const INPUT_FOCUS  = "0px 0px 0px 2px #146ef5"
+
 interface Props {
   onSubmit: (data: Record<string, unknown>, formatted: string) => void
 }
@@ -24,7 +30,7 @@ function RadioGroup<T extends string>({
 }) {
   return (
     <fieldset>
-      <legend className="text-[13px] font-medium mb-2.5" style={{ color: "#5e5d59" }}>
+      <legend className="text-[13px] font-medium mb-2.5" style={{ color: "#000000" }}>
         {legend}
       </legend>
       <div className="flex flex-wrap gap-2">
@@ -40,14 +46,17 @@ function RadioGroup<T extends string>({
             />
             <span
               className={cn(
-                "inline-block rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-all",
-                "focus-within:ring-2 focus-within:ring-[#3898ec]",
+                "inline-block px-3.5 py-1.5 text-[13px] font-medium transition-colors",
+                "focus-within:ring-2 focus-within:ring-[#146ef5]",
               )}
-              style={
-                selected === opt
-                  ? { background: "#c96442", color: "#faf9f5", boxShadow: "0px 0px 0px 1px rgba(201,100,66,0.5)" }
-                  : { background: "rgba(201,100,66,0.07)", color: "#4d4c48", boxShadow: "0px 0px 0px 1px rgba(201,100,66,0.18)" }
-              }
+              style={{
+                borderRadius: "1584px",
+                background: selected === opt ? PRIMARY : "#ffffff",
+                color: selected === opt ? "#ffffff" : "#000000",
+                boxShadow: selected === opt
+                  ? `0px 0px 0px 1.5px ${PRIMARY_RING}`
+                  : INPUT_REST,
+              }}
             >
               {opt}
             </span>
@@ -100,12 +109,12 @@ export function CareerChangerTurn4({ onSubmit }: Props) {
 
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <span className="text-[13px] font-medium" style={{ color: "#5e5d59" }}>
-            Pay range <span className="font-normal" style={{ color: "#87867f" }}>(optional)</span>
+          <span className="text-[13px] font-medium" style={{ color: "#000000" }}>
+            Pay range <span className="font-normal" style={{ color: "#9f9b93" }}>(optional)</span>
           </span>
           <div
-            className="flex rounded-lg overflow-hidden text-[12px]"
-            style={{ boxShadow: "0px 0px 0px 1px #e8e6dc" }}
+            className="flex overflow-hidden text-[12px]"
+            style={{ borderRadius: "1584px", boxShadow: INPUT_REST }}
           >
             {(["per hour", "per year"] as PayPeriod[]).map((p) => (
               <button
@@ -115,8 +124,8 @@ export function CareerChangerTurn4({ onSubmit }: Props) {
                 className="px-2.5 py-1 transition-colors"
                 style={
                   payPeriod === p
-                    ? { background: "#c96442", color: "#faf9f5" }
-                    : { background: "#faf9f5", color: "#5e5d59" }
+                    ? { background: PRIMARY, color: "#ffffff" }
+                    : { background: "#ffffff", color: "#000000" }
                 }
               >
                 {p}
@@ -127,17 +136,17 @@ export function CareerChangerTurn4({ onSubmit }: Props) {
         <div className="flex items-center gap-2">
           {[{ label: "Minimum now", val: minPay, set: setMinPay }, { label: "Target longer-term", val: targetPay, set: setTargetPay }].map(({ label, val, set }) => (
             <div key={label} className="flex-1 relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: "#87867f" }}>$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: "#9f9b93" }}>$</span>
               <input
                 type="number"
                 value={val}
                 onChange={(e) => set(e.target.value)}
                 placeholder={label}
                 min={0}
-                className="w-full rounded-lg pl-6 pr-2 py-2 text-[13px] focus:outline-none transition-shadow"
-                style={{ background: "#fff", color: "#141413", boxShadow: "0px 0px 0px 1px #e8e6dc" }}
-                onFocus={(e) => (e.currentTarget.style.boxShadow = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)")}
-                onBlur={(e) => (e.currentTarget.style.boxShadow = "0px 0px 0px 1px #e8e6dc")}
+                className="w-full rounded pl-6 pr-2 py-2 text-[13px] focus:outline-none transition-shadow"
+                style={{ background: "#fff", color: "#000000", boxShadow: INPUT_REST }}
+                onFocus={(e) => (e.currentTarget.style.boxShadow = INPUT_FOCUS)}
+                onBlur={(e) => (e.currentTarget.style.boxShadow = INPUT_REST)}
                 aria-label={label}
               />
             </div>
@@ -149,10 +158,11 @@ export function CareerChangerTurn4({ onSubmit }: Props) {
         type="button"
         onClick={handleSubmit}
         disabled={!canSubmit}
-        className="w-full rounded-xl py-2.5 text-[14px] font-medium transition-all disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
+        className="w-full py-2.5 text-[16px] font-medium transition-colors disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
         style={{
-          background: canSubmit ? "#c96442" : "#e8e6dc",
-          color: canSubmit ? "#faf9f5" : "#87867f",
+          borderRadius: "1584px",
+          background: canSubmit ? PRIMARY : "#e8e7e2",
+          color: canSubmit ? "#ffffff" : "#9f9b93",
         }}
       >
         Submit

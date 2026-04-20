@@ -6,18 +6,24 @@ import type { CareerAreaInterestValue } from "@/hooks/use-onboarding"
 import { AssistantQuestion, ContinueButton } from "./shared"
 
 const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
-  { value: "building_fixing",    main: "Building or fixing things",              sub: "e.g. construction, manufacturing, IT support, repair"       },
-  { value: "numbers_data",       main: "Working with numbers or data",            sub: "e.g. accounting, finance, analytics, research"              },
-  { value: "helping_people",     main: "Helping or caring for people",            sub: "e.g. healthcare, education, social work, customer service"  },
-  { value: "creating_content",   main: "Creating things — writing, design, media",sub: "e.g. graphic design, copywriting, video, photography"       },
-  { value: "technical_problems", main: "Solving technical problems",              sub: "e.g. software, engineering, IT, cybersecurity"              },
-  { value: "running_organizing", main: "Running or organizing operations",        sub: "e.g. project management, logistics, admin, event planning"  },
-  { value: "selling_persuading", main: "Selling or persuading",                   sub: "e.g. sales, marketing, recruiting, fundraising"             },
-  { value: "outdoors_hands",     main: "Working outdoors or with your hands",     sub: "e.g. landscaping, trades, agriculture, physical labor"      },
-  { value: "needs_assessment",   main: "I'm honestly not sure",                   sub: "That's okay — I'll help you figure it out"                  },
+  { value: "building_fixing",    main: "Building or fixing things",              sub: "construction, manufacturing, IT support, repair"       },
+  { value: "numbers_data",       main: "Working with numbers or data",            sub: "accounting, finance, analytics, research"              },
+  { value: "helping_people",     main: "Helping or caring for people",            sub: "healthcare, education, social work, customer service"  },
+  { value: "creating_content",   main: "Creating things — writing, design, media",sub: "graphic design, copywriting, video, photography"       },
+  { value: "technical_problems", main: "Solving technical problems",              sub: "software, engineering, IT, cybersecurity"              },
+  { value: "running_organizing", main: "Running or organizing operations",        sub: "project management, logistics, admin, event planning"  },
+  { value: "selling_persuading", main: "Selling or persuading",                   sub: "sales, marketing, recruiting, fundraising"             },
+  { value: "outdoors_hands",     main: "Working outdoors or with your hands",     sub: "landscaping, trades, agriculture, physical labor"      },
+  { value: "needs_assessment",   main: "I'm honestly not sure",                   sub: "That's okay — I'll help you figure it out"            },
 ]
 
 const MUTUAL_EXCLUSION = "needs_assessment"
+
+const PRIMARY      = "#43089f"
+const PRIMARY_TINT = "rgba(67,8,159,0.06)"
+const PRIMARY_RING = "rgba(67,8,159,0.4)"
+const BORDER       = "#dad4c8"
+const CLAY_SHADOW  = `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px, 0px 0px 0px 1px ${BORDER}`
 
 function TwoLineCard({
   main,
@@ -34,11 +40,11 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
       style={
         selected
-          ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-          : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
+          ? { background: PRIMARY_TINT, boxShadow: `0px 0px 0px 1.5px ${PRIMARY_RING}`, color: "#000000" }
+          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000" }
       }
       aria-pressed={selected}
     >
@@ -46,15 +52,15 @@ function TwoLineCard({
         <span
           className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
           style={{
-            borderColor: selected ? "#c96442" : "#c2c0b6",
-            background: selected ? "#c96442" : "transparent",
+            borderColor: selected ? PRIMARY : BORDER,
+            background: selected ? PRIMARY : "transparent",
           }}
         >
           {selected && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
         </span>
         <span>
           <span className="block font-medium">{main}</span>
-          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#6b6860" : "#87867f" }}>{sub}</span>
+          <span className="block text-[13px] mt-0.5" style={{ color: "#9f9b93" }}>{sub}</span>
         </span>
       </span>
     </button>
@@ -104,7 +110,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="What kinds of work feel most interesting or natural to you?" />
-        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#87867f" }}>Check all that apply</p>
+        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#9f9b93" }}>Check all that apply</p>
       </div>
 
       <div className="space-y-2">

@@ -14,6 +14,14 @@ const REGULAR_OPTIONS = [
   { id: "hobby",     type: "hobby"     as ExperienceContextType, label: "I have a hobby or side project I'm serious about",placeholder: "What is it?" },
 ]
 
+const PRIMARY      = "#43089f"
+const PRIMARY_TINT = "rgba(67,8,159,0.06)"
+const PRIMARY_RING = "rgba(67,8,159,0.4)"
+const BORDER       = "#dad4c8"
+const CLAY_SHADOW  = `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px, 0px 0px 0px 1px ${BORDER}`
+const INPUT_REST   = `0px 0px 0px 1px ${BORDER}`
+const INPUT_FOCUS  = "0px 0px 0px 2px #146ef5"
+
 type SelectionMap = Record<string, { checked: boolean; text: string }>
 
 function initSelections(
@@ -63,11 +71,11 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-all min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3898ec]"
+      className="w-full text-left rounded-xl px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
       style={
         checked
-          ? { background: "rgba(201,100,66,0.08)", boxShadow: "0px 0px 0px 1.5px rgba(201,100,66,0.5)", color: "#141413" }
-          : { background: "#faf9f5", boxShadow: "0px 0px 0px 1px #e8e6dc", color: "#3d3d3a" }
+          ? { background: PRIMARY_TINT, boxShadow: `0px 0px 0px 1.5px ${PRIMARY_RING}`, color: "#000000" }
+          : { background: "#ffffff", boxShadow: CLAY_SHADOW, color: "#000000" }
       }
       aria-pressed={checked}
     >
@@ -75,8 +83,8 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
         <span
           className="mt-[3px] h-4 w-4 shrink-0 rounded-sm border-2 flex items-center justify-center"
           style={{
-            borderColor: checked ? "#c96442" : "#c2c0b6",
-            background: checked ? "#c96442" : "transparent",
+            borderColor: checked ? PRIMARY : BORDER,
+            background: checked ? PRIMARY : "transparent",
           }}
         >
           {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
@@ -127,7 +135,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far." />
-        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#87867f" }}>Check all that apply</p>
+        <p className="mt-3 ml-10 text-[13px] italic" style={{ color: "#9f9b93" }}>Check all that apply</p>
       </div>
 
       <div className="space-y-2">
@@ -146,14 +154,14 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
                   onChange={e => updateText(opt.id, e.target.value)}
                   placeholder={opt.placeholder}
                   autoFocus
-                  className="w-full rounded-xl px-4 py-3 text-[14px] focus:outline-none transition-shadow"
+                  className="w-full rounded px-4 py-3 text-[14px] focus:outline-none transition-shadow"
                   style={{
                     background: "#ffffff",
-                    color: "#141413",
-                    boxShadow: "0px 0px 0px 1px #e8e6dc",
+                    color: "#000000",
+                    boxShadow: INPUT_REST,
                   }}
-                  onFocus={e => (e.currentTarget.style.boxShadow = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)")}
-                  onBlur={e => (e.currentTarget.style.boxShadow = "0px 0px 0px 1px #e8e6dc")}
+                  onFocus={e => (e.currentTarget.style.boxShadow = INPUT_FOCUS)}
+                  onBlur={e => (e.currentTarget.style.boxShadow = INPUT_REST)}
                   aria-label={opt.placeholder}
                 />
               </div>

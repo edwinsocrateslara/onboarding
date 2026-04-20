@@ -19,7 +19,6 @@ export function ConversationalScreen({ spec, state, onEdit }: ConversationalScre
     <div className="space-y-5">
       <AssistantQuestion text={spec.question} />
 
-      {/* Extraction summary (tappable → edit modal) */}
       {showSummary && (
         <div className="ml-10">
           <ExtractionSummary
@@ -30,12 +29,10 @@ export function ConversationalScreen({ spec, state, onEdit }: ConversationalScre
         </div>
       )}
 
-      {/* Follow-up question */}
       {state.status === "follow_up" && state.followUpQuestion && (
         <AssistantQuestion text={state.followUpQuestion} />
       )}
 
-      {/* Loading */}
       {state.status === "loading" && (
         <div className="ml-10 flex gap-1.5 items-center" aria-label="Processing…">
           {[0, 1, 2].map(i => (
@@ -43,7 +40,7 @@ export function ConversationalScreen({ spec, state, onEdit }: ConversationalScre
               key={i}
               className="h-1.5 w-1.5 rounded-full animate-bounce"
               style={{
-                background: "#c96442",
+                background: "#43089f",
                 animationDelay: `${i * 140}ms`,
                 opacity: 0.6,
               }}
@@ -52,9 +49,8 @@ export function ConversationalScreen({ spec, state, onEdit }: ConversationalScre
         </div>
       )}
 
-      {/* Error */}
       {state.status === "error" && state.error && (
-        <p className="ml-10 text-[13px]" style={{ color: "#c96442" }}>
+        <p className="ml-10 text-[13px]" style={{ color: "#c0392b" }}>
           {state.error}
         </p>
       )}

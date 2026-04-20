@@ -23,6 +23,9 @@ const PAY_UNIT_OPTIONS: { label: string; value: PayUnitValue }[] = [
   { label: "Yearly", value: "yearly" },
 ]
 
+const INPUT_REST  = "0px 0px 0px 1px #dad4c8"
+const INPUT_FOCUS = "0px 0px 0px 2px #146ef5"
+
 interface Props {
   initialSchedule: ScheduleValue[]
   initialModality: WorkModalityValue | null
@@ -83,14 +86,14 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
 
   const handlePayFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     setPayFocused(true)
-    e.currentTarget.style.boxShadow = "0px 0px 0px 1px #3898ec, 0px 0px 0px 3px rgba(56,152,236,0.12)"
+    e.currentTarget.style.boxShadow = INPUT_FOCUS
   }
 
   const handlePayBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const normalized = normalizeRaw(payRaw)
     setPayRaw(normalized)
     setPayFocused(false)
-    e.currentTarget.style.boxShadow = "0px 0px 0px 1px #e8e6dc"
+    e.currentTarget.style.boxShadow = INPUT_REST
   }
 
   useEffect(() => {
@@ -113,7 +116,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       <AssistantQuestion text="To find jobs that actually work for you, I need a few quick details." />
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Schedule
         </p>
         <div className="flex flex-wrap gap-2">
@@ -130,7 +133,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Work setting
         </p>
         <div className="flex flex-wrap gap-2">
@@ -147,11 +150,11 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#a8a69e" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#9f9b93" }}>
           Minimum pay you&apos;d accept
         </p>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-medium shrink-0" style={{ color: "#5e5d59" }}>$</span>
+          <span className="text-[15px] font-medium shrink-0" style={{ color: "#9f9b93" }}>$</span>
           <input
             type="text"
             inputMode="decimal"
@@ -161,12 +164,12 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
             onBlur={handlePayBlur}
             disabled={advancing}
             placeholder="0"
-            className="shrink-0 rounded-xl px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
+            className="shrink-0 rounded px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
             style={{
               width: "160px",
               background: "#ffffff",
-              color: "#141413",
-              boxShadow: "0px 0px 0px 1px #e8e6dc",
+              color: "#000000",
+              boxShadow: INPUT_REST,
             }}
             aria-label="Minimum pay amount"
           />

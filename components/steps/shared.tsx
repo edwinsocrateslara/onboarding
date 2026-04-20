@@ -1,5 +1,7 @@
 "use client"
 
+import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { ArrowLeft, Check } from "lucide-react"
 
 const C = {
@@ -214,13 +216,18 @@ export function StickyFooter({
   disabled: boolean
   label?: string
 }) {
-  return (
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
+
+  return createPortal(
     <div
       className="fixed bottom-0 left-0 right-0 z-20 px-5 py-4"
       style={{ background: "#ffffff", borderTop: "1px solid #e5e7eb" }}
     >
       <ContinueButton onClick={onClick} disabled={disabled} label={label} />
-    </div>
+    </div>,
+    document.body,
   )
 }
 

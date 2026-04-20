@@ -225,7 +225,9 @@ export function StickyFooter({
       className="fixed bottom-0 left-0 right-0 z-20 px-5 py-4"
       style={{ background: "#ffffff", borderTop: "1px solid #e5e7eb" }}
     >
-      <ContinueButton onClick={onClick} disabled={disabled} label={label} />
+      <div className="mx-auto max-w-[500px]">
+        <ContinueButton onClick={onClick} disabled={disabled} label={label} />
+      </div>
     </div>,
     document.body,
   )

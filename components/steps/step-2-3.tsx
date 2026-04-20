@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import type { TimelineValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, OptionCard, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
+import { AssistantQuestion, OptionCard, StickyFooter, FieldLabel, FOCUS_RING } from "./shared"
 
 const TIMELINE_OPTIONS: { label: string; value: TimelineValue }[] = [
   { label: "Already in transition — as soon as possible", value: "immediate"             },
@@ -23,31 +23,14 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
   const [to, setTo] = useState(initialTo)
   const [timeline, setTimeline] = useState<TimelineValue | null>(initialTimeline)
   const [advancing, setAdvancing] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const onAdvanceRef = useRef(onAdvance)
-  onAdvanceRef.current = onAdvance
-  const completionTriggerRef = useRef<"timeline" | "text">("text")
   const fromRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { fromRef.current?.focus() }, [])
 
   const handleTimelineSelect = (val: TimelineValue) => {
     if (advancing) return
-    completionTriggerRef.current = "timeline"
     setTimeline(val)
   }
-
-  useEffect(() => {
-    if (advancing) return
-    if (timerRef.current) clearTimeout(timerRef.current)
-    if (!from.trim() || !to.trim() || !timeline) return
-    const delay = completionTriggerRef.current === "timeline" ? 300 : 800
-    timerRef.current = setTimeout(() => {
-      setAdvancing(true)
-      onAdvanceRef.current({ currentRoleOrField: from.trim(), targetCareer: to.trim(), targetTimeline: timeline! })
-    }, delay)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [from, to, timeline])
 
   const inputClass = "w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
   const inputStyle = { background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }
@@ -64,7 +47,7 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
           ref={fromRef}
           type="text"
           value={from}
-          onChange={e => { if (!advancing) { completionTriggerRef.current = "text"; setFrom(e.target.value) } }}
+          onChange={e => { if (!advancing) setFrom(e.target.value) }}
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
@@ -79,7 +62,7 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
         <input
           type="text"
           value={to}
-          onChange={e => { if (!advancing) { completionTriggerRef.current = "text"; setTo(e.target.value) } }}
+          onChange={e => { if (!advancing) setTo(e.target.value) }}
           disabled={advancing}
           className={inputClass}
           style={inputStyle}
@@ -104,9 +87,9 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
         </div>
       </div>
 
-      <ContinueButton onClick={() => {
+      <div className="h-[84px]" aria-hidden="true" />
+      <StickyFooter onClick={() => {
         if (!ready || advancing) return
-        if (timerRef.current) clearTimeout(timerRef.current)
         setAdvancing(true)
         onAdvance({ currentRoleOrField: from.trim(), targetCareer: to.trim(), targetTimeline: timeline! })
       }} disabled={!ready || advancing} />

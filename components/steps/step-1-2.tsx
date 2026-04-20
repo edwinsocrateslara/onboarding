@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import type { Q1Option, CareerStageValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, OptionCard, ContinueButton, FOCUS_RING } from "./shared"
+import { AssistantQuestion, OptionCard, StickyFooter, FOCUS_RING } from "./shared"
 
 const QUESTION: Record<Q1Option, string> = {
   a: "What role are you looking for?",
@@ -75,7 +75,8 @@ export function Step12({
             }}
             aria-label={QUESTION[q1Selection]}
           />
-          <ContinueButton onClick={handleTextSubmit} disabled={!text.trim()} />
+          <div className="h-[84px]" aria-hidden="true" />
+          <StickyFooter onClick={handleTextSubmit} disabled={!text.trim()} />
         </div>
       )}
 

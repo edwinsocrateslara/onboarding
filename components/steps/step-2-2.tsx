@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import type { ScheduleValue, WorkModalityValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, PillButton, OptionCard, SegmentedControl, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
+import { AssistantQuestion, PillButton, OptionCard, SegmentedControl, StickyFooter, FieldLabel, FOCUS_RING } from "./shared"
 
 const SCHEDULE_OPTIONS: { label: string; value: ScheduleValue }[] = [
   { label: "Full-time",  value: "full_time"  },
@@ -62,9 +62,6 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
   const [payFocused, setPayFocused] = useState(false)
   const [payUnit, setPayUnit] = useState<PayUnitValue | null>(initialPayUnit)
   const [advancing, setAdvancing] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const onAdvanceRef = useRef(onAdvance)
-  onAdvanceRef.current = onAdvance
 
   const payDisplay = payFocused ? payRaw : formatWithCommas(payRaw)
 
@@ -80,17 +77,6 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
     const cleaned = parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : raw
     setPayRaw(cleaned)
   }
-
-  useEffect(() => {
-    if (advancing) return
-    if (timerRef.current) clearTimeout(timerRef.current)
-    if (!isComplete(schedule, modality, payRaw, payUnit)) return
-    timerRef.current = setTimeout(() => {
-      setAdvancing(true)
-      onAdvanceRef.current({ schedule, modality: modality!, payAmount: normalizeRaw(payRaw), payUnit: payUnit! })
-    }, 800)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [schedule, modality, payRaw, payUnit])
 
   const ready = isComplete(schedule, modality, payRaw, payUnit)
 
@@ -154,7 +140,8 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
         </div>
       </div>
 
-      <ContinueButton onClick={() => {
+      <div className="h-[84px]" aria-hidden="true" />
+      <StickyFooter onClick={() => {
         if (!ready || advancing) return
         setAdvancing(true)
         onAdvance({ schedule, modality: modality!, payAmount: normalizeRaw(payRaw), payUnit: payUnit! })

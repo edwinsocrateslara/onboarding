@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import type { AvailabilityValue, FinancialConstraintValue, PayUnitValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, OptionCard, SegmentedControl, ContinueButton, FieldLabel, FOCUS_RING } from "./shared"
+import { AssistantQuestion, OptionCard, SegmentedControl, StickyFooter, FieldLabel, FOCUS_RING } from "./shared"
 
 const AVAILABILITY_OPTIONS: { label: string; value: AvailabilityValue }[] = [
   { label: "Less than 10 hours",                   value: "less_than_10" },
@@ -116,24 +116,6 @@ export function Step32({
   const [payTarget, setPayTarget] = useState(initialPayTarget)
   const [payTargetUnit, setPayTargetUnit] = useState<PayUnitValue | null>(initialPayTargetUnit)
   const [advancing, setAdvancing] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const onAdvanceRef = useRef(onAdvance)
-  onAdvanceRef.current = onAdvance
-
-  useEffect(() => {
-    if (advancing) return
-    if (timerRef.current) clearTimeout(timerRef.current)
-    if (!isComplete(availability, financial, payMin, payMinUnit, payTarget, payTargetUnit)) return
-    timerRef.current = setTimeout(() => {
-      setAdvancing(true)
-      onAdvanceRef.current({
-        availability: availability!, financialConstraint: financial!,
-        payMin: normalizeRaw(payMin), payMinUnit: payMinUnit!,
-        payTarget: normalizeRaw(payTarget), payTargetUnit: payTargetUnit!,
-      })
-    }, 800)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [availability, financial, payMin, payMinUnit, payTarget, payTargetUnit])
 
   const ready = isComplete(availability, financial, payMin, payMinUnit, payTarget, payTargetUnit)
 
@@ -191,9 +173,9 @@ export function Step32({
         />
       </div>
 
-      <ContinueButton onClick={() => {
+      <div className="h-[84px]" aria-hidden="true" />
+      <StickyFooter onClick={() => {
         if (!ready || advancing) return
-        if (timerRef.current) clearTimeout(timerRef.current)
         setAdvancing(true)
         onAdvance({
           availability: availability!, financialConstraint: financial!,

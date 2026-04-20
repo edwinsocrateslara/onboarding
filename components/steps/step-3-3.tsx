@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
 import type { CareerAreaInterestValue } from "@/hooks/use-onboarding"
-import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
+import { AssistantQuestion, StickyFooter, FOCUS_RING } from "./shared"
 
 const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
   { value: "building_fixing",    main: "Building or fixing things",    sub: "engineering, trades, manufacturing"          },
@@ -119,9 +119,8 @@ export function Step33({ initialInterests, onAdvance }: Props) {
         ))}
       </div>
 
-      <div className="pt-2">
-        <ContinueButton onClick={handleContinue} disabled={!ready} />
-      </div>
+      <div className="h-[84px]" aria-hidden="true" />
+      <StickyFooter onClick={handleContinue} disabled={!ready} />
     </div>
   )
 }

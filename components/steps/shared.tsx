@@ -205,6 +205,25 @@ export function FieldLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
+export function StickyFooter({
+  onClick,
+  disabled,
+  label = "Next",
+}: {
+  onClick: () => void
+  disabled: boolean
+  label?: string
+}) {
+  return (
+    <div
+      className="fixed bottom-0 left-0 right-0 z-20 px-5 py-4"
+      style={{ background: "#ffffff", borderTop: "1px solid #e5e7eb" }}
+    >
+      <ContinueButton onClick={onClick} disabled={disabled} label={label} />
+    </div>
+  )
+}
+
 export function SegmentedControl<T extends string>({
   options,
   value,

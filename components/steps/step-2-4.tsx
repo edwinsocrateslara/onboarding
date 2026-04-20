@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Check } from "lucide-react"
 import type { ExperienceContextType } from "@/hooks/use-onboarding"
-import { AssistantQuestion, ContinueButton, FOCUS_RING } from "./shared"
+import { AssistantQuestion, StickyFooter, FOCUS_RING } from "./shared"
 
 const REGULAR_OPTIONS = [
   { id: "student",   type: "student"   as ExperienceContextType, label: "I'm currently a student",                         placeholder: "What are you studying?" },
@@ -162,9 +162,8 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
         />
       </div>
 
-      <div className="pt-2">
-        <ContinueButton onClick={handleContinue} disabled={!isReady(selections)} />
-      </div>
+      <div className="h-[84px]" aria-hidden="true" />
+      <StickyFooter onClick={handleContinue} disabled={!isReady(selections)} />
     </div>
   )
 }

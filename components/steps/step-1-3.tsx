@@ -5,9 +5,9 @@ import type { CareerStageValue } from "@/hooks/use-onboarding"
 import { AssistantQuestion, OptionCard } from "./shared"
 
 const OPTIONS: { label: string; value: CareerStageValue }[] = [
-  { label: "Working",        value: "working"     },
-  { label: "In school",      value: "student"     },
-  { label: "Between things", value: "not_working" },
+  { label: "Student",      value: "student"     },
+  { label: "Working",      value: "working"     },
+  { label: "Not working",  value: "not_working" },
 ]
 
 interface Props {

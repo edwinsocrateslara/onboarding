@@ -6,7 +6,7 @@ import type {
   ScheduleValue, WorkModalityValue, PayUnitValue,
   ApplicationDiagnosticsValue, TimelineValue, AvailabilityValue,
   FinancialConstraintValue, ExperienceContextType, CareerAreaInterestValue,
-  CareerStageValue,
+  CareerStageValue, JourneyPath,
 } from "@/hooks/use-onboarding"
 import type { GoalClarity, CareerStageSignal } from "@/lib/types"
 import { useConversation } from "@/hooks/use-conversation"
@@ -17,12 +17,26 @@ import { InputBar } from "@/components/input-bar"
 import { ConversationalScreen } from "@/components/conversational-screen"
 import { EditModal } from "@/components/edit-modal"
 import { Step41 } from "@/components/steps/step-4-1"
+import { Step1Journey } from "@/components/steps/step-1-journey"
+import { Step1ResumeUpload } from "@/components/steps/step-1-resume-upload"
+import { Step1ResumeReview } from "@/components/steps/step-1-resume-review"
+import { Step1WorkExp } from "@/components/steps/step-1-work-exp"
+import { Step1Education } from "@/components/steps/step-1-education"
+
+const JOURNEY_STEPS = new Set([
+  "1.journey", "1.resume-upload", "1.resume-review", "1.work-exp", "1.education",
+])
 
 export default function OnboardingPage() {
   const {
     state,
     advanceFrom11Conv,
     advanceFrom13,
+    advanceFrom1Journey,
+    advanceFrom1ResumeUpload,
+    advanceFrom1ResumeReview,
+    advanceFrom1WorkExp,
+    advanceFrom1Education,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -46,10 +60,10 @@ export default function OnboardingPage() {
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
 
+  const isJourneyStep = JOURNEY_STEPS.has(state.step)
   const persona = state.classification?.persona ?? null
   const spec = CONV_SPECS[state.step]
 
-  // Route extracted data to the correct advance function
   const handleConvComplete = useCallback((extracted: Record<string, unknown>) => {
     switch (state.step) {
       case "1.1":
@@ -96,12 +110,12 @@ export default function OnboardingPage() {
 
       case "3.2":
         advanceFrom32({
-          availability:       (extracted.availability as AvailabilityValue)           ?? "less_than_10",
-          financialConstraint:(extracted.financialConstraint as FinancialConstraintValue) ?? "needs_income",
-          payMin:             String(extracted.payMin    ?? ""),
-          payMinUnit:         (extracted.payMinUnit    as PayUnitValue) ?? "hourly",
-          payTarget:          String(extracted.payTarget ?? ""),
-          payTargetUnit:      (extracted.payTargetUnit as PayUnitValue) ?? "hourly",
+          availability:        (extracted.availability as AvailabilityValue)            ?? "less_than_10",
+          financialConstraint: (extracted.financialConstraint as FinancialConstraintValue) ?? "needs_income",
+          payMin:              String(extracted.payMin    ?? ""),
+          payMinUnit:          (extracted.payMinUnit    as PayUnitValue) ?? "hourly",
+          payTarget:           String(extracted.payTarget ?? ""),
+          payTargetUnit:       (extracted.payTargetUnit as PayUnitValue) ?? "hourly",
         })
         break
 
@@ -119,10 +133,8 @@ export default function OnboardingPage() {
     onComplete: handleConvComplete,
   })
 
-  // InputBar key: changes on step change OR after each LLM turn (refocuses input for follow-ups)
   const inputBarKey = `${state.step}-${convState.turnIndex}`
 
-  // Placeholder adapts based on follow-up state
   const placeholder = spec
     ? (convState.status === "follow_up" && spec.followUpPlaceholder)
       ? spec.followUpPlaceholder
@@ -130,14 +142,24 @@ export default function OnboardingPage() {
     : "Tell me more…"
 
   function renderStep() {
+    // Terminal screen
     if (state.step === "4.1") return <Step41 />
 
+    // Form-based journey sub-flow screens
+    if (state.step === "1.journey")
+      return <Step1Journey onSelect={(path: JourneyPath) => advanceFrom1Journey(path)} />
+    if (state.step === "1.resume-upload")
+      return <Step1ResumeUpload onAdvance={advanceFrom1ResumeUpload} />
+    if (state.step === "1.resume-review")
+      return <Step1ResumeReview onAdvance={advanceFrom1ResumeReview} />
+    if (state.step === "1.work-exp")
+      return <Step1WorkExp onAdvance={advanceFrom1WorkExp} />
+    if (state.step === "1.education")
+      return <Step1Education onAdvance={advanceFrom1Education} />
+
+    // Conversational screens
     if (!spec) {
-      return (
-        <p className="text-[15px]" style={{ color: "#9f9b93" }}>
-          Loading…
-        </p>
-      )
+      return <p className="text-[15px]" style={{ color: "#9f9b93" }}>Loading…</p>
     }
 
     return (
@@ -182,8 +204,8 @@ export default function OnboardingPage() {
         </div>
       </main>
 
-      {/* Persistent input bar — always primary */}
-      {state.step !== "4.1" && (
+      {/* InputBar: hidden on journey form steps and terminal screen */}
+      {!isJourneyStep && state.step !== "4.1" && (
         <InputBar
           stepKey={inputBarKey}
           isPrimary={true}

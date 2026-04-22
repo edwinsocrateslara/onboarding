@@ -7,15 +7,16 @@ const STAGES = [
   { num: 1 as const, label: "Your situation"     },
   { num: 2 as const, label: "Your preferences"   },
   { num: 3 as const, label: "Your starting point"},
-  { num: 4 as const, label: "Ready to go"        },
+  { num: 4 as const, label: "Final questions"    },
+  { num: 5 as const, label: "Ready to go"        },
 ]
 
-type StageNum = 1 | 2 | 3 | 4
+type StageNum = 1 | 2 | 3 | 4 | 5
 
 interface StepperProps {
   currentStage:    StageNum
   completedStages: StageNum[]
-  onStageClick:    (stage: StageNum) => void
+  onStageClick:    (stage: 1 | 2 | 3 | 4) => void
 }
 
 export function Stepper({ currentStage, completedStages, onStageClick }: StepperProps) {
@@ -30,7 +31,7 @@ export function Stepper({ currentStage, completedStages, onStageClick }: Stepper
           <div key={stage.num} className="flex items-center min-w-0 last:shrink-0">
             <button
               type="button"
-              onClick={() => isClickable && onStageClick(stage.num)}
+              onClick={() => isClickable && stage.num !== 5 && onStageClick(stage.num as 1 | 2 | 3 | 4)}
               disabled={!isClickable}
               className={cn(
                 "flex items-center gap-1.5 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(67,8,159)] rounded-sm",

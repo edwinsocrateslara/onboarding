@@ -9,7 +9,7 @@ export type Step =
   | "1.journey" | "1.resume-upload" | "1.resume-review" | "1.work-exp" | "1.education"
   | "2.1" | "2.2" | "2.3" | "2.4"
   | "3.1" | "3.2" | "3.3"
-  | "4.1"
+  | "4.0" | "4.1"
 
 export type Q1Option = "a" | "b" | "c"
 export type JourneyPath = "resume" | "work_exp" | "new_to_workforce"
@@ -139,6 +139,15 @@ export interface OnboardingState {
   eceEmploymentStatus: "student" | "employed" | "unemployed" | null
   // Early Career Explorer Stage 3 (Q3)
   eceCareerInterests: CareerAreaInterestValue[]
+  // Stage 4 tenant form
+  tenantCountryCode: string
+  tenantPhone: string
+  tenantCity: string
+  tenantDobMonth: string
+  tenantDobDay: string
+  tenantDobYear: string
+  tenantEthnicGroups: string[]
+  tenantEthnicOther: string
 }
 
 type Action =
@@ -157,8 +166,9 @@ type Action =
   | { type: "ADVANCE_3_1"; diagnostics: ApplicationDiagnosticsValue }
   | { type: "ADVANCE_3_2"; availability: AvailabilityValue; financialConstraint: FinancialConstraintValue; payMin: string; payMinUnit: PayUnitValue; payTarget: string; payTargetUnit: PayUnitValue }
   | { type: "ADVANCE_3_3"; careerInterests: CareerAreaInterestValue[] }
+  | { type: "ADVANCE_4_0"; countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }
   | { type: "BACK" }
-  | { type: "JUMP_TO_STAGE"; stage: 1 | 2 | 3 }
+  | { type: "JUMP_TO_STAGE"; stage: 1 | 2 | 3 | 4 }
 
 const JOURNEY_CLEAR = {
   journeyPath: null as JourneyPath | null,
@@ -222,6 +232,14 @@ function initState(): OnboardingState {
     classification: null,
     ...JOURNEY_CLEAR,
     ...STAGE_2_CLEAR,
+    tenantCountryCode: "",
+    tenantPhone: "",
+    tenantCity: "",
+    tenantDobMonth: "",
+    tenantDobDay: "",
+    tenantDobYear: "",
+    tenantEthnicGroups: [] as string[],
+    tenantEthnicOther: "",
   }
 }
 
@@ -407,7 +425,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_3_1": {
       return {
         ...state,
-        step: "4.1",
+        step: "4.0",
         direction: "forward",
         applicationDiagnostics: action.diagnostics,
       }
@@ -416,7 +434,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_3_2": {
       return {
         ...state,
-        step: "4.1",
+        step: "4.0",
         direction: "forward",
         ccAvailability: action.availability,
         ccFinancialConstraint: action.financialConstraint,
@@ -430,9 +448,25 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_3_3": {
       return {
         ...state,
-        step: "4.1",
+        step: "4.0",
         direction: "forward",
         eceCareerInterests: action.careerInterests,
+      }
+    }
+
+    case "ADVANCE_4_0": {
+      return {
+        ...state,
+        step: "4.1",
+        direction: "forward",
+        tenantCountryCode: action.countryCode,
+        tenantPhone: action.phone,
+        tenantCity: action.city,
+        tenantDobMonth: action.dobMonth,
+        tenantDobDay: action.dobDay,
+        tenantDobYear: action.dobYear,
+        tenantEthnicGroups: action.ethnicGroups,
+        tenantEthnicOther: action.ethnicOther,
       }
     }
 
@@ -444,6 +478,11 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
       if (state.journeyPath === "resume") stage2BackStep = "1.resume-review"
       else if (state.journeyPath === "work_exp") stage2BackStep = "1.work-exp"
       else if (state.journeyPath === "new_to_workforce") stage2BackStep = "1.education"
+
+      const stage3BackStep: Step =
+        persona === "career_changer" ? "3.2" :
+        persona === "early_career_explorer" ? "3.3" :
+        "3.1"
 
       const prev: Record<Step, Step | null> = {
         "1.1": null,
@@ -461,10 +500,8 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         "3.1": "2.2",
         "3.2": "2.3",
         "3.3": "2.4",
-        "4.1":
-          persona === "career_changer" ? "3.2" :
-          persona === "early_career_explorer" ? "3.3" :
-          "3.1",
+        "4.0": stage3BackStep,
+        "4.1": "4.0",
       }
       const prevStep = prev[state.step]
       if (!prevStep) return state
@@ -489,7 +526,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
           "3.1"
         return { ...state, step: step3, direction: "back" }
       }
-      return state
+      return { ...state, step: "4.0", direction: "back" }
     }
   }
 }
@@ -540,11 +577,12 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
       return summary.length <= 80 ? summary : summary.slice(0, 77) + "…"
     }
 
+    case "4.0": return null
     case "4.1": return null
   }
 }
 
-export function getStageForStep(step: Step): 1 | 2 | 3 | 4 {
+export function getStageForStep(step: Step): 1 | 2 | 3 | 4 | 5 {
   if (
     step === "1.1" || step === "1.2" || step === "1.3" ||
     step === "1.journey" || step === "1.resume-upload" || step === "1.resume-review" ||
@@ -552,7 +590,8 @@ export function getStageForStep(step: Step): 1 | 2 | 3 | 4 {
   ) return 1
   if (step === "2.1" || step === "2.2" || step === "2.3" || step === "2.4") return 2
   if (step === "3.1" || step === "3.2" || step === "3.3") return 3
-  return 4
+  if (step === "4.0") return 4
+  return 5
 }
 
 export function useOnboarding() {
@@ -580,7 +619,9 @@ export function useOnboarding() {
     advanceFrom32: (data: { availability: AvailabilityValue; financialConstraint: FinancialConstraintValue; payMin: string; payMinUnit: PayUnitValue; payTarget: string; payTargetUnit: PayUnitValue }) =>
       dispatch({ type: "ADVANCE_3_2", ...data }),
     advanceFrom33: (careerInterests: CareerAreaInterestValue[]) => dispatch({ type: "ADVANCE_3_3", careerInterests }),
+    advanceFrom40: (data: { countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }) =>
+      dispatch({ type: "ADVANCE_4_0", ...data }),
     back: () => dispatch({ type: "BACK" }),
-    jumpToStage: (stage: 1 | 2 | 3) => dispatch({ type: "JUMP_TO_STAGE", stage }),
+    jumpToStage: (stage: 1 | 2 | 3 | 4) => dispatch({ type: "JUMP_TO_STAGE", stage }),
   }
 }

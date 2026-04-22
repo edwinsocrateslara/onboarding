@@ -19,13 +19,15 @@ import { Step24 } from "@/components/steps/step-2-4"
 import { Step31 } from "@/components/steps/step-3-1"
 import { Step33 } from "@/components/steps/step-3-3"
 import { Step32 } from "@/components/steps/step-3-2"
+import { Step40 } from "@/components/steps/step-4-0"
 import { Step41 } from "@/components/steps/step-4-1"
 
-const STAGE_NAMES: Record<1 | 2 | 3 | 4, string> = {
+const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
   1: "Your situation",
   2: "Your preferences",
   3: "Your starting point",
-  4: "Ready to go",
+  4: "Final questions",
+  5: "Ready to go",
 }
 
 export default function OnboardingPage() {
@@ -46,22 +48,24 @@ export default function OnboardingPage() {
     advanceFrom31,
     advanceFrom32,
     advanceFrom33,
+    advanceFrom40,
     back,
     jumpToStage,
   } = useOnboarding()
 
   const currentStage = getStageForStep(state.step)
-  const completedStages: (1 | 2 | 3 | 4)[] = []
+  const completedStages: (1 | 2 | 3 | 4 | 5)[] = []
   if (currentStage > 1) completedStages.push(1)
   if (currentStage > 2) completedStages.push(2)
   if (currentStage > 3) completedStages.push(3)
+  if (currentStage > 4) completedStages.push(4)
 
   const previousAnswer = getPreviousAnswer(state)
   const showBack = state.step !== "1.1"
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
 
-  const progressPct = currentStage * 25
+  const progressPct = currentStage * 20
 
   function renderStep() {
     switch (state.step) {
@@ -154,6 +158,8 @@ export default function OnboardingPage() {
             onAdvance={advanceFrom33}
           />
         )
+      case "4.0":
+        return <Step40 onAdvance={advanceFrom40} />
       case "4.1":
         return <Step41 />
     }
@@ -190,7 +196,7 @@ export default function OnboardingPage() {
 
         <div className="flex-1 min-w-0">
           <p className="text-[11px] font-medium" style={{ color: "var(--color-muted)" }}>
-            Step {currentStage} of 4
+            Step {currentStage} of 5
           </p>
           <p className="text-[13px] font-semibold truncate" style={{ color: "var(--color-subtle)" }}>
             {STAGE_NAMES[currentStage]}

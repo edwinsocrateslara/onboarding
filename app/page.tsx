@@ -7,6 +7,11 @@ import type { Q1Option } from "@/hooks/use-onboarding"
 import { Step11 } from "@/components/steps/step-1-1"
 import { Step12 } from "@/components/steps/step-1-2"
 import { Step13 } from "@/components/steps/step-1-3"
+import { Step1Journey } from "@/components/steps/step-1-journey"
+import { Step1ResumeUpload } from "@/components/steps/step-1-resume-upload"
+import { Step1ResumeReview } from "@/components/steps/step-1-resume-review"
+import { Step1WorkExp } from "@/components/steps/step-1-work-exp"
+import { Step1Education } from "@/components/steps/step-1-education"
 import { Step21 } from "@/components/steps/step-2-1"
 import { Step22 } from "@/components/steps/step-2-2"
 import { Step23 } from "@/components/steps/step-2-3"
@@ -30,6 +35,11 @@ export default function OnboardingPage() {
     advanceFrom12Text,
     advanceFrom12Stage,
     advanceFrom13,
+    advanceFrom1Journey,
+    advanceFrom1ResumeUpload,
+    advanceFrom1ResumeReview,
+    advanceFrom1WorkExp,
+    advanceFrom1Education,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -79,6 +89,16 @@ export default function OnboardingPage() {
             onAdvance={advanceFrom13}
           />
         )
+      case "1.journey":
+        return <Step1Journey onSelect={advanceFrom1Journey} />
+      case "1.resume-upload":
+        return <Step1ResumeUpload onAdvance={advanceFrom1ResumeUpload} />
+      case "1.resume-review":
+        return <Step1ResumeReview onAdvance={advanceFrom1ResumeReview} />
+      case "1.work-exp":
+        return <Step1WorkExp onAdvance={advanceFrom1WorkExp} />
+      case "1.education":
+        return <Step1Education onAdvance={advanceFrom1Education} />
       case "2.1":
         return <Step21 />
       case "2.2":
@@ -140,27 +160,28 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex flex-col h-dvh bg-white relative overflow-hidden">
-      {/* Lavender blob decoration */}
+    <div className="flex flex-col h-dvh relative overflow-hidden">
+      {/* Decorative blob */}
       <div
         aria-hidden
-        className="pointer-events-none fixed bottom-0 left-0 w-[55vw] max-w-[420px] h-[55vh] max-h-[420px]"
+        className="pointer-events-none fixed bottom-0 left-0 w-[50vw] max-w-[440px] h-[50vh] max-h-[440px]"
         style={{
           background: "radial-gradient(ellipse at 20% 80%, rgba(196,181,253,0.45) 0%, rgba(196,181,253,0.2) 40%, transparent 70%), radial-gradient(ellipse at 0% 100%, rgba(147,197,253,0.35) 0%, transparent 60%)",
           borderRadius: "0 60% 0 0",
+          filter: "blur(72px)",
           zIndex: 0,
         }}
       />
-
       {/* Nav header */}
-      <div className="shrink-0 bg-white px-4 pt-3 pb-2 flex items-center gap-3 relative z-10">
+      <div className="shrink-0 px-4 pt-3 pb-2 flex items-center gap-3 relative z-10" style={{ background: "var(--color-canvas)" }}>
         <div className="shrink-0 w-8 flex items-center">
           {showBack ? (
             <button
               type="button"
               onClick={back}
               aria-label="Go back"
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-[#6b7280] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+              style={{ color: "#374151" }}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
@@ -168,10 +189,10 @@ export default function OnboardingPage() {
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-medium" style={{ color: "#9ca3af" }}>
+          <p className="text-[11px] font-medium" style={{ color: "var(--color-muted)" }}>
             Step {currentStage} of 4
           </p>
-          <p className="text-[13px] font-semibold truncate" style={{ color: "#374151" }}>
+          <p className="text-[13px] font-semibold truncate" style={{ color: "var(--color-subtle)" }}>
             {STAGE_NAMES[currentStage]}
           </p>
         </div>
@@ -185,12 +206,12 @@ export default function OnboardingPage() {
       </div>
 
       {/* Progress bar */}
-      <div className="shrink-0 h-[3px] relative z-10" style={{ background: "#f3f4f6" }}>
+      <div className="shrink-0 h-1 rounded-full relative z-10" style={{ background: "#e5e7eb" }}>
         <div
-          className="h-full transition-all duration-500 ease-out"
+          className="h-full rounded-full transition-all duration-300 ease-out"
           style={{
             width: `${progressPct}%`,
-            background: "linear-gradient(to right, #7c3aed, #6366f1)",
+            background: "#6366f1",
           }}
         />
       </div>
@@ -199,7 +220,7 @@ export default function OnboardingPage() {
       <main className="flex-1 overflow-y-auto relative z-10">
         <div
           key={state.step}
-          className={`mx-auto max-w-[500px] px-5 sm:px-6 py-10 ${transitionClass}`}
+          className={`mx-auto max-w-xl px-5 sm:px-6 pt-12 md:pt-16 pb-10 ${transitionClass}`}
         >
           {renderStep()}
         </div>

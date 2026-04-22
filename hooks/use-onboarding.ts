@@ -2,15 +2,17 @@
 
 import { useReducer } from "react"
 import { classify } from "@/lib/classify"
-import type { GoalClarity, CareerStageSignal, ClassificationResult } from "@/lib/types"
+import type { GoalClarity, CareerStageSignal, ClassificationResult, Persona } from "@/lib/types"
 
 export type Step =
   | "1.1" | "1.2" | "1.3"
+  | "1.journey" | "1.resume-upload" | "1.resume-review" | "1.work-exp" | "1.education"
   | "2.1" | "2.2" | "2.3" | "2.4"
   | "3.1" | "3.2" | "3.3"
   | "4.1"
 
 export type Q1Option = "a" | "b" | "c"
+export type JourneyPath = "resume" | "work_exp" | "new_to_workforce"
 export type CareerStageValue = "student" | "working" | "not_working"
 export type ScheduleValue = "full_time" | "part_time" | "flexible" | "shift_work"
 export type WorkModalityValue = "on_site" | "remote" | "hybrid" | "no_preference"
@@ -100,6 +102,19 @@ export interface OnboardingState {
   goal: string | null
   careerStageSignal: CareerStageSignal | null
   classification: ClassificationResult | null
+  // Journey sub-flow (Q1a/Q1b)
+  journeyPath: JourneyPath | null
+  workJobTitle: string
+  workStartMonth: string
+  workStartYear: string
+  workEndMonth: string
+  workEndYear: string
+  workCurrentlyWorking: boolean
+  educationLevel: string
+  educationMajor: string
+  educationStartYear: string
+  educationEndYear: string
+  educationCurrentlyStudying: boolean
   // Job Seeker Stage 2 (Q2)
   schedulePreference: ScheduleValue[]
   workModality: WorkModalityValue | null
@@ -131,6 +146,11 @@ type Action =
   | { type: "ADVANCE_1_2_TEXT"; text: string }
   | { type: "ADVANCE_1_2_STAGE"; stage: CareerStageValue }
   | { type: "ADVANCE_1_3"; stage: CareerStageValue }
+  | { type: "ADVANCE_1_JOURNEY"; path: JourneyPath }
+  | { type: "ADVANCE_1_RESUME_UPLOAD" }
+  | { type: "ADVANCE_1_RESUME_REVIEW" }
+  | { type: "ADVANCE_1_WORK_EXP"; jobTitle: string; startMonth: string; startYear: string; endMonth: string; endYear: string; currentlyWorking: boolean }
+  | { type: "ADVANCE_1_EDUCATION"; level: string; major: string; startYear: string; endYear: string; currentlyStudying: boolean }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
   | { type: "ADVANCE_2_4"; experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean; employmentStatus: "student" | "employed" | "unemployed" }
@@ -139,6 +159,21 @@ type Action =
   | { type: "ADVANCE_3_3"; careerInterests: CareerAreaInterestValue[] }
   | { type: "BACK" }
   | { type: "JUMP_TO_STAGE"; stage: 1 | 2 | 3 }
+
+const JOURNEY_CLEAR = {
+  journeyPath: null as JourneyPath | null,
+  workJobTitle: "",
+  workStartMonth: "",
+  workStartYear: "",
+  workEndMonth: "",
+  workEndYear: "",
+  workCurrentlyWorking: false,
+  educationLevel: "",
+  educationMajor: "",
+  educationStartYear: "",
+  educationEndYear: "",
+  educationCurrentlyStudying: false,
+}
 
 const STAGE_2_CLEAR = {
   schedulePreference: [] as ScheduleValue[],
@@ -168,6 +203,10 @@ function nextStep2(persona: string): Step {
   return "2.1"
 }
 
+function hardwireClassification(persona: Persona, subType: string): ClassificationResult {
+  return { persona, subType, todoFlags: [] }
+}
+
 function initState(): OnboardingState {
   return {
     step: "1.1",
@@ -181,6 +220,7 @@ function initState(): OnboardingState {
     goal: null,
     careerStageSignal: null,
     classification: null,
+    ...JOURNEY_CLEAR,
     ...STAGE_2_CLEAR,
   }
 }
@@ -203,6 +243,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
           goal: null,
           careerStageSignal: null,
           classification: null,
+          ...JOURNEY_CLEAR,
           ...STAGE_2_CLEAR,
         }),
       }
@@ -213,7 +254,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         state.q1Selection === "a" ? "specific_target" : "general_direction"
       return {
         ...state,
-        step: "1.3",
+        step: "1.journey",
         direction: "forward",
         followUpText: action.text,
         goalClarity,
@@ -222,6 +263,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         bridgingAnswer: null,
         classification: null,
         usedBridging: false,
+        ...JOURNEY_CLEAR,
         ...STAGE_2_CLEAR,
       }
     }
@@ -238,6 +280,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         careerStageSignal: action.stage,
         classification,
         usedBridging: false,
+        ...JOURNEY_CLEAR,
         ...STAGE_2_CLEAR,
       }
     }
@@ -252,6 +295,68 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         careerStageSignal: action.stage,
         classification,
         usedBridging: true,
+        ...STAGE_2_CLEAR,
+      }
+    }
+
+    case "ADVANCE_1_JOURNEY": {
+      const nextStep: Step =
+        action.path === "resume" ? "1.resume-upload" :
+        action.path === "work_exp" ? "1.work-exp" :
+        "1.education"
+      return {
+        ...state,
+        step: nextStep,
+        direction: "forward",
+        journeyPath: action.path,
+      }
+    }
+
+    case "ADVANCE_1_RESUME_UPLOAD": {
+      return { ...state, step: "1.resume-review", direction: "forward" }
+    }
+
+    case "ADVANCE_1_RESUME_REVIEW": {
+      return {
+        ...state,
+        step: "2.3",
+        direction: "forward",
+        classification: hardwireClassification("career_changer", "resume_upload"),
+        careerStageSignal: "working",
+        ...STAGE_2_CLEAR,
+        targetCareer: state.followUpText,
+      }
+    }
+
+    case "ADVANCE_1_WORK_EXP": {
+      return {
+        ...state,
+        step: "2.2",
+        direction: "forward",
+        workJobTitle: action.jobTitle,
+        workStartMonth: action.startMonth,
+        workStartYear: action.startYear,
+        workEndMonth: action.endMonth,
+        workEndYear: action.endYear,
+        workCurrentlyWorking: action.currentlyWorking,
+        classification: hardwireClassification("job_seeker", "work_exp_manual"),
+        careerStageSignal: "working",
+        ...STAGE_2_CLEAR,
+      }
+    }
+
+    case "ADVANCE_1_EDUCATION": {
+      return {
+        ...state,
+        step: "2.4",
+        direction: "forward",
+        educationLevel: action.level,
+        educationMajor: action.major,
+        educationStartYear: action.startYear,
+        educationEndYear: action.endYear,
+        educationCurrentlyStudying: action.currentlyStudying,
+        classification: hardwireClassification("early_career_explorer", "new_to_workforce"),
+        careerStageSignal: "student",
         ...STAGE_2_CLEAR,
       }
     }
@@ -334,14 +439,25 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "BACK": {
       const persona = state.classification?.persona
       const s13Back: Step = state.usedBridging ? "1.3" : "1.2"
+
+      let stage2BackStep: Step = s13Back
+      if (state.journeyPath === "resume") stage2BackStep = "1.resume-review"
+      else if (state.journeyPath === "work_exp") stage2BackStep = "1.work-exp"
+      else if (state.journeyPath === "new_to_workforce") stage2BackStep = "1.education"
+
       const prev: Record<Step, Step | null> = {
         "1.1": null,
         "1.2": "1.1",
         "1.3": "1.2",
-        "2.1": s13Back,
-        "2.2": s13Back,
-        "2.3": s13Back,
-        "2.4": s13Back,
+        "1.journey": "1.2",
+        "1.resume-upload": "1.journey",
+        "1.resume-review": "1.resume-upload",
+        "1.work-exp": "1.journey",
+        "1.education": "1.journey",
+        "2.1": stage2BackStep,
+        "2.2": stage2BackStep,
+        "2.3": stage2BackStep,
+        "2.4": stage2BackStep,
         "3.1": "2.2",
         "3.2": "2.3",
         "3.3": "2.4",
@@ -383,6 +499,11 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
     case "1.1": return null
     case "1.2": return state.q1Selection ? Q1_SHORT[state.q1Selection] : null
     case "1.3": return state.followUpText || null
+    case "1.journey": return state.followUpText || null
+    case "1.resume-upload": return state.followUpText || null
+    case "1.resume-review": return state.followUpText || null
+    case "1.work-exp": return state.followUpText || null
+    case "1.education": return state.followUpText || null
 
     case "2.1":
     case "2.2":
@@ -424,7 +545,11 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
 }
 
 export function getStageForStep(step: Step): 1 | 2 | 3 | 4 {
-  if (step === "1.1" || step === "1.2" || step === "1.3") return 1
+  if (
+    step === "1.1" || step === "1.2" || step === "1.3" ||
+    step === "1.journey" || step === "1.resume-upload" || step === "1.resume-review" ||
+    step === "1.work-exp" || step === "1.education"
+  ) return 1
   if (step === "2.1" || step === "2.2" || step === "2.3" || step === "2.4") return 2
   if (step === "3.1" || step === "3.2" || step === "3.3") return 3
   return 4
@@ -438,6 +563,13 @@ export function useOnboarding() {
     advanceFrom12Text: (text: string) => dispatch({ type: "ADVANCE_1_2_TEXT", text }),
     advanceFrom12Stage: (stage: CareerStageValue) => dispatch({ type: "ADVANCE_1_2_STAGE", stage }),
     advanceFrom13: (stage: CareerStageValue) => dispatch({ type: "ADVANCE_1_3", stage }),
+    advanceFrom1Journey: (path: JourneyPath) => dispatch({ type: "ADVANCE_1_JOURNEY", path }),
+    advanceFrom1ResumeUpload: () => dispatch({ type: "ADVANCE_1_RESUME_UPLOAD" }),
+    advanceFrom1ResumeReview: () => dispatch({ type: "ADVANCE_1_RESUME_REVIEW" }),
+    advanceFrom1WorkExp: (data: { jobTitle: string; startMonth: string; startYear: string; endMonth: string; endYear: string; currentlyWorking: boolean }) =>
+      dispatch({ type: "ADVANCE_1_WORK_EXP", ...data }),
+    advanceFrom1Education: (data: { level: string; major: string; startYear: string; endYear: string; currentlyStudying: boolean }) =>
+      dispatch({ type: "ADVANCE_1_EDUCATION", ...data }),
     advanceFrom22: (data: { schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }) =>
       dispatch({ type: "ADVANCE_2_2", ...data }),
     advanceFrom23: (data: { currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }) =>

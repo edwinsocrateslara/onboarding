@@ -12,9 +12,9 @@ export function classify(
     }
     if (careerStage === "not_working") {
       todoFlags.push(
-        "Defaulted to Early Career Explorer (not working + exploring). Profile data or an additional bridging question is needed to distinguish early vs mid career.",
+        "Defaulted to Job Seeker (not working + exploring). No career-length data available to distinguish early vs mid career; mid-career is the more common case.",
       )
-      return { persona: "early_career_explorer", subType: "Need 1: figure out what to pursue", todoFlags }
+      return { persona: "job_seeker", subType: "Need 1: help me get it fast", todoFlags }
     }
     if (careerStage === "working") {
       todoFlags.push(

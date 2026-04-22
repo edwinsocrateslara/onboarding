@@ -11,7 +11,7 @@ const C = {
   placeholder: "#9ca3af",
   border:      "#e5e7eb",
   surface:     "#ffffff",
-  primary:     "#fbbd41",
+  primary:     "#6366f1",
   accent:      "#6366f1",
   accentLight: "#eef2ff",
   accentBorder:"rgba(99,102,241,0.6)",
@@ -24,8 +24,8 @@ export const FOCUS_RING = "0px 0px 0px 2px #ffffff, 0px 0px 0px 4px #6366f1"
 export function AssistantQuestion({ text }: { text: string }) {
   return (
     <h1
-      className="text-[26px] sm:text-[30px] font-bold leading-tight text-center mb-2"
-      style={{ color: C.ink, letterSpacing: "-0.3px" }}
+      className="text-3xl font-semibold leading-normal mb-2 w-full text-balance"
+      style={{ color: C.ink }}
     >
       {text}
     </h1>
@@ -34,7 +34,7 @@ export function AssistantQuestion({ text }: { text: string }) {
 
 export function ScreenSubtitle({ text }: { text: string }) {
   return (
-    <p className="text-[15px] text-center leading-relaxed mb-8" style={{ color: C.muted }}>
+    <p className="text-base leading-normal mb-8" style={{ color: C.muted }}>
       {text}
     </p>
   )
@@ -42,7 +42,7 @@ export function ScreenSubtitle({ text }: { text: string }) {
 
 export function PreviousAnswer({ answer }: { answer: string }) {
   return (
-    <p className="text-[13px] text-center mb-6" style={{ color: C.muted }}>
+    <p className="text-sm leading-normal mb-6" style={{ color: C.muted }}>
       You answered: <span style={{ color: C.subtle }}>{answer}</span>
     </p>
   )
@@ -54,8 +54,8 @@ export function BackButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Go back"
-      className="h-8 w-8 flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
-      style={{ color: C.muted }}
+      className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      style={{ color: C.subtle }}
     >
       <ArrowLeft className="h-5 w-5" />
     </button>
@@ -76,12 +76,13 @@ export function ContinueButton({
       type="button"
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
-      className="w-full h-[52px] rounded-lg text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
-      style={
-        disabled
-          ? { background: C.disabledBg, color: C.disabledText, cursor: "default" }
-          : { background: C.primary, color: C.ink, cursor: "pointer" }
-      }
+      className="w-full h-12 rounded-full text-base font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      style={{
+        background: C.primary,
+        color: "#ffffff",
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
     >
       {label}
     </button>
@@ -104,13 +105,13 @@ export function OptionCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      className="w-full text-left rounded-xl px-4 py-3 text-base leading-normal transition-all duration-150 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
       style={
         selected
           ? {
               background: C.accentLight,
               border: `1.5px solid ${C.accentBorder}`,
-              color: C.ink,
+              color: C.accent,
             }
           : {
               background: C.surface,
@@ -152,10 +153,10 @@ export function PillButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="rounded-full px-4 py-2 text-[14px] font-medium transition-colors min-h-[38px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      className="rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 min-h-[38px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
       style={
         selected
-          ? { background: C.accent, color: "#ffffff", border: `1px solid ${C.accent}` }
+          ? { background: C.accentLight, color: C.accent, border: `1px solid ${C.accentBorder}` }
           : { background: C.surface, color: C.subtle, border: `1px solid ${C.border}` }
       }
       aria-pressed={selected}
@@ -183,7 +184,7 @@ export function CheckboxItem({
       className="flex items-center gap-3 text-left w-full py-2 focus-visible:outline-none"
     >
       <span
-        className="shrink-0 h-[18px] w-[18px] rounded-[4px] border-2 flex items-center justify-center transition-colors"
+        className="shrink-0 h-5 w-5 rounded border-2 flex items-center justify-center transition-colors"
         style={{
           borderColor: checked ? C.accent : C.border,
           background:  checked ? C.accent : C.surface,
@@ -191,7 +192,7 @@ export function CheckboxItem({
       >
         {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
       </span>
-      <span className="text-[15px]" style={{ color: C.ink }}>{label}</span>
+      <span className="text-base leading-normal" style={{ color: C.ink }}>{label}</span>
     </button>
   )
 }
@@ -199,7 +200,7 @@ export function CheckboxItem({
 export function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <p
-      className="text-[11px] font-semibold uppercase tracking-widest mb-1.5"
+      className="text-sm font-medium mb-1.5"
       style={{ color: C.muted }}
     >
       {children}
@@ -225,7 +226,7 @@ export function StickyFooter({
       className="fixed bottom-0 left-0 right-0 z-20 px-5 py-4"
       style={{ background: "#ffffff", borderTop: "1px solid #e5e7eb" }}
     >
-      <div className="mx-auto max-w-[500px]">
+      <div className="mx-auto max-w-xl">
         <ContinueButton onClick={onClick} disabled={disabled} label={label} />
       </div>
     </div>,
@@ -246,7 +247,7 @@ export function SegmentedControl<T extends string>({
 }) {
   return (
     <div
-      className="inline-flex rounded-lg overflow-hidden"
+      className="inline-flex rounded-full overflow-hidden"
       style={{ border: `1px solid ${C.border}` }}
     >
       {options.map((opt, i) => {
@@ -257,7 +258,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             onClick={() => { if (!disabled) onChange(opt.value) }}
             disabled={disabled}
-            className="px-5 py-2.5 text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1] min-h-[40px] disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1] min-h-[40px] disabled:opacity-50"
             style={{
               background: isSelected ? C.accent : C.surface,
               color:      isSelected ? "#ffffff" : C.subtle,

@@ -117,7 +117,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
       <div className="space-y-2">
         <FieldLabel>Minimum pay you&apos;d accept</FieldLabel>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-medium shrink-0" style={{ color: "#374151" }}>$</span>
+          <span className="text-sm font-medium shrink-0" style={{ color: "#6b7280" }}>$</span>
           <input
             type="text"
             inputMode="decimal"
@@ -127,8 +127,8 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
             onBlur={e => { setPayFocused(false); e.currentTarget.style.boxShadow = "none"; setPayRaw(normalizeRaw(payRaw)) }}
             disabled={advancing}
             placeholder="0"
-            className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-            style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
+            className="shrink-0 rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow disabled:opacity-50"
+            style={{ width: "120px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
             aria-label="Minimum pay amount"
           />
           <SegmentedControl
@@ -140,7 +140,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
         </div>
       </div>
 
-      <div className="h-[84px]" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={() => {
         if (!ready || advancing) return
         setAdvancing(true)

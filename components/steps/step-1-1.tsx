@@ -29,7 +29,7 @@ export function Step11({ initialValue, onAdvance }: Props) {
   return (
     <div className="space-y-5">
       <AssistantQuestion text="Which best describes where you are right now?" />
-      <div className="space-y-2.5">
+      <div className="space-y-3">
         {OPTIONS.map((opt) => (
           <OptionCard
             key={opt.key}

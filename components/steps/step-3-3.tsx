@@ -34,10 +34,10 @@ function TwoLineCard({
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      className="w-full text-left rounded-lg px-4 py-3 text-base leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
       style={
         selected
-          ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: "#111827" }
+          ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: "#6366f1" }
           : { background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }
       }
       aria-pressed={selected}
@@ -54,7 +54,7 @@ function TwoLineCard({
         </span>
         <span>
           <span className="block font-medium">{main}</span>
-          <span className="block text-[13px] mt-0.5" style={{ color: selected ? "#374151" : "#9ca3af" }}>{sub}</span>
+          <span className="block text-sm mt-0.5" style={{ color: selected ? "#6366f1" : "#6b7280" }}>{sub}</span>
         </span>
       </span>
     </button>
@@ -104,7 +104,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="Which of these sound interesting to you?" />
-        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>pick as many as you like — there's no wrong answer</p>
+        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>pick as many as you like — there's no wrong answer</p>
       </div>
 
       <div className="space-y-2">
@@ -119,7 +119,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
         ))}
       </div>
 
-      <div className="h-[84px]" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={handleContinue} disabled={!ready} />
     </div>
   )

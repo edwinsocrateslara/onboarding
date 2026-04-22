@@ -63,7 +63,7 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-lg px-4 py-3.5 text-[15px] leading-[1.5] transition-colors min-h-[52px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      className="w-full text-left rounded-lg px-4 py-3 text-base leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#146ef5]"
       style={
         checked
           ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: "#111827" }
@@ -125,7 +125,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far." />
-        <p className="text-[13px] text-center mt-1" style={{ color: "#9ca3af" }}>check all that apply</p>
+        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>check all that apply</p>
       </div>
 
       <div className="space-y-2">
@@ -144,7 +144,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
                   onChange={e => updateText(opt.id, e.target.value)}
                   placeholder={opt.placeholder}
                   autoFocus
-                  className="w-full rounded-lg px-4 py-3 text-[14px] focus:outline-none transition-shadow"
+                  className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-shadow"
                   style={{ background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
                   onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
                   onBlur={e => (e.currentTarget.style.boxShadow = "none")}
@@ -162,7 +162,7 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
         />
       </div>
 
-      <div className="h-[84px]" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={handleContinue} disabled={!isReady(selections)} />
     </div>
   )

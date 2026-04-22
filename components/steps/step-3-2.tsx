@@ -52,10 +52,10 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
   const display = focused ? value : formatWithCommas(value)
 
   return (
-    <div className="space-y-1.5">
-      <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "#6b7280" }}>{caption}</p>
+    <div className="space-y-2">
+      <p className="text-sm font-medium" style={{ color: "#6b7280" }}>{caption}</p>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[15px] font-medium shrink-0" style={{ color: "#374151" }}>$</span>
+        <span className="text-sm font-medium shrink-0" style={{ color: "#6b7280" }}>$</span>
         <input
           type="text"
           inputMode="decimal"
@@ -65,8 +65,8 @@ function PayRow({ caption, value, unit, advancing, onChange, onUnit, onBlurNorma
           onBlur={e => { onBlurNormalize(normalizeRaw(value)); setFocused(false); e.currentTarget.style.boxShadow = "none" }}
           disabled={advancing}
           placeholder="0"
-          className="shrink-0 rounded-lg px-3 py-3 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
-          style={{ width: "160px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
+          className="shrink-0 rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow disabled:opacity-50"
+          style={{ width: "120px", background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }}
           aria-label={ariaLabel}
         />
         <SegmentedControl
@@ -173,7 +173,7 @@ export function Step32({
         />
       </div>
 
-      <div className="h-[84px]" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={() => {
         if (!ready || advancing) return
         setAdvancing(true)

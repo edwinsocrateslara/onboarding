@@ -67,7 +67,7 @@ export function Step12({
                 : "Healthcare, Technology, Finance…"
             }
             autoFocus
-            className="w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow"
+            className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
             style={{
               background: "#ffffff",
               color: "#111827",
@@ -75,7 +75,7 @@ export function Step12({
             }}
             aria-label={QUESTION[q1Selection]}
           />
-          <div className="h-[84px]" aria-hidden="true" />
+          <div className="h-20" aria-hidden="true" />
           <StickyFooter onClick={handleTextSubmit} disabled={!text.trim()} />
         </div>
       )}

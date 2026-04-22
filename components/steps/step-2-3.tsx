@@ -32,7 +32,7 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
     setTimeline(val)
   }
 
-  const inputClass = "w-full rounded-lg px-4 py-3.5 text-[15px] focus:outline-none transition-shadow disabled:opacity-50"
+  const inputClass = "w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow disabled:opacity-50"
   const inputStyle = { background: "#ffffff", color: "#111827", border: "1px solid #e5e7eb" }
 
   const ready = !!(from.trim() && to.trim() && timeline)
@@ -87,7 +87,7 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
         </div>
       </div>
 
-      <div className="h-[84px]" aria-hidden="true" />
+      <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={() => {
         if (!ready || advancing) return
         setAdvancing(true)

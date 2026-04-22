@@ -2,14 +2,14 @@
 
 export function Step21() {
   return (
-    <div className="space-y-4 text-center">
+    <div className="space-y-4">
       <h1
-        className="text-[26px] sm:text-[30px] font-bold leading-tight"
-        style={{ color: "#111827", letterSpacing: "-0.3px" }}
+        className="text-3xl font-semibold leading-normal w-full text-balance"
+        style={{ color: "#111827" }}
       >
         Great — I&apos;ve got enough to understand your starting point.
       </h1>
-      <p className="text-[15px]" style={{ color: "#6b7280" }}>
+      <p className="text-base" style={{ color: "var(--color-muted)" }}>
         [Next questions coming soon.]
       </p>
     </div>

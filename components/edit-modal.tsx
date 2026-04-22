@@ -233,6 +233,10 @@ function Edit23({ extracted, onChange }: { extracted: Record<string, unknown>; o
         <TextInput value={str(extracted.currentRoleOrField)} onChange={v => onChange("currentRoleOrField", v)} placeholder="e.g. teacher, marketing manager" label="Current role or field" />
       </div>
       <div className="space-y-1.5">
+        <SectionLabel text="Employer (optional)" />
+        <TextInput value={str(extracted.currentEmployer)} onChange={v => onChange("currentEmployer", v)} placeholder="e.g. Memorial Hospital" label="Current employer" />
+      </div>
+      <div className="space-y-1.5">
         <SectionLabel text="Where you want to go" />
         <TextInput value={str(extracted.targetCareer)} onChange={v => onChange("targetCareer", v)} placeholder="e.g. UX designer, software developer" label="Target career" />
       </div>

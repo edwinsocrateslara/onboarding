@@ -108,6 +108,26 @@ export const CONV_SPECS: Record<string, ConvSpec> = {
     },
   },
 
+  "1.1a": {
+    question: "What role are you looking for?",
+    placeholder: "Software Engineer, Nurse, Teacher…",
+    followUpPlaceholder: "Tell me more…",
+    requiredFields: ["goal"],
+    isComplete: (e) => !!str(e.goal).trim(),
+    getFollowUp: () => null,
+    summarize: (e) => str(e.goal) ? [str(e.goal)] : [],
+  },
+
+  "1.1b": {
+    question: "What field or area are you interested in?",
+    placeholder: "Healthcare, Technology, Finance…",
+    followUpPlaceholder: "Tell me more…",
+    requiredFields: ["targetCareer"],
+    isComplete: (e) => !!str(e.targetCareer).trim(),
+    getFollowUp: () => null,
+    summarize: (e) => str(e.targetCareer) ? [str(e.targetCareer)] : [],
+  },
+
   "1.3": {
     question: "One more thing — are you currently working, in school, or between things?",
     placeholder: "School, work, or between things…",
@@ -170,11 +190,14 @@ export const CONV_SPECS: Record<string, ConvSpec> = {
     },
     summarize: (e) => {
       const parts: string[] = []
-      if (e.currentRoleOrField && e.targetCareer) {
-        const fromTo = `${e.currentRoleOrField} → ${e.targetCareer}`
+      const role = str(e.currentRoleOrField)
+      const employer = str(e.currentEmployer)
+      const from = role && employer ? `${role} at ${employer}` : role
+      if (from && e.targetCareer) {
+        const fromTo = `${from} → ${e.targetCareer}`
         parts.push(fromTo.length <= 60 ? fromTo : fromTo.slice(0, 57) + "…")
-      } else if (e.currentRoleOrField) {
-        parts.push(str(e.currentRoleOrField))
+      } else if (from) {
+        parts.push(from)
       } else if (e.targetCareer) {
         parts.push(str(e.targetCareer))
       }
@@ -219,31 +242,48 @@ export const CONV_SPECS: Record<string, ConvSpec> = {
   },
 
   "3.2": {
-    question: "Let's make sure any plan I suggest is realistic. How many hours a week can you put toward this, and what's your financial situation — do you need to keep earning, or do you have some runway for training?",
+    question: "How many hours a week can you put toward this, and is your financial situation need to keep earning, some savings, or have some runway?",
     placeholder: "Tell me about your availability and finances…",
-    followUpPlaceholder: "e.g. Min $20/hr, targeting $60k/year…",
-    requiredFields: ["availability", "financialConstraint", "payMin", "payMinUnit", "payTarget", "payTargetUnit"],
+    followUpPlaceholder: "e.g. $25/hr now, targeting $40/hr…",
+    requiredFields: ["availability", "financialConstraint", "payMin", "payMinUnit"],
     isComplete: (e) =>
       !!e.availability &&
       !!e.financialConstraint &&
-      !!(e.payMin as string)?.trim() && Number(e.payMin) > 0 && !!e.payMinUnit &&
-      !!(e.payTarget as string)?.trim() && Number(e.payTarget) > 0 && !!e.payTargetUnit,
+      !!(e.payMin as string)?.trim() && Number(e.payMin) > 0 && !!e.payMinUnit,
     getFollowUp: (e) => {
-      if (!e.payMin || !e.payMinUnit || !e.payTarget || !e.payTargetUnit) {
-        return "And what pay range are you thinking — minimum you'd need now and what you're targeting longer-term?"
+      if (!e.availability) {
+        return "How many hours a week can you put toward this — less than 10, 10–20, 20–30, or 30+?"
+      }
+      if (!e.financialConstraint) {
+        return "And is your financial situation need to keep earning, some savings, or have some runway?"
+      }
+      if (!e.payMin || !e.payMinUnit) {
+        return "And what pay range works for you — what you need now at minimum, and what you're targeting longer-term?"
       }
       return null
     },
     summarize: (e) => {
+      const hasMin    = !!e.payMin    && !!e.payMinUnit
+      const hasTarget = !!e.payTarget && !!e.payTargetUnit
+
+      // Turn 2: pay-only summary once any pay field has been captured.
+      if (hasMin || hasTarget) {
+        const parts: string[] = []
+        if (hasMin) {
+          const unit = e.payMinUnit === "hourly" ? "hr" : "yr"
+          parts.push(hasTarget ? `$${e.payMin}/${unit} now` : `$${e.payMin}/${unit} minimum`)
+        }
+        if (hasTarget) {
+          const unit = e.payTargetUnit === "hourly" ? "hr" : "yr"
+          parts.push(`$${e.payTarget}/${unit} target`)
+        }
+        return parts
+      }
+
+      // Turn 1: availability + financial.
       const parts: string[] = []
-      if (e.availability)         parts.push(AVAILABILITY_LABEL[e.availability as AvailabilityValue] ?? str(e.availability))
-      if (e.financialConstraint)  parts.push(FINANCIAL_LABEL[e.financialConstraint as FinancialConstraintValue] ?? str(e.financialConstraint))
-      if (e.payMin && e.payMinUnit) {
-        parts.push(`Min $${e.payMin}/${e.payMinUnit === "hourly" ? "hr" : "yr"}`)
-      }
-      if (e.payTarget && e.payTargetUnit) {
-        parts.push(`Target $${e.payTarget}/${e.payTargetUnit === "hourly" ? "hr" : "yr"}`)
-      }
+      if (e.availability)        parts.push(AVAILABILITY_LABEL[e.availability as AvailabilityValue] ?? str(e.availability))
+      if (e.financialConstraint) parts.push(FINANCIAL_LABEL[e.financialConstraint as FinancialConstraintValue] ?? str(e.financialConstraint))
       return parts.filter(Boolean)
     },
   },

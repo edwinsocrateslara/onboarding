@@ -20,16 +20,18 @@ export function useConversation({
   persona,
   spec,
   onComplete,
+  initialExtracted,
 }: {
-  stepKey:    string
-  step:       string
-  persona:    string | null
-  spec:       ConvSpec
-  onComplete: (extracted: Record<string, unknown>) => void
+  stepKey:          string
+  step:             string
+  persona:          string | null
+  spec:             ConvSpec
+  onComplete:       (extracted: Record<string, unknown>) => void
+  initialExtracted?: Record<string, unknown>
 }) {
   const [convState, setConvState] = useState<ConvState>({
     status:           "idle",
-    extracted:        {},
+    extracted:        initialExtracted ?? {},
     followUpQuestion: null,
     error:            null,
     summaryParts:     [],
@@ -45,10 +47,13 @@ export function useConversation({
   const extractedRef = useRef<Record<string, unknown>>({})
   extractedRef.current = convState.extracted
 
+  const initialExtractedRef = useRef(initialExtracted)
+  initialExtractedRef.current = initialExtracted
+
   // Reset when step changes
   useEffect(() => {
     setConvState({
-      status: "idle", extracted: {}, followUpQuestion: null,
+      status: "idle", extracted: initialExtractedRef.current ?? {}, followUpQuestion: null,
       error: null, summaryParts: [], turnIndex: 0,
     })
   }, [stepKey])
@@ -89,7 +94,15 @@ export function useConversation({
         const { extracted: newFields, error } = await resp.json() as { extracted?: Record<string, unknown>; error?: string }
         if (error) throw new Error(error)
 
-        const merged = { ...currentExtracted, ...newFields }
+        // Only overwrite with non-null/undefined values so pre-filled fields
+        // (e.g. resume-seeded role/employer) survive turns where the LLM
+        // returns null for "not mentioned".
+        const merged: Record<string, unknown> = { ...currentExtracted }
+        if (newFields) {
+          for (const [k, v] of Object.entries(newFields)) {
+            if (v !== null && v !== undefined) merged[k] = v
+          }
+        }
         const summaryParts = spec.summarize(merged)
 
         if (spec.isComplete(merged)) {

@@ -10,23 +10,19 @@ const BORDER          = "#dad4c8"
 const SURFACE         = "#ffffff"
 const INK             = "#000000"
 const SECONDARY       = "#9f9b93"
+const MUTED_FRAME     = "#55534e"
 const CLAY_SHADOW     = `rgba(0,0,0,0.1) 0px 1px 1px, rgba(0,0,0,0.04) 0px -1px 1px inset, rgba(0,0,0,0.05) 0px -0.5px 1px, 0px 0px 0px 1px ${BORDER}`
 const SELECTED_RING   = `0px 0px 0px 1.5px ${PRIMARY_BORDER}`
 const FOCUS_RING      = "focus-visible:ring-2 focus-visible:ring-[#146ef5]"
 
-export function AssistantQuestion({ text }: { text: string }) {
+export function AssistantQuestion({ text, children, muted }: { text?: string; children?: React.ReactNode; muted?: boolean }) {
   return (
-    <div className="flex gap-3 items-start">
-      <div
-        className="mt-1 shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-semibold"
-        style={{ background: AVATAR_BG, color: PRIMARY }}
-      >
-        F
-      </div>
-      <h1 className="text-[20px] sm:text-[22px] font-semibold leading-[1.3]" style={{ color: INK }}>
-        {text}
-      </h1>
-    </div>
+    <h1
+      className={`text-[20px] sm:text-[22px] leading-[1.3] ${muted ? "font-normal" : "font-semibold"}`}
+      style={{ color: muted ? MUTED_FRAME : INK }}
+    >
+      {children ?? text}
+    </h1>
   )
 }
 

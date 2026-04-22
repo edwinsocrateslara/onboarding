@@ -5,19 +5,56 @@ import { ExtractionSummary } from "./extraction-summary"
 import type { ConvState } from "@/hooks/use-conversation"
 import type { ConvSpec } from "@/lib/extraction-specs"
 
-interface ConversationalScreenProps {
-  spec:    ConvSpec
-  state:   ConvState
-  onEdit:  () => void
+const HINT = { color: "#000000", fontWeight: 500 } as const
+
+const HINTED_QUESTIONS: Record<string, React.ReactNode> = {
+  "1.1": (
+    <>
+      Tell me where you are right now —{" "}
+      <span style={HINT}>do you know what job you want</span>,{" "}
+      <span style={HINT}>have a general direction</span>, or{" "}
+      <span style={HINT}>still exploring</span>?
+    </>
+  ),
+  "1.3": (
+    <>
+      Are you currently{" "}
+      <span style={HINT}>a student</span>,{" "}
+      <span style={HINT}>working</span>, or{" "}
+      <span style={HINT}>not working right now</span>?
+    </>
+  ),
+  "3.1": (
+    <>
+      Have you been applying already?{" "}
+      <span style={HINT}>Just getting started</span>,{" "}
+      <span style={HINT}>a few applications with no responses</span>,{" "}
+      <span style={HINT}>many applications with few interviews</span>, or{" "}
+      <span style={HINT}>getting interviews but no offers</span>?
+    </>
+  ),
 }
 
-export function ConversationalScreen({ spec, state, onEdit }: ConversationalScreenProps) {
+interface ConversationalScreenProps {
+  stepKey:      string
+  spec:         ConvSpec
+  state:        ConvState
+  onEdit:       () => void
+  questionNode?: React.ReactNode
+}
+
+export function ConversationalScreen({ stepKey, spec, state, onEdit, questionNode }: ConversationalScreenProps) {
   const showSummary = state.summaryParts.length > 0 &&
     (state.status === "summary" || state.status === "follow_up" || state.status === "advancing")
 
+  const questionContent = questionNode ?? HINTED_QUESTIONS[stepKey]
+
   return (
     <div className="space-y-5">
-      <AssistantQuestion text={spec.question} />
+      {questionContent
+        ? <AssistantQuestion muted>{questionContent}</AssistantQuestion>
+        : <AssistantQuestion text={spec.question} />
+      }
 
       {showSummary && (
         <div className="ml-10">

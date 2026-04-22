@@ -1,6 +1,7 @@
 "use client"
 
 import { Briefcase, GraduationCap } from "lucide-react"
+import { HARDCODED_RESUME } from "@/lib/resume-data"
 
 const PRIMARY       = "#43089f"
 const BORDER        = "#dad4c8"
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export function Step1ResumeReview({ onAdvance }: Props) {
+  const r = HARDCODED_RESUME
+
   return (
     <div className="space-y-5">
       <div className="space-y-1.5">
@@ -32,8 +35,12 @@ export function Step1ResumeReview({ onAdvance }: Props) {
           </span>
         </div>
         <div className="space-y-0.5">
-          <p className="text-[15px] font-semibold" style={{ color: INK }}>Warehouse Associate</p>
-          <p className="text-[13px]" style={{ color: SECONDARY }}>Apex Logistics · 2021 – Present</p>
+          <p className="text-[15px] font-semibold" style={{ color: INK }}>{r.currentRole}</p>
+          <p className="text-[13px]" style={{ color: SECONDARY }}>{r.currentEmployer} · {r.currentTenure}</p>
+        </div>
+        <div className="space-y-0.5 pt-1">
+          <p className="text-[15px] font-semibold" style={{ color: INK }}>{r.previousRole}</p>
+          <p className="text-[13px]" style={{ color: SECONDARY }}>{r.previousEmployer} · {r.previousTenure}</p>
         </div>
       </div>
 
@@ -45,8 +52,8 @@ export function Step1ResumeReview({ onAdvance }: Props) {
           </span>
         </div>
         <div className="space-y-0.5">
-          <p className="text-[15px] font-semibold" style={{ color: INK }}>High School Diploma</p>
-          <p className="text-[13px]" style={{ color: SECONDARY }}>Riverside Secondary School · 2019</p>
+          <p className="text-[15px] font-semibold" style={{ color: INK }}>{r.educationDegree}</p>
+          <p className="text-[13px]" style={{ color: SECONDARY }}>{r.educationSchool}</p>
         </div>
       </div>
 

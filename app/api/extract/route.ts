@@ -23,6 +23,32 @@ Rules:
 - goal: what they said they want or are pursuing; null if unclear
 - careerStageSignal: "student" if they mention school/studying; "working" if they mention current job; "not_working" if unemployed/between jobs; "unknown" if not clear`,
 
+  "1.1a": () => `You are a JSON extraction assistant for a career onboarding flow.
+The user was asked: "What role are you looking for?"
+
+Return ONLY valid JSON (no markdown, no code fences, no prose):
+{
+  "goal": string
+}
+
+Rules:
+- goal: the specific job title or role the user mentions (e.g. "Software Engineer", "Registered Nurse", "Teacher")
+- Normalize to title case
+- If the user gives multiple roles, pick the most specific one they emphasize`,
+
+  "1.1b": () => `You are a JSON extraction assistant for a career onboarding flow.
+The user was asked: "What field or area are you interested in?"
+
+Return ONLY valid JSON (no markdown, no code fences, no prose):
+{
+  "targetCareer": string
+}
+
+Rules:
+- targetCareer: the field, industry, or domain the user mentions (e.g. "Healthcare", "Technology", "Finance")
+- Normalize to title case
+- Capture what they said as closely as possible`,
+
   "1.3": () => `You are a JSON extraction assistant for a career onboarding flow.
 The user was asked: "Are you currently working, in school, or between things?"
 
@@ -57,17 +83,19 @@ Rules:
 
   "2.3": (prior) => `You are a JSON extraction assistant for a career changer onboarding flow.
 The user was asked about the career change they're making.
-${prior && Object.keys(prior).length > 0 ? `\nAlready extracted: ${JSON.stringify(prior)}\nFocus on extracting missing fields.` : ""}
+${prior && Object.keys(prior).length > 0 ? `\nAlready extracted (pre-filled from the user's uploaded resume when present): ${JSON.stringify(prior)}\nIf currentRoleOrField and/or currentEmployer are already set, treat them as confirmed defaults. Only override them if the user EXPLICITLY contradicts the pre-filled values (e.g. "I'm not a nurse anymore", "I left Memorial last year"). Otherwise preserve them by returning the same values (or omit to leave unchanged). Focus on extracting targetCareer and targetTimeline from the user's response.` : ""}
 
 Return ONLY valid JSON (no markdown, no code fences, no prose):
 {
   "currentRoleOrField": string | null,
+  "currentEmployer": string | null,
   "targetCareer": string | null,
   "targetTimeline": "immediate" | "within_3_months" | "within_6_to_12_months" | "no_timeline" | null
 }
 
 Rules:
-- currentRoleOrField: their current job, role, or field (e.g. "teacher", "marketing manager"); null if not mentioned
+- currentRoleOrField: their current job, role, or field (e.g. "teacher", "marketing manager"); null if not mentioned AND not pre-filled
+- currentEmployer: their current employer/company (e.g. "Memorial Hospital", "Acme Corp"); null if not mentioned AND not pre-filled
 - targetCareer: what they want to move into (e.g. "UX designer", "software developer"); null if not mentioned
 - targetTimeline: "immediate" = ASAP/right away; "within_3_months" = soon/few months; "within_6_to_12_months" = 6-12 months; "no_timeline" = no rush/flexible; null if not mentioned`,
 

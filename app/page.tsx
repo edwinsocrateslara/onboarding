@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { useOnboarding, getPreviousAnswer, getStageForStep } from "@/hooks/use-onboarding"
+import { HARDCODED_RESUME } from "@/lib/resume-data"
 import type {
   ScheduleValue, WorkModalityValue, PayUnitValue,
   ApplicationDiagnosticsValue, TimelineValue, AvailabilityValue,
@@ -31,6 +32,8 @@ export default function OnboardingPage() {
   const {
     state,
     advanceFrom11Conv,
+    advanceFrom11a,
+    advanceFrom11b,
     advanceFrom13,
     advanceFrom1Journey,
     advanceFrom1ResumeUpload,
@@ -75,6 +78,14 @@ export default function OnboardingPage() {
         })
         break
 
+      case "1.1a":
+        advanceFrom11a((extracted.goal as string) ?? "")
+        break
+
+      case "1.1b":
+        advanceFrom11b((extracted.targetCareer as string) ?? "")
+        break
+
       case "1.3":
         advanceFrom13((extracted.careerStageSignal as CareerStageValue) ?? "not_working")
         break
@@ -91,6 +102,7 @@ export default function OnboardingPage() {
       case "2.3":
         advanceFrom23({
           currentRoleOrField: String(extracted.currentRoleOrField ?? ""),
+          currentEmployer:    String(extracted.currentEmployer    ?? ""),
           targetCareer:       String(extracted.targetCareer ?? ""),
           targetTimeline:     (extracted.targetTimeline as TimelineValue) ?? "no_timeline",
         })
@@ -123,7 +135,17 @@ export default function OnboardingPage() {
         advanceFrom33(((extracted.careerInterests as CareerAreaInterestValue[]) ?? []))
         break
     }
-  }, [state.step, advanceFrom11Conv, advanceFrom13, advanceFrom22, advanceFrom23, advanceFrom24, advanceFrom31, advanceFrom32, advanceFrom33])
+  }, [state.step, advanceFrom11Conv, advanceFrom11a, advanceFrom11b, advanceFrom13, advanceFrom22, advanceFrom23, advanceFrom24, advanceFrom31, advanceFrom32, advanceFrom33])
+
+  const resumePrefill = state.step === "2.3" && state.journeyPath === "resume"
+  const initialExtracted = useMemo(() => (
+    resumePrefill
+      ? {
+          currentRoleOrField: HARDCODED_RESUME.currentRole,
+          currentEmployer:    HARDCODED_RESUME.currentEmployer,
+        }
+      : undefined
+  ), [resumePrefill])
 
   const { convState, submit, updateExtracted } = useConversation({
     stepKey:    state.step,
@@ -131,7 +153,38 @@ export default function OnboardingPage() {
     persona,
     spec:       spec ?? CONV_SPECS["1.1"],
     onComplete: handleConvComplete,
+    initialExtracted,
   })
+
+  const questionNode = useMemo(() => {
+    if (resumePrefill) {
+      const HINT = { color: "#000000", fontWeight: 500 } as const
+      const label = `${HARDCODED_RESUME.currentRole} at ${HARDCODED_RESUME.currentEmployer}`
+      return (
+        <>
+          I saw you&apos;re a{" "}
+          <span style={HINT}>{label}</span>
+          . Is that still the starting point? Tell me where you want to go and how soon.
+        </>
+      )
+    }
+    if (state.step === "3.2") {
+      const HINT = { color: "#000000", fontWeight: 500 } as const
+      return (
+        <>
+          How many hours a week can you put toward this —{" "}
+          <span style={HINT}>less than 10</span>,{" "}
+          <span style={HINT}>10–20</span>,{" "}
+          <span style={HINT}>20–30</span>, or{" "}
+          <span style={HINT}>30+</span>? And is your financial situation{" "}
+          <span style={HINT}>need to keep earning</span>,{" "}
+          <span style={HINT}>some savings</span>, or{" "}
+          <span style={HINT}>have some runway</span>?
+        </>
+      )
+    }
+    return undefined
+  }, [resumePrefill, state.step])
 
   const inputBarKey = `${state.step}-${convState.turnIndex}`
 
@@ -164,9 +217,11 @@ export default function OnboardingPage() {
 
     return (
       <ConversationalScreen
+        stepKey={state.step}
         spec={spec}
         state={convState}
         onEdit={() => setShowEditModal(true)}
+        questionNode={questionNode}
       />
     )
   }
@@ -178,10 +233,8 @@ export default function OnboardingPage() {
         className="shrink-0 border-b"
         style={{ borderColor: "#dad4c8", background: "#ffffff" }}
       >
-        <div className="mx-auto max-w-[640px] px-3 py-3 flex items-center gap-1">
-          <div className="shrink-0 w-8 flex items-center">
-            {showBack && <BackButton onClick={back} />}
-          </div>
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 py-3 flex items-center gap-2">
+          {showBack && <BackButton onClick={back} />}
           <div className="flex-1 flex items-center min-w-0">
             <Stepper
               currentStage={currentStage}
@@ -189,7 +242,6 @@ export default function OnboardingPage() {
               onStageClick={(stage) => jumpToStage(stage as 1 | 2 | 3)}
             />
           </div>
-          <div className="shrink-0 w-8" />
         </div>
       </div>
 
@@ -197,7 +249,7 @@ export default function OnboardingPage() {
       <main className="flex-1 overflow-y-auto">
         <div
           key={state.step}
-          className={`mx-auto max-w-[640px] px-4 sm:px-6 py-8 ${transitionClass}`}
+          className={`mx-auto max-w-2xl px-4 sm:px-6 py-8 ${transitionClass}`}
         >
           {previousAnswer && <PreviousAnswer answer={previousAnswer} />}
           {renderStep()}

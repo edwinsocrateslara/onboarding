@@ -25,6 +25,9 @@ export type Step =
   | "2.2-employed"
   | "2.2-unemployed"
   | "2.2-returning"
+  | "2.3-education"
+  | "2.3-resume"
+  | "3.classification-pending"
   | "2.2" | "2.3" | "2.4"
   | "3.1" | "3.2" | "3.3"
   | "4.0" | "4.1"
@@ -103,7 +106,20 @@ export interface OnboardingState {
   location:          string
   userType:          UserType | null
   employment_status: EmploymentStatus | null
-  // Classification (set after Q2 help question in Phase 3)
+  // Q2 help question
+  helpQuestionAnswer:    string
+  helpQuestionOtherText: string
+  goal:                  string | null
+  goal_clarity:          null  // Phase 4 derives this
+  // Education screen (Recently Graduated)
+  educationLevel:     string
+  major:              string
+  educationStartYear: string
+  currentlyStudying:  boolean
+  // Resume screen (Employed / Unemployed / Returning)
+  resumeUploaded: boolean
+  resumeSkipped:  boolean
+  // Classification (set after Q2 help question — Phase 4)
   classification: ClassificationResult | null
   // Active Jobseeker Stage 2 (Q2)
   schedulePreference: ScheduleValue[]
@@ -143,6 +159,9 @@ export interface OnboardingState {
 type Action =
   | { type: "ADVANCE_INTRO"; firstName: string; lastName: string; location: string }
   | { type: "ADVANCE_STARTER"; userType: UserType }
+  | { type: "ADVANCE_Q2"; helpQuestionAnswer: string; helpQuestionOtherText: string; goal: string }
+  | { type: "ADVANCE_EDUCATION"; educationLevel: string; major: string; educationStartYear: string; currentlyStudying: boolean }
+  | { type: "ADVANCE_RESUME"; uploaded: boolean; skipped: boolean }
   | { type: "SET_PERSONA"; persona: Persona }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
@@ -184,6 +203,16 @@ function initState(): OnboardingState {
     location:          "",
     userType:          null,
     employment_status: null,
+    helpQuestionAnswer:    "",
+    helpQuestionOtherText: "",
+    goal:         null,
+    goal_clarity: null,
+    educationLevel:     "",
+    major:              "",
+    educationStartYear: "",
+    currentlyStudying:  false,
+    resumeUploaded: false,
+    resumeSkipped:  false,
     classification:    null,
     ...STAGE_2_CLEAR,
     tenantCountryCode:  "",
@@ -219,6 +248,45 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         employment_status: action.userType,
         classification:    null,
         ...STAGE_2_CLEAR,
+      }
+    }
+
+    case "ADVANCE_Q2": {
+      const ut = state.userType
+      const nextStep: Step =
+        ut === "student"                ? "3.classification-pending" :
+        ut === "recently_graduated"     ? "2.3-education" :
+        "2.3-resume"
+      return {
+        ...state,
+        step:                  nextStep,
+        direction:             "forward",
+        helpQuestionAnswer:    action.helpQuestionAnswer,
+        helpQuestionOtherText: action.helpQuestionOtherText,
+        goal:                  action.goal,
+        goal_clarity:          null,
+      }
+    }
+
+    case "ADVANCE_EDUCATION": {
+      return {
+        ...state,
+        step:               "3.classification-pending",
+        direction:          "forward",
+        educationLevel:     action.educationLevel,
+        major:              action.major,
+        educationStartYear: action.educationStartYear,
+        currentlyStudying:  action.currentlyStudying,
+      }
+    }
+
+    case "ADVANCE_RESUME": {
+      return {
+        ...state,
+        step:           "3.classification-pending",
+        direction:      "forward",
+        resumeUploaded: action.uploaded,
+        resumeSkipped:  action.skipped,
       }
     }
 
@@ -329,15 +397,32 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "BACK": {
       const persona = state.classification?.persona
 
+      // For resume back: return to the Q2 screen that routed into it
+      const ut = state.userType
+      const resumeBack: Step =
+        ut === "employed"               ? "2.2-employed" :
+        ut === "unemployed"             ? "2.2-unemployed" :
+        ut === "returning_to_workforce" ? "2.2-returning" :
+        "starter"
+
+      // For classification-pending back: return to whichever step came before
+      const classificationBack: Step =
+        ut === "student"            ? "2.2-student" :
+        ut === "recently_graduated" ? "2.3-education" :
+        "2.3-resume"
+
       const prev: Partial<Record<Step, Step | null>> = {
-        "intro":                 null,
-        "starter":               "intro",
-        "2.2-student":           "starter",
-        "2.2-recently-graduated":"starter",
-        "2.2-employed":          "starter",
-        "2.2-unemployed":        "starter",
-        "2.2-returning":         "starter",
-        // Old Q2 screens (reachable via SET_PERSONA in Phase 3)
+        "intro":                  null,
+        "starter":                "intro",
+        "2.2-student":            "starter",
+        "2.2-recently-graduated": "starter",
+        "2.2-employed":           "starter",
+        "2.2-unemployed":         "starter",
+        "2.2-returning":          "starter",
+        "2.3-education":          "2.2-recently-graduated",
+        "2.3-resume":             resumeBack,
+        "3.classification-pending": classificationBack,
+        // Old Q2 screens (reachable via SET_PERSONA in Phase 4)
         "2.2": null,
         "2.3": null,
         "2.4": null,
@@ -389,6 +474,9 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
     case "2.2-employed":
     case "2.2-unemployed":
     case "2.2-returning":
+    case "2.3-education":
+    case "2.3-resume":
+    case "3.classification-pending":
     case "2.2":
     case "2.3":
     case "2.4":
@@ -428,9 +516,13 @@ export function getStageForStep(step: Step): 1 | 2 | 3 | 4 | 5 {
   if (
     step === "2.2-student" || step === "2.2-recently-graduated" ||
     step === "2.2-employed" || step === "2.2-unemployed" || step === "2.2-returning" ||
+    step === "2.3-education" || step === "2.3-resume" ||
     step === "2.2" || step === "2.3" || step === "2.4"
   ) return 2
-  if (step === "3.1" || step === "3.2" || step === "3.3") return 3
+  if (
+    step === "3.classification-pending" ||
+    step === "3.1" || step === "3.2" || step === "3.3"
+  ) return 3
   if (step === "4.0") return 4
   return 5
 }
@@ -443,6 +535,12 @@ export function useOnboarding() {
       dispatch({ type: "ADVANCE_INTRO", ...data }),
     advanceFromStarter: (userType: UserType) =>
       dispatch({ type: "ADVANCE_STARTER", userType }),
+    advanceFromQ2: (data: { helpQuestionAnswer: string; helpQuestionOtherText: string; goal: string }) =>
+      dispatch({ type: "ADVANCE_Q2", ...data }),
+    advanceFromEducation: (data: { educationLevel: string; major: string; educationStartYear: string; currentlyStudying: boolean }) =>
+      dispatch({ type: "ADVANCE_EDUCATION", ...data }),
+    advanceFromResume: (data: { uploaded: boolean; skipped: boolean }) =>
+      dispatch({ type: "ADVANCE_RESUME", ...data }),
     setPersona: (persona: Persona) => dispatch({ type: "SET_PERSONA", persona }),
     advanceFrom22: (data: { schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }) =>
       dispatch({ type: "ADVANCE_2_2", ...data }),

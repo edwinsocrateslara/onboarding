@@ -3,13 +3,16 @@
 import { ArrowLeft, User } from "lucide-react"
 import { useOnboarding, getStageForStep } from "@/hooks/use-onboarding"
 
-import { StepIntro }              from "@/components/steps/step-intro"
-import { StepStarter }            from "@/components/steps/step-starter"
-import { Step22Student }          from "@/components/steps/step-2-2-student"
+import { StepIntro }               from "@/components/steps/step-intro"
+import { StepStarter }             from "@/components/steps/step-starter"
+import { Step22Student }           from "@/components/steps/step-2-2-student"
 import { Step22RecentlyGraduated } from "@/components/steps/step-2-2-recently-graduated"
-import { Step22Employed }         from "@/components/steps/step-2-2-employed"
-import { Step22Unemployed }       from "@/components/steps/step-2-2-unemployed"
-import { Step22Returning }        from "@/components/steps/step-2-2-returning"
+import { Step22Employed }          from "@/components/steps/step-2-2-employed"
+import { Step22Unemployed }        from "@/components/steps/step-2-2-unemployed"
+import { Step22Returning }         from "@/components/steps/step-2-2-returning"
+import { Step23Education }         from "@/components/steps/step-2-3-education"
+import { Step23Resume }            from "@/components/steps/step-2-3-resume"
+import { Step3ClassificationPending } from "@/components/steps/step-3-classification-pending"
 import { Step22 } from "@/components/steps/step-2-2"
 import { Step23 } from "@/components/steps/step-2-3"
 import { Step24 } from "@/components/steps/step-2-4"
@@ -32,6 +35,9 @@ export default function OnboardingPage() {
     state,
     advanceFromIntro,
     advanceFromStarter,
+    advanceFromQ2,
+    advanceFromEducation,
+    advanceFromResume,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -72,11 +78,22 @@ export default function OnboardingPage() {
             onAdvance={advanceFromStarter}
           />
         )
-      case "2.2-student":           return <Step22Student />
-      case "2.2-recently-graduated": return <Step22RecentlyGraduated />
-      case "2.2-employed":          return <Step22Employed />
-      case "2.2-unemployed":        return <Step22Unemployed />
-      case "2.2-returning":         return <Step22Returning />
+      case "2.2-student":
+        return <Step22Student onAdvance={advanceFromQ2} />
+      case "2.2-recently-graduated":
+        return <Step22RecentlyGraduated onAdvance={advanceFromQ2} />
+      case "2.2-employed":
+        return <Step22Employed onAdvance={advanceFromQ2} />
+      case "2.2-unemployed":
+        return <Step22Unemployed onAdvance={advanceFromQ2} />
+      case "2.2-returning":
+        return <Step22Returning onAdvance={advanceFromQ2} />
+      case "2.3-education":
+        return <Step23Education onAdvance={advanceFromEducation} />
+      case "2.3-resume":
+        return <Step23Resume onAdvance={advanceFromResume} />
+      case "3.classification-pending":
+        return <Step3ClassificationPending />
       case "2.2":
         return (
           <Step22

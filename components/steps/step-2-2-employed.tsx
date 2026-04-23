@@ -1,16 +1,23 @@
 "use client"
 
-const INK       = "#111827"
-const SECONDARY = "#6b7280"
+import { AssistantQuestion } from "./shared"
+import { Q2HelpQuestion }    from "./q2-help-question"
+import type { Q2Option }     from "./q2-help-question"
 
-// Placeholder — Phase 3 will replace this with the real Employed Q2 screen
-export function Step22Employed() {
+const OPTIONS: Q2Option[] = [
+  { key: "a", label: "I want to find a better job in my current field" },
+  { key: "b", label: "I want to switch into a different career"        },
+]
+
+interface Props {
+  onAdvance: (data: { helpQuestionAnswer: string; helpQuestionOtherText: string; goal: string }) => void
+}
+
+export function Step22Employed({ onAdvance }: Props) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-3xl font-semibold leading-normal w-full text-balance" style={{ color: INK }}>
-        Q2 for employed
-      </h2>
-      <p style={{ color: SECONDARY }}>Coming in Phase 3.</p>
+    <div className="space-y-5">
+      <AssistantQuestion text="What would you most like help with?" />
+      <Q2HelpQuestion options={OPTIONS} onAdvance={onAdvance} />
     </div>
   )
 }

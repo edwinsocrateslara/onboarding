@@ -3,7 +3,7 @@
 import type { Persona } from "@/lib/types"
 
 const HANDOFF: Record<Persona, { heading: string; body: string }> = {
-  job_seeker: {
+  active_jobseeker: {
     heading: "You're set.",
     body: "I've got what I need to start surfacing real jobs. Ready when you are.",
   },
@@ -11,7 +11,7 @@ const HANDOFF: Record<Persona, { heading: string; body: string }> = {
     heading: "Good to go.",
     body: "You've shared enough for me to start mapping a path that makes sense for where you're headed.",
   },
-  early_career_explorer: {
+  career_explorer: {
     heading: "Let's figure this out.",
     body: "You're in the right place. I have what I need to start pointing you toward things that'll actually fit.",
   },

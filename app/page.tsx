@@ -1,24 +1,14 @@
 "use client"
 
 import { ArrowLeft, User } from "lucide-react"
-import { useOnboarding, getPreviousAnswer, getStageForStep } from "@/hooks/use-onboarding"
-import type { Q1Option } from "@/hooks/use-onboarding"
+import { useOnboarding, getStageForStep } from "@/hooks/use-onboarding"
 
-import { Step11 } from "@/components/steps/step-1-1"
-import { Step12 } from "@/components/steps/step-1-2"
-import { Step13 } from "@/components/steps/step-1-3"
-import { Step1Journey } from "@/components/steps/step-1-journey"
-import { Step1ResumeUpload } from "@/components/steps/step-1-resume-upload"
-import { Step1ResumeReview } from "@/components/steps/step-1-resume-review"
-import { Step1WorkExp } from "@/components/steps/step-1-work-exp"
-import { Step1Education } from "@/components/steps/step-1-education"
-import { Step21 } from "@/components/steps/step-2-1"
 import { Step22 } from "@/components/steps/step-2-2"
 import { Step23 } from "@/components/steps/step-2-3"
 import { Step24 } from "@/components/steps/step-2-4"
 import { Step31 } from "@/components/steps/step-3-1"
-import { Step33 } from "@/components/steps/step-3-3"
 import { Step32 } from "@/components/steps/step-3-2"
+import { Step33 } from "@/components/steps/step-3-3"
 import { Step40 } from "@/components/steps/step-4-0"
 import { Step41 } from "@/components/steps/step-4-1"
 
@@ -33,15 +23,6 @@ const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
 export default function OnboardingPage() {
   const {
     state,
-    advanceFrom11,
-    advanceFrom12Text,
-    advanceFrom12Stage,
-    advanceFrom13,
-    advanceFrom1Journey,
-    advanceFrom1ResumeUpload,
-    advanceFrom1ResumeReview,
-    advanceFrom1WorkExp,
-    advanceFrom1Education,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -60,8 +41,7 @@ export default function OnboardingPage() {
   if (currentStage > 3) completedStages.push(3)
   if (currentStage > 4) completedStages.push(4)
 
-  const previousAnswer = getPreviousAnswer(state)
-  const showBack = state.step !== "1.1"
+  const showBack = state.step !== "2.2"
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
 
@@ -69,42 +49,6 @@ export default function OnboardingPage() {
 
   function renderStep() {
     switch (state.step) {
-      case "1.1":
-        return (
-          <Step11
-            initialValue={state.q1Selection}
-            onAdvance={advanceFrom11}
-          />
-        )
-      case "1.2":
-        return (
-          <Step12
-            q1Selection={state.q1Selection!}
-            initialCareerStage={state.followUpCareerStage}
-            initialText={state.followUpText}
-            onAdvanceCareerStage={advanceFrom12Stage}
-            onAdvanceText={advanceFrom12Text}
-          />
-        )
-      case "1.3":
-        return (
-          <Step13
-            initialValue={state.bridgingAnswer}
-            onAdvance={advanceFrom13}
-          />
-        )
-      case "1.journey":
-        return <Step1Journey onSelect={advanceFrom1Journey} />
-      case "1.resume-upload":
-        return <Step1ResumeUpload onAdvance={advanceFrom1ResumeUpload} />
-      case "1.resume-review":
-        return <Step1ResumeReview onAdvance={advanceFrom1ResumeReview} />
-      case "1.work-exp":
-        return <Step1WorkExp onAdvance={advanceFrom1WorkExp} />
-      case "1.education":
-        return <Step1Education onAdvance={advanceFrom1Education} />
-      case "2.1":
-        return <Step21 />
       case "2.2":
         return (
           <Step22

@@ -3,7 +3,28 @@
 import { useReducer } from "react"
 import type { ClassificationResult, Persona } from "@/lib/types"
 
+export type UserType =
+  | "student"
+  | "recently_graduated"
+  | "employed"
+  | "unemployed"
+  | "returning_to_workforce"
+
+export type EmploymentStatus =
+  | "student"
+  | "recently_graduated"
+  | "employed"
+  | "unemployed"
+  | "returning_to_workforce"
+
 export type Step =
+  | "intro"
+  | "starter"
+  | "2.2-student"
+  | "2.2-recently-graduated"
+  | "2.2-employed"
+  | "2.2-unemployed"
+  | "2.2-returning"
   | "2.2" | "2.3" | "2.4"
   | "3.1" | "3.2" | "3.3"
   | "4.0" | "4.1"
@@ -65,10 +86,24 @@ const ECE_EXPERIENCE_RECAP: Record<ExperienceContextType, string> = {
   hobby:     "Side project",
 }
 
+const USER_TYPE_Q2: Record<UserType, Step> = {
+  student:                "2.2-student",
+  recently_graduated:     "2.2-recently-graduated",
+  employed:               "2.2-employed",
+  unemployed:             "2.2-unemployed",
+  returning_to_workforce: "2.2-returning",
+}
+
 export interface OnboardingState {
   step:      Step
   direction: "forward" | "back"
-  // Classification
+  // Stage 1 — intro + starter
+  firstName:         string
+  lastName:          string
+  location:          string
+  userType:          UserType | null
+  employment_status: EmploymentStatus | null
+  // Classification (set after Q2 help question in Phase 3)
   classification: ClassificationResult | null
   // Active Jobseeker Stage 2 (Q2)
   schedulePreference: ScheduleValue[]
@@ -89,8 +124,8 @@ export interface OnboardingState {
   ccPayTarget:           string
   ccPayTargetUnit:       PayUnitValue | null
   // Career Explorer Stage 2 (Q2)
-  eceExperiences:     { type: ExperienceContextType; detail: string }[]
-  eceNoneSelected:    boolean
+  eceExperiences:      { type: ExperienceContextType; detail: string }[]
+  eceNoneSelected:     boolean
   eceEmploymentStatus: "student" | "employed" | "unemployed" | null
   // Career Explorer Stage 3 (Q3)
   eceCareerInterests: CareerAreaInterestValue[]
@@ -106,6 +141,8 @@ export interface OnboardingState {
 }
 
 type Action =
+  | { type: "ADVANCE_INTRO"; firstName: string; lastName: string; location: string }
+  | { type: "ADVANCE_STARTER"; userType: UserType }
   | { type: "SET_PERSONA"; persona: Persona }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
@@ -140,10 +177,14 @@ const STAGE_2_CLEAR = {
 
 function initState(): OnboardingState {
   return {
-    // Phase 2 will replace "2.2" with the new intro step
-    step:      "2.2",
-    direction: "forward",
-    classification: null,
+    step:              "intro",
+    direction:         "forward",
+    firstName:         "",
+    lastName:          "",
+    location:          "",
+    userType:          null,
+    employment_status: null,
+    classification:    null,
     ...STAGE_2_CLEAR,
     tenantCountryCode:  "",
     tenantPhone:        "",
@@ -158,15 +199,38 @@ function initState(): OnboardingState {
 
 function reducer(state: OnboardingState, action: Action): OnboardingState {
   switch (action.type) {
+    case "ADVANCE_INTRO": {
+      return {
+        ...state,
+        step:      "starter",
+        direction: "forward",
+        firstName: action.firstName,
+        lastName:  action.lastName,
+        location:  action.location,
+      }
+    }
+
+    case "ADVANCE_STARTER": {
+      return {
+        ...state,
+        step:              USER_TYPE_Q2[action.userType],
+        direction:         "forward",
+        userType:          action.userType,
+        employment_status: action.userType,
+        classification:    null,
+        ...STAGE_2_CLEAR,
+      }
+    }
+
     case "SET_PERSONA": {
       const step: Step =
-        action.persona === "active_jobseeker"  ? "2.2" :
-        action.persona === "career_changer"    ? "2.3" :
+        action.persona === "active_jobseeker" ? "2.2" :
+        action.persona === "career_changer"   ? "2.3" :
         "2.4"
       return {
         ...state,
         step,
-        direction: "forward",
+        direction:     "forward",
         classification: { persona: action.persona, subType: "", todoFlags: [] },
         ...STAGE_2_CLEAR,
       }
@@ -188,11 +252,11 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_2_3": {
       return {
         ...state,
-        step:              "3.2",
-        direction:         "forward",
+        step:               "3.2",
+        direction:          "forward",
         currentRoleOrField: action.currentRoleOrField,
-        targetCareer:      action.targetCareer,
-        targetTimeline:    action.targetTimeline,
+        targetCareer:       action.targetCareer,
+        targetTimeline:     action.targetTimeline,
         ccAvailability:        null,
         ccFinancialConstraint: null,
         ccPayMin:              "",
@@ -205,12 +269,12 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_2_4": {
       return {
         ...state,
-        step:               "3.3",
-        direction:          "forward",
-        eceExperiences:     action.experiences,
-        eceNoneSelected:    action.noneSelected,
+        step:                "3.3",
+        direction:           "forward",
+        eceExperiences:      action.experiences,
+        eceNoneSelected:     action.noneSelected,
         eceEmploymentStatus: action.employmentStatus,
-        eceCareerInterests: [],
+        eceCareerInterests:  [],
       }
     }
 
@@ -266,7 +330,14 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
       const persona = state.classification?.persona
 
       const prev: Partial<Record<Step, Step | null>> = {
-        // Stage 2 back targets — Phase 2 will wire these to the new starter Q
+        "intro":                 null,
+        "starter":               "intro",
+        "2.2-student":           "starter",
+        "2.2-recently-graduated":"starter",
+        "2.2-employed":          "starter",
+        "2.2-unemployed":        "starter",
+        "2.2-returning":         "starter",
+        // Old Q2 screens (reachable via SET_PERSONA in Phase 3)
         "2.2": null,
         "2.3": null,
         "2.4": null,
@@ -285,17 +356,17 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     }
 
     case "JUMP_TO_STAGE": {
-      const persona = state.classification?.persona
-      // Stage 1 has no step yet — Phase 2 will add it
-      if (action.stage === 1) return state
+      const persona  = state.classification?.persona
+      const userType = state.userType
+
+      if (action.stage === 1) return { ...state, step: "intro", direction: "back" }
+
       if (action.stage === 2) {
-        const step2: Step =
-          persona === "active_jobseeker" ? "2.2" :
-          persona === "career_changer"   ? "2.3" :
-          persona === "career_explorer"  ? "2.4" :
-          "2.2"
-        return { ...state, step: step2, direction: "back" }
+        // If userType is known, jump to the appropriate Q2 placeholder
+        if (userType) return { ...state, step: USER_TYPE_Q2[userType], direction: "back" }
+        return { ...state, step: "starter", direction: "back" }
       }
+
       if (action.stage === 3) {
         const step3: Step =
           persona === "career_changer"  ? "3.2" :
@@ -303,6 +374,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
           "3.1"
         return { ...state, step: step3, direction: "back" }
       }
+
       return { ...state, step: "4.0", direction: "back" }
     }
   }
@@ -310,6 +382,13 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
 
 export function getPreviousAnswer(state: OnboardingState): string | null {
   switch (state.step) {
+    case "intro":
+    case "starter":
+    case "2.2-student":
+    case "2.2-recently-graduated":
+    case "2.2-employed":
+    case "2.2-unemployed":
+    case "2.2-returning":
     case "2.2":
     case "2.3":
     case "2.4":
@@ -324,9 +403,9 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
 
     case "3.2": {
       if (!state.currentRoleOrField || !state.targetCareer || !state.targetTimeline) return null
-      const fromTo = `${state.currentRoleOrField} → ${state.targetCareer}`
+      const fromTo  = `${state.currentRoleOrField} → ${state.targetCareer}`
       const timeline = TIMELINE_LABEL[state.targetTimeline]
-      const full = `${fromTo} · ${timeline}`
+      const full     = `${fromTo} · ${timeline}`
       if (full.length <= 80) return full
       const maxFromTo = 80 - 3 - timeline.length
       return `${fromTo.slice(0, maxFromTo)}… · ${timeline}`
@@ -345,7 +424,12 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
 }
 
 export function getStageForStep(step: Step): 1 | 2 | 3 | 4 | 5 {
-  if (step === "2.2" || step === "2.3" || step === "2.4") return 2
+  if (step === "intro" || step === "starter") return 1
+  if (
+    step === "2.2-student" || step === "2.2-recently-graduated" ||
+    step === "2.2-employed" || step === "2.2-unemployed" || step === "2.2-returning" ||
+    step === "2.2" || step === "2.3" || step === "2.4"
+  ) return 2
   if (step === "3.1" || step === "3.2" || step === "3.3") return 3
   if (step === "4.0") return 4
   return 5
@@ -355,6 +439,10 @@ export function useOnboarding() {
   const [state, dispatch] = useReducer(reducer, undefined, initState)
   return {
     state,
+    advanceFromIntro: (data: { firstName: string; lastName: string; location: string }) =>
+      dispatch({ type: "ADVANCE_INTRO", ...data }),
+    advanceFromStarter: (userType: UserType) =>
+      dispatch({ type: "ADVANCE_STARTER", userType }),
     setPersona: (persona: Persona) => dispatch({ type: "SET_PERSONA", persona }),
     advanceFrom22: (data: { schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }) =>
       dispatch({ type: "ADVANCE_2_2", ...data }),

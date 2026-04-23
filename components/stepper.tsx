@@ -4,11 +4,11 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const STAGES = [
-  { num: 1 as const, label: "Your situation"     },
-  { num: 2 as const, label: "Your preferences"   },
-  { num: 3 as const, label: "Your starting point"},
-  { num: 4 as const, label: "Final questions"    },
-  { num: 5 as const, label: "Ready to go"        },
+  { num: 1 as const, label: "Getting to know you" },
+  { num: 2 as const, label: "Your goals"           },
+  { num: 3 as const, label: "Your starting point"  },
+  { num: 4 as const, label: "Final questions"      },
+  { num: 5 as const, label: "Ready to go"          },
 ]
 
 type StageNum = 1 | 2 | 3 | 4 | 5

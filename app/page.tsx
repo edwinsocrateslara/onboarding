@@ -3,6 +3,13 @@
 import { ArrowLeft, User } from "lucide-react"
 import { useOnboarding, getStageForStep } from "@/hooks/use-onboarding"
 
+import { StepIntro }              from "@/components/steps/step-intro"
+import { StepStarter }            from "@/components/steps/step-starter"
+import { Step22Student }          from "@/components/steps/step-2-2-student"
+import { Step22RecentlyGraduated } from "@/components/steps/step-2-2-recently-graduated"
+import { Step22Employed }         from "@/components/steps/step-2-2-employed"
+import { Step22Unemployed }       from "@/components/steps/step-2-2-unemployed"
+import { Step22Returning }        from "@/components/steps/step-2-2-returning"
 import { Step22 } from "@/components/steps/step-2-2"
 import { Step23 } from "@/components/steps/step-2-3"
 import { Step24 } from "@/components/steps/step-2-4"
@@ -13,8 +20,8 @@ import { Step40 } from "@/components/steps/step-4-0"
 import { Step41 } from "@/components/steps/step-4-1"
 
 const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
-  1: "Your situation",
-  2: "Your preferences",
+  1: "Getting to know you",
+  2: "Your goals",
   3: "Your starting point",
   4: "Final questions",
   5: "Ready to go",
@@ -23,6 +30,8 @@ const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
 export default function OnboardingPage() {
   const {
     state,
+    advanceFromIntro,
+    advanceFromStarter,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -31,7 +40,6 @@ export default function OnboardingPage() {
     advanceFrom33,
     advanceFrom40,
     back,
-    jumpToStage,
   } = useOnboarding()
 
   const currentStage = getStageForStep(state.step)
@@ -41,14 +49,34 @@ export default function OnboardingPage() {
   if (currentStage > 3) completedStages.push(3)
   if (currentStage > 4) completedStages.push(4)
 
-  const showBack = state.step !== "2.2"
+  const showBack    = state.step !== "intro"
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
-
   const progressPct = currentStage * 20
 
   function renderStep() {
     switch (state.step) {
+      case "intro":
+        return (
+          <StepIntro
+            initialFirstName={state.firstName}
+            initialLastName={state.lastName}
+            initialLocation={state.location}
+            onAdvance={advanceFromIntro}
+          />
+        )
+      case "starter":
+        return (
+          <StepStarter
+            initialValue={state.userType}
+            onAdvance={advanceFromStarter}
+          />
+        )
+      case "2.2-student":           return <Step22Student />
+      case "2.2-recently-graduated": return <Step22RecentlyGraduated />
+      case "2.2-employed":          return <Step22Employed />
+      case "2.2-unemployed":        return <Step22Unemployed />
+      case "2.2-returning":         return <Step22Returning />
       case "2.2":
         return (
           <Step22
@@ -159,10 +187,7 @@ export default function OnboardingPage() {
       <div className="shrink-0 h-1 rounded-full relative z-10" style={{ background: "#e5e7eb" }}>
         <div
           className="h-full rounded-full transition-all duration-300 ease-out"
-          style={{
-            width: `${progressPct}%`,
-            background: "#6366f1",
-          }}
+          style={{ width: `${progressPct}%`, background: "#6366f1" }}
         />
       </div>
 

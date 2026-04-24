@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { ArrowLeft, User } from "lucide-react"
 import { useOnboarding, getStageForStep } from "@/hooks/use-onboarding"
 
@@ -22,12 +23,19 @@ import { Step33 } from "@/components/steps/step-3-3"
 import { Step40 } from "@/components/steps/step-4-0"
 import { Step41 } from "@/components/steps/step-4-1"
 
-const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
+const STAGE_NAMES_5: Record<1 | 2 | 3 | 4 | 5, string> = {
   1: "Getting to know you",
   2: "Your goals",
-  3: "Your starting point",
+  3: "Your situation",
   4: "Final questions",
-  5: "Ready to go",
+  5: "Complete",
+}
+
+const STAGE_NAMES_4: Record<1 | 2 | 3 | 4, string> = {
+  1: "Getting to know you",
+  2: "Your goals",
+  3: "Your situation",
+  4: "Complete",
 }
 
 export default function OnboardingPage() {
@@ -38,6 +46,8 @@ export default function OnboardingPage() {
     advanceFromQ2,
     advanceFromEducation,
     advanceFromResume,
+    setPersona,
+    setTenantConfig,
     advanceFrom22,
     advanceFrom23,
     advanceFrom24,
@@ -48,17 +58,23 @@ export default function OnboardingPage() {
     back,
   } = useOnboarding()
 
-  const currentStage = getStageForStep(state.step)
-  const completedStages: (1 | 2 | 3 | 4 | 5)[] = []
-  if (currentStage > 1) completedStages.push(1)
-  if (currentStage > 2) completedStages.push(2)
-  if (currentStage > 3) completedStages.push(3)
-  if (currentStage > 4) completedStages.push(4)
+  // Read ?tenant=no-form once on mount — no visible UI toggle
+  useEffect(() => {
+    const noForm = new URLSearchParams(window.location.search).get("tenant") === "no-form"
+    if (noForm) setTenantConfig(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const showBack    = state.step !== "intro"
+  const { hasTenantForm } = state
+  const totalStages  = hasTenantForm ? 5 : 4
+  const currentStage = getStageForStep(state.step, hasTenantForm)
+  const stageName    = hasTenantForm
+    ? STAGE_NAMES_5[currentStage]
+    : STAGE_NAMES_4[currentStage as 1 | 2 | 3 | 4]
+  const progressPct  = (currentStage / totalStages) * 100
+
+  const showBack       = state.step !== "intro"
   const transitionClass =
     state.direction === "back" ? "animate-screen-back" : "animate-screen-forward"
-  const progressPct = currentStage * 20
 
   function renderStep() {
     switch (state.step) {
@@ -93,7 +109,14 @@ export default function OnboardingPage() {
       case "2.3-resume":
         return <Step23Resume onAdvance={advanceFromResume} />
       case "3.classification-pending":
-        return <Step3ClassificationPending />
+        return (
+          <Step3ClassificationPending
+            userType={state.userType!}
+            helpQuestionAnswer={state.helpQuestionAnswer}
+            helpQuestionOtherText={state.helpQuestionOtherText}
+            onClassified={setPersona}
+          />
+        )
       case "2.2":
         return (
           <Step22
@@ -150,7 +173,7 @@ export default function OnboardingPage() {
       case "4.0":
         return <Step40 onAdvance={advanceFrom40} />
       case "4.1":
-        return <Step41 />
+        return <Step41 persona={state.classification!.persona} />
     }
   }
 
@@ -185,10 +208,10 @@ export default function OnboardingPage() {
 
         <div className="flex-1 min-w-0">
           <p className="text-[11px] font-medium" style={{ color: "var(--color-muted)" }}>
-            Step {currentStage} of 5
+            Step {currentStage} of {totalStages}
           </p>
           <p className="text-[13px] font-semibold truncate" style={{ color: "var(--color-subtle)" }}>
-            {STAGE_NAMES[currentStage]}
+            {stageName}
           </p>
         </div>
 

@@ -120,7 +120,8 @@ export interface OnboardingState {
   resumeUploaded: boolean
   resumeSkipped:  boolean
   // Classification (set after Q2 help question — Phase 4)
-  classification: ClassificationResult | null
+  classification:  ClassificationResult | null
+  hasTenantForm:   boolean
   // Active Jobseeker Stage 2 (Q2)
   schedulePreference: ScheduleValue[]
   workModality:       WorkModalityValue | null
@@ -142,7 +143,6 @@ export interface OnboardingState {
   // Career Explorer Stage 2 (Q2)
   eceExperiences:      { type: ExperienceContextType; detail: string }[]
   eceNoneSelected:     boolean
-  eceEmploymentStatus: "student" | "employed" | "unemployed" | null
   // Career Explorer Stage 3 (Q3)
   eceCareerInterests: CareerAreaInterestValue[]
   // Stage 4 tenant form
@@ -165,11 +165,12 @@ type Action =
   | { type: "SET_PERSONA"; persona: Persona }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
-  | { type: "ADVANCE_2_4"; experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean; employmentStatus: "student" | "employed" | "unemployed" }
+  | { type: "ADVANCE_2_4"; experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean }
   | { type: "ADVANCE_3_1"; diagnostics: ApplicationDiagnosticsValue }
   | { type: "ADVANCE_3_2"; availability: AvailabilityValue; financialConstraint: FinancialConstraintValue; payMin: string; payMinUnit: PayUnitValue; payTarget: string; payTargetUnit: PayUnitValue }
   | { type: "ADVANCE_3_3"; careerInterests: CareerAreaInterestValue[] }
   | { type: "ADVANCE_4_0"; countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }
+  | { type: "SET_TENANT_CONFIG"; hasTenantForm: boolean }
   | { type: "BACK" }
   | { type: "JUMP_TO_STAGE"; stage: 1 | 2 | 3 | 4 }
 
@@ -190,7 +191,6 @@ const STAGE_2_CLEAR = {
   ccPayTargetUnit:       null as PayUnitValue | null,
   eceExperiences:        [] as { type: ExperienceContextType; detail: string }[],
   eceNoneSelected:       false,
-  eceEmploymentStatus:   null as "student" | "employed" | "unemployed" | null,
   eceCareerInterests:    [] as CareerAreaInterestValue[],
 }
 
@@ -214,6 +214,7 @@ function initState(): OnboardingState {
     resumeUploaded: false,
     resumeSkipped:  false,
     classification:    null,
+    hasTenantForm:     true,
     ...STAGE_2_CLEAR,
     tenantCountryCode:  "",
     tenantPhone:        "",
@@ -341,15 +342,18 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         direction:           "forward",
         eceExperiences:      action.experiences,
         eceNoneSelected:     action.noneSelected,
-        eceEmploymentStatus: action.employmentStatus,
         eceCareerInterests:  [],
       }
+    }
+
+    case "SET_TENANT_CONFIG": {
+      return { ...state, hasTenantForm: action.hasTenantForm }
     }
 
     case "ADVANCE_3_1": {
       return {
         ...state,
-        step:                  "4.0",
+        step:                  state.hasTenantForm ? "4.0" : "4.1",
         direction:             "forward",
         applicationDiagnostics: action.diagnostics,
       }
@@ -358,7 +362,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_3_2": {
       return {
         ...state,
-        step:                  "4.0",
+        step:                  state.hasTenantForm ? "4.0" : "4.1",
         direction:             "forward",
         ccAvailability:        action.availability,
         ccFinancialConstraint: action.financialConstraint,
@@ -372,7 +376,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_3_3": {
       return {
         ...state,
-        step:               "4.0",
+        step:               state.hasTenantForm ? "4.0" : "4.1",
         direction:          "forward",
         eceCareerInterests: action.careerInterests,
       }
@@ -422,10 +426,10 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         "2.3-education":          "2.2-recently-graduated",
         "2.3-resume":             resumeBack,
         "3.classification-pending": classificationBack,
-        // Old Q2 screens (reachable via SET_PERSONA in Phase 4)
-        "2.2": null,
-        "2.3": null,
-        "2.4": null,
+        // Back from persona Q3 returns to the user's Q2 help question
+        "2.2": ut ? USER_TYPE_Q2[ut] : "starter",
+        "2.3": ut ? USER_TYPE_Q2[ut] : "starter",
+        "2.4": ut ? USER_TYPE_Q2[ut] : "starter",
         "3.1": "2.2",
         "3.2": "2.3",
         "3.3": "2.4",
@@ -433,7 +437,10 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
           persona === "career_changer"  ? "3.2" :
           persona === "career_explorer" ? "3.3" :
           "3.1",
-        "4.1": "4.0",
+        "4.1": state.hasTenantForm ? "4.0" :
+          persona === "career_changer"  ? "3.2" :
+          persona === "career_explorer" ? "3.3" :
+          "3.1",
       }
       const prevStep = prev[state.step]
       if (!prevStep) return state
@@ -511,7 +518,7 @@ export function getPreviousAnswer(state: OnboardingState): string | null {
   }
 }
 
-export function getStageForStep(step: Step): 1 | 2 | 3 | 4 | 5 {
+export function getStageForStep(step: Step, hasTenantForm: boolean): 1 | 2 | 3 | 4 | 5 {
   if (step === "intro" || step === "starter") return 1
   if (
     step === "2.2-student" || step === "2.2-recently-graduated" ||
@@ -524,7 +531,7 @@ export function getStageForStep(step: Step): 1 | 2 | 3 | 4 | 5 {
     step === "3.1" || step === "3.2" || step === "3.3"
   ) return 3
   if (step === "4.0") return 4
-  return 5
+  return hasTenantForm ? 5 : 4   // "4.1"
 }
 
 export function useOnboarding() {
@@ -546,7 +553,7 @@ export function useOnboarding() {
       dispatch({ type: "ADVANCE_2_2", ...data }),
     advanceFrom23: (data: { currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }) =>
       dispatch({ type: "ADVANCE_2_3", ...data }),
-    advanceFrom24: (data: { experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean; employmentStatus: "student" | "employed" | "unemployed" }) =>
+    advanceFrom24: (data: { experiences: { type: ExperienceContextType; detail: string }[]; noneSelected: boolean }) =>
       dispatch({ type: "ADVANCE_2_4", ...data }),
     advanceFrom31: (diagnostics: ApplicationDiagnosticsValue) => dispatch({ type: "ADVANCE_3_1", diagnostics }),
     advanceFrom32: (data: { availability: AvailabilityValue; financialConstraint: FinancialConstraintValue; payMin: string; payMinUnit: PayUnitValue; payTarget: string; payTargetUnit: PayUnitValue }) =>
@@ -554,6 +561,7 @@ export function useOnboarding() {
     advanceFrom33: (careerInterests: CareerAreaInterestValue[]) => dispatch({ type: "ADVANCE_3_3", careerInterests }),
     advanceFrom40: (data: { countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }) =>
       dispatch({ type: "ADVANCE_4_0", ...data }),
+    setTenantConfig: (hasTenantForm: boolean) => dispatch({ type: "SET_TENANT_CONFIG", hasTenantForm }),
     back:        () => dispatch({ type: "BACK" }),
     jumpToStage: (stage: 1 | 2 | 3 | 4) => dispatch({ type: "JUMP_TO_STAGE", stage }),
   }

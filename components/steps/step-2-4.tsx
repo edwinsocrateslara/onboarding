@@ -6,11 +6,9 @@ import type { ExperienceContextType } from "@/hooks/use-onboarding"
 import { AssistantQuestion, StickyFooter, FOCUS_RING } from "./shared"
 
 const REGULAR_OPTIONS = [
-  { id: "student",   type: "student"   as ExperienceContextType, label: "I'm currently a student",                         placeholder: "What are you studying?" },
-  { id: "working",   type: "working"   as ExperienceContextType, label: "I'm currently working",                           placeholder: "What's your job?" },
   { id: "past_job",  type: "past_job"  as ExperienceContextType, label: "I've had a past job or internship",               placeholder: "What was it?" },
   { id: "volunteer", type: "volunteer" as ExperienceContextType, label: "I've done volunteer work",                        placeholder: "What kind?" },
-  { id: "courses",   type: "courses"   as ExperienceContextType, label: "I've taken online courses or certifications",     placeholder: "In what area?" },
+  { id: "courses",   type: "courses"   as ExperienceContextType, label: "I've taken courses or certifications",            placeholder: "In what area?" },
   { id: "hobby",     type: "hobby"     as ExperienceContextType, label: "I have a hobby or side project I'm serious about",placeholder: "What is it?" },
 ]
 
@@ -36,12 +34,6 @@ function isReady(selections: SelectionMap): boolean {
   return checked.every(opt => selections[opt.id]?.text.trim() !== "")
 }
 
-function deriveEmploymentStatus(selections: SelectionMap): "student" | "employed" | "unemployed" {
-  if (selections.student?.checked) return "student"
-  if (selections.working?.checked) return "employed"
-  return "unemployed"
-}
-
 function buildExperiences(selections: SelectionMap): { type: ExperienceContextType; detail: string }[] {
   return REGULAR_OPTIONS
     .filter(opt => selections[opt.id]?.checked)
@@ -54,7 +46,6 @@ interface Props {
   onAdvance: (data: {
     experiences: { type: ExperienceContextType; detail: string }[]
     noneSelected: boolean
-    employmentStatus: "student" | "employed" | "unemployed"
   }) => void
 }
 
@@ -117,15 +108,14 @@ export function Step24({ initialExperiences, initialNoneSelected, onAdvance }: P
     onAdvance({
       experiences: buildExperiences(selections),
       noneSelected: selections.none?.checked ?? false,
-      employmentStatus: deriveEmploymentStatus(selections),
     })
   }
 
   return (
     <div className="space-y-5">
       <div>
-        <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far." />
-        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>check all that apply</p>
+        <AssistantQuestion text="To help me suggest directions that fit you, tell me a bit about what you've done so far" />
+        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>(check all that apply)</p>
       </div>
 
       <div className="space-y-2">

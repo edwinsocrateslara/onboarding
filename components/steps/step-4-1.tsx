@@ -1,17 +1,12 @@
 "use client"
 
-export function Step41() {
-  return (
-    <div className="space-y-4">
-      <h1
-        className="text-3xl font-semibold leading-normal w-full text-balance"
-        style={{ color: "#111827" }}
-      >
-        You&apos;re set.
-      </h1>
-      <p className="text-base" style={{ color: "var(--color-muted)" }}>
-        [Handoff screen coming soon.]
-      </p>
-    </div>
-  )
+import { HandoffScreen } from "@/components/handoff-screen"
+import type { Persona } from "@/lib/types"
+
+interface Props {
+  persona: Persona
+}
+
+export function Step41({ persona }: Props) {
+  return <HandoffScreen persona={persona} />
 }

@@ -39,7 +39,7 @@ export function Step23({ initialFrom, initialTo, initialTimeline, onAdvance }: P
 
   return (
     <div className="space-y-7">
-      <AssistantQuestion text="Tell me about the change you're making." />
+      <AssistantQuestion text="Tell me about the change you're making" />
 
       <div className="space-y-2">
         <FieldLabel>What you&apos;re doing now</FieldLabel>

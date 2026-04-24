@@ -121,7 +121,7 @@ export function Step32({
 
   return (
     <div className="space-y-6">
-      <AssistantQuestion text="Let's make sure any plan I suggest is realistic for your situation." />
+      <AssistantQuestion text="Let's make sure any plan I suggest is realistic for your situation" />
 
       <div className="space-y-2">
         <FieldLabel>How many hours per week can you put toward this transition? (training, applications, networking)</FieldLabel>

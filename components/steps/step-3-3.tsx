@@ -9,7 +9,7 @@ const CARDS: { value: CareerAreaInterestValue; main: string; sub: string }[] = [
   { value: "building_fixing",    main: "Building or fixing things",    sub: "engineering, trades, manufacturing"          },
   { value: "numbers_data",       main: "Working with numbers or data", sub: "finance, analytics, accounting"              },
   { value: "helping_people",     main: "Helping people directly",      sub: "healthcare, education, social work"          },
-  { value: "creating_content",   main: "Creating content or designs",  sub: "marketing, media, art, UX"                  },
+  { value: "creating_content",   main: "Creative content or designs",  sub: "marketing, media, art, UX"                  },
   { value: "technical_problems", main: "Solving technical problems",   sub: "IT, software, cybersecurity"                 },
   { value: "running_organizing", main: "Running or organizing things", sub: "operations, logistics, project management"   },
   { value: "selling_persuading", main: "Selling or persuading",        sub: "sales, business development, consulting"     },
@@ -104,7 +104,7 @@ export function Step33({ initialInterests, onAdvance }: Props) {
     <div className="space-y-5">
       <div>
         <AssistantQuestion text="Which of these sound interesting to you?" />
-        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>pick as many as you like — there's no wrong answer</p>
+        <p className="text-sm mt-1" style={{ color: "#9ca3af" }}>(pick as many as you like — there's no wrong answer)</p>
       </div>
 
       <div className="space-y-2">

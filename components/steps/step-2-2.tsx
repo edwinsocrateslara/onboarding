@@ -82,7 +82,7 @@ export function Step22({ initialSchedule, initialModality, initialPayAmount, ini
 
   return (
     <div className="space-y-7">
-      <AssistantQuestion text="To find jobs that actually work for you, I need a few quick details." />
+      <AssistantQuestion text="To find jobs that actually work for you, I need a few quick details" />
 
       <div className="space-y-2">
         <FieldLabel>Schedule</FieldLabel>

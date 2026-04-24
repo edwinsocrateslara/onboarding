@@ -118,7 +118,6 @@ export interface OnboardingState {
   currentlyStudying:  boolean
   // Resume screen (Employed / Unemployed / Returning)
   resumeUploaded: boolean
-  resumeSkipped:  boolean
   // Classification (set after Q2 help question — Phase 4)
   classification:  ClassificationResult | null
   hasTenantForm:   boolean
@@ -161,7 +160,7 @@ type Action =
   | { type: "ADVANCE_STARTER"; userType: UserType }
   | { type: "ADVANCE_Q2"; helpQuestionAnswer: string; helpQuestionOtherText: string; goal: string }
   | { type: "ADVANCE_EDUCATION"; educationLevel: string; major: string; educationStartYear: string; currentlyStudying: boolean }
-  | { type: "ADVANCE_RESUME"; uploaded: boolean; skipped: boolean }
+  | { type: "ADVANCE_RESUME"; uploaded: boolean }
   | { type: "SET_PERSONA"; persona: Persona }
   | { type: "ADVANCE_2_2"; schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }
   | { type: "ADVANCE_2_3"; currentRoleOrField: string; targetCareer: string; targetTimeline: TimelineValue }
@@ -212,7 +211,6 @@ function initState(): OnboardingState {
     educationStartYear: "",
     currentlyStudying:  false,
     resumeUploaded: false,
-    resumeSkipped:  false,
     classification:    null,
     hasTenantForm:     true,
     ...STAGE_2_CLEAR,
@@ -287,7 +285,6 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         step:           "3.classification-pending",
         direction:      "forward",
         resumeUploaded: action.uploaded,
-        resumeSkipped:  action.skipped,
       }
     }
 
@@ -524,10 +521,10 @@ export function getStageForStep(step: Step, hasTenantForm: boolean): 1 | 2 | 3 |
     step === "2.2-student" || step === "2.2-recently-graduated" ||
     step === "2.2-employed" || step === "2.2-unemployed" || step === "2.2-returning" ||
     step === "2.3-education" || step === "2.3-resume" ||
-    step === "2.2" || step === "2.3" || step === "2.4"
+    step === "3.classification-pending"
   ) return 2
   if (
-    step === "3.classification-pending" ||
+    step === "2.2" || step === "2.3" || step === "2.4" ||
     step === "3.1" || step === "3.2" || step === "3.3"
   ) return 3
   if (step === "4.0") return 4
@@ -546,7 +543,7 @@ export function useOnboarding() {
       dispatch({ type: "ADVANCE_Q2", ...data }),
     advanceFromEducation: (data: { educationLevel: string; major: string; educationStartYear: string; currentlyStudying: boolean }) =>
       dispatch({ type: "ADVANCE_EDUCATION", ...data }),
-    advanceFromResume: (data: { uploaded: boolean; skipped: boolean }) =>
+    advanceFromResume: (data: { uploaded: boolean }) =>
       dispatch({ type: "ADVANCE_RESUME", ...data }),
     setPersona: (persona: Persona) => dispatch({ type: "SET_PERSONA", persona }),
     advanceFrom22: (data: { schedule: ScheduleValue[]; modality: WorkModalityValue; payAmount: string; payUnit: PayUnitValue }) =>

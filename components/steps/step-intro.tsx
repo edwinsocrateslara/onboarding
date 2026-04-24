@@ -23,6 +23,19 @@ const CITIES = [
   "London UK",
 ]
 
+// Display-only: "Seattle WA USA" → "Seattle, WA, USA" / "London UK" → "London, UK"
+function formatCity(raw: string): string {
+  const parts   = raw.trim().split(/\s+/)
+  const country = parts[parts.length - 1]
+  const mid     = parts[parts.length - 2]
+  if (mid && /^[A-Z]{2}$/.test(mid)) {
+    const city = parts.slice(0, parts.length - 2).join(" ")
+    return `${city}, ${mid}, ${country}`
+  }
+  const city = parts.slice(0, parts.length - 1).join(" ")
+  return `${city}, ${country}`
+}
+
 function LocationField({
   initialValue,
   onCommit,
@@ -56,7 +69,7 @@ function LocationField({
     <div ref={containerRef} className="relative">
       <input
         type="text"
-        value={query}
+        value={CITIES.includes(query) ? formatCity(query) : query}
         onChange={e => { setQuery(e.target.value); onCommit(""); setOpen(true) }}
         onFocus={e => { setOpen(true); e.currentTarget.style.boxShadow = FOCUS_STYLE }}
         onBlur={e => { e.currentTarget.style.boxShadow = "" }}
@@ -82,7 +95,7 @@ function LocationField({
                 className="w-full text-left px-3 py-2 text-sm hover:bg-[#f9fafb] transition-colors"
                 style={{ color: city === query ? "#6366f1" : INK, fontWeight: city === query ? 500 : 400 }}
               >
-                {city}
+                {formatCity(city)}
               </button>
             </li>
           ))}

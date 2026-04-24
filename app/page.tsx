@@ -24,7 +24,7 @@ import { Step40 } from "@/components/steps/step-4-0"
 import { Step41 } from "@/components/steps/step-4-1"
 
 const STAGE_NAMES_5: Record<1 | 2 | 3 | 4 | 5, string> = {
-  1: "Getting to know you",
+  1: "About you",
   2: "Your goals",
   3: "Your situation",
   4: "Final questions",
@@ -32,7 +32,7 @@ const STAGE_NAMES_5: Record<1 | 2 | 3 | 4 | 5, string> = {
 }
 
 const STAGE_NAMES_4: Record<1 | 2 | 3 | 4, string> = {
-  1: "Getting to know you",
+  1: "About you",
   2: "Your goals",
   3: "Your situation",
   4: "Complete",
@@ -190,46 +190,49 @@ export default function OnboardingPage() {
           zIndex: 0,
         }}
       />
-      {/* Nav header */}
-      <div className="shrink-0 px-4 pt-3 pb-2 flex items-center gap-3 relative z-10" style={{ background: "var(--color-canvas)" }}>
-        <div className="shrink-0 w-8 flex items-center">
-          {showBack ? (
-            <button
-              type="button"
-              onClick={back}
-              aria-label="Go back"
-              className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
-              style={{ color: "#374151" }}
+      {/* Nav header + progress bar — hidden on Intro */}
+      {state.step !== "intro" && (
+        <>
+          <div className="shrink-0 px-4 pt-3 pb-2 flex items-center gap-3 relative z-10" style={{ background: "var(--color-canvas)" }}>
+            <div className="shrink-0 w-8 flex items-center">
+              {showBack ? (
+                <button
+                  type="button"
+                  onClick={back}
+                  aria-label="Go back"
+                  className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f3f4f6] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+                  style={{ color: "#374151" }}
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+              ) : null}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-medium" style={{ color: "var(--color-muted)" }}>
+                Step {currentStage} of {totalStages}
+              </p>
+              <p className="text-[13px] font-semibold truncate" style={{ color: "var(--color-subtle)" }}>
+                {stageName}
+              </p>
+            </div>
+
+            <div
+              className="shrink-0 h-8 w-8 rounded-full flex items-center justify-center"
+              style={{ background: "#eef2ff" }}
             >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-          ) : null}
-        </div>
+              <User className="h-4 w-4" style={{ color: "#6366f1" }} />
+            </div>
+          </div>
 
-        <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-medium" style={{ color: "var(--color-muted)" }}>
-            Step {currentStage} of {totalStages}
-          </p>
-          <p className="text-[13px] font-semibold truncate" style={{ color: "var(--color-subtle)" }}>
-            {stageName}
-          </p>
-        </div>
-
-        <div
-          className="shrink-0 h-8 w-8 rounded-full flex items-center justify-center"
-          style={{ background: "#eef2ff" }}
-        >
-          <User className="h-4 w-4" style={{ color: "#6366f1" }} />
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="shrink-0 h-1 rounded-full relative z-10" style={{ background: "#e5e7eb" }}>
-        <div
-          className="h-full rounded-full transition-all duration-300 ease-out"
-          style={{ width: `${progressPct}%`, background: "#6366f1" }}
-        />
-      </div>
+          <div className="shrink-0 h-1 rounded-full relative z-10" style={{ background: "#e5e7eb" }}>
+            <div
+              className="h-full rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${progressPct}%`, background: "#6366f1" }}
+            />
+          </div>
+        </>
+      )}
 
       {/* Scrollable content */}
       <main className="flex-1 overflow-y-auto relative z-10">

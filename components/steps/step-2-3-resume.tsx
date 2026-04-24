@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Upload, FileText, CheckCircle } from "lucide-react"
 import { StickyFooter } from "./shared"
 
@@ -19,13 +19,11 @@ const MOCK_REVIEW = {
 type UploadState = "idle" | "processing" | "done"
 
 interface Props {
-  onAdvance: (data: { uploaded: boolean; skipped: boolean }) => void
+  onAdvance: (data: { uploaded: boolean }) => void
 }
 
 export function Step23Resume({ onAdvance }: Props) {
   const [uploadState, setUploadState] = useState<UploadState>("idle")
-  const [skipped,     setSkipped]     = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleUpload = () => {
     if (uploadState !== "idle") return
@@ -33,12 +31,7 @@ export function Step23Resume({ onAdvance }: Props) {
     setTimeout(() => setUploadState("done"), 1500)
   }
 
-  const handleSkip = () => {
-    setSkipped(true)
-    onAdvance({ uploaded: false, skipped: true })
-  }
-
-  const ready = uploadState === "done" || skipped
+  const ready = uploadState === "done"
 
   return (
     <div className="space-y-6">
@@ -96,22 +89,10 @@ export function Step23Resume({ onAdvance }: Props) {
         </div>
       )}
 
-      {/* Hidden file input — not actually used, upload is purely mocked */}
-      <input ref={inputRef} type="file" accept=".pdf,.docx" className="sr-only" tabIndex={-1} aria-hidden />
-
-      <button
-        type="button"
-        onClick={handleSkip}
-        className="w-full text-sm text-center py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1] rounded"
-        style={{ color: SECONDARY }}
-      >
-        Skip for now — I&apos;ll add this later
-      </button>
-
       <div className="h-20" aria-hidden="true" />
       <StickyFooter
-        onClick={() => onAdvance({ uploaded: uploadState === "done", skipped: false })}
-        disabled={!ready || skipped}
+        onClick={() => onAdvance({ uploaded: true })}
+        disabled={!ready}
         label="Next"
       />
     </div>

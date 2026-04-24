@@ -2,10 +2,10 @@
 
 import type { Persona } from "@/lib/types"
 
-const BODY: Record<Persona, string> = {
-  active_jobseeker: "You're all set. I've got what I need to start surfacing real jobs for you.",
-  career_changer:   "You're all set. I've got what I need to map out your transition.",
-  career_explorer:  "You're all set. I've got what I need to help you figure out the right direction.",
+const PERSONA_LABEL: Record<Persona, string> = {
+  active_jobseeker: "Active Jobseeker",
+  career_changer:   "Career Changer",
+  career_explorer:  "Career Explorer",
 }
 
 interface Props {
@@ -15,31 +15,40 @@ interface Props {
 export function HandoffScreen({ persona }: Props) {
   return (
     <div className="flex flex-col items-center justify-center flex-1 px-6 py-16 text-center animate-fade-in">
-      <div
-        className="h-14 w-14 rounded-full flex items-center justify-center text-xl font-semibold mb-6"
-        style={{ background: "rgba(201,100,66,0.12)", color: "#c96442" }}
+      {/* Prototype badge */}
+      <span
+        className="inline-block rounded-full px-3 py-1 text-[11px] font-medium tracking-wide uppercase mb-8"
+        style={{ background: "#f3f4f6", color: "#6b7280", border: "1px solid #e5e7eb" }}
       >
-        F
-      </div>
+        Prototype end
+      </span>
+
       <h1
-        className="text-[24px] font-semibold mb-3 font-serif"
-        style={{ color: "#141413" }}
+        className="text-[24px] font-semibold mb-3"
+        style={{ color: "#111827" }}
       >
-        Onboarding complete
+        End of prototype
       </h1>
-      <p className="text-[16px] leading-[1.6] max-w-[340px] mb-8" style={{ color: "#5e5d59" }}>
-        {BODY[persona]}
-      </p>
-      <button
-        type="button"
-        disabled
-        className="rounded-xl px-8 py-3 text-[15px] font-medium opacity-50 cursor-not-allowed"
-        style={{ background: "#c96442", color: "#faf9f5" }}
-        aria-label="Continue (coming soon)"
-        title="Coming soon"
+
+      <p
+        className="text-[15px] leading-[1.6] max-w-[400px] mb-8"
+        style={{ color: "#6b7280" }}
       >
-        Continue
-      </button>
+        Onboarding data collected. In production, this is where the user would transition into the platform experience.
+      </p>
+
+      {/* Classification result */}
+      <div
+        className="w-full max-w-[400px] rounded-xl p-5 text-left"
+        style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
+      >
+        <p className="text-[11px] font-medium uppercase tracking-wide mb-1" style={{ color: "#9ca3af" }}>
+          Classified as
+        </p>
+        <p className="text-[15px] font-semibold" style={{ color: "#374151" }}>
+          {PERSONA_LABEL[persona]}
+        </p>
+      </div>
     </div>
   )
 }

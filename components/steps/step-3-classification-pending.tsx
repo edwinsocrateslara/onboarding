@@ -1,27 +1,27 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { C } from "./shared"
 import { classifyDeterministic, classifyOther } from "@/lib/classify"
-import type { UserType } from "@/hooks/use-onboarding"
+import type { Q1Answer, Q2Answer } from "@/lib/classify"
 import type { Persona } from "@/lib/types"
 
-const SECONDARY = "#6b7280"
-const PRIMARY   = "#6366f1"
-
 interface Props {
-  userType:              UserType
-  helpQuestionAnswer:    string
-  helpQuestionOtherText: string
-  onClassified:          (persona: Persona) => void
+  q1Answer:     Q1Answer
+  q1FreeText:   string
+  q2Answer:     Q2Answer
+  q2FreeText:   string
+  onClassified: (persona: Persona) => void
 }
 
 export function Step3ClassificationPending({
-  userType,
-  helpQuestionAnswer,
-  helpQuestionOtherText,
+  q1Answer,
+  q1FreeText,
+  q2Answer,
+  q2FreeText,
   onClassified,
 }: Props) {
-  const [classifying, setClassifying] = useState(helpQuestionAnswer === "other")
+  const [classifying, setClassifying] = useState(true)
   const firedRef    = useRef(false)
   const callbackRef = useRef(onClassified)
   callbackRef.current = onClassified
@@ -30,26 +30,32 @@ export function Step3ClassificationPending({
     if (firedRef.current) return
     firedRef.current = true
 
-    if (helpQuestionAnswer !== "other") {
-      try {
-        const persona = classifyDeterministic(userType, helpQuestionAnswer)
-        requestAnimationFrame(() => callbackRef.current(persona))
-      } catch {
-        requestAnimationFrame(() => callbackRef.current("career_explorer"))
-      }
-      return
-    }
+    const useLLM = q1Answer === "d" || q2Answer === "e"
+    const start  = Date.now()
 
-    const start = Date.now()
-    classifyOther(userType, helpQuestionOtherText).then(persona => {
+    if (!useLLM) {
+      const persona = classifyDeterministic(
+        q1Answer as "a" | "b" | "c",
+        q2Answer as "a" | "b" | "c" | "d",
+      )
       const elapsed = Date.now() - start
       const delay   = Math.max(0, 500 - elapsed)
       setTimeout(() => {
         setClassifying(false)
         callbackRef.current(persona)
       }, delay)
+      return
+    }
+
+    classifyOther(q1Answer, q1FreeText, q2Answer, q2FreeText).then(result => {
+      const elapsed = Date.now() - start
+      const delay   = Math.max(0, 500 - elapsed)
+      setTimeout(() => {
+        setClassifying(false)
+        callbackRef.current(result.persona)
+      }, delay)
     })
-  }, [helpQuestionAnswer, helpQuestionOtherText, userType])
+  }, [q1Answer, q1FreeText, q2Answer, q2FreeText])
 
   if (!classifying) return null
 
@@ -57,10 +63,10 @@ export function Step3ClassificationPending({
     <div className="flex flex-col items-center justify-center gap-4 py-20">
       <div
         className="h-10 w-10 rounded-full border-4 animate-spin"
-        style={{ borderColor: `${PRIMARY}40`, borderTopColor: PRIMARY }}
+        style={{ borderColor: `${C.primary}40`, borderTopColor: C.primary }}
         aria-label="Classifying"
       />
-      <p className="text-[15px]" style={{ color: SECONDARY }}>
+      <p className="text-[15px]" style={{ color: C.muted }}>
         Personalizing your experience…
       </p>
     </div>

@@ -1,12 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { StickyFooter } from "./shared"
-
-const INK          = "#111827"
-const SECONDARY    = "#6b7280"
-const BORDER       = "#e5e7eb"
-const FOCUS_STYLE  = "0 0 0 2px #ffffff, 0 0 0 4px #6366f1"
+import { C, FOCUS_RING, StickyFooter } from "./shared"
 
 const CITIES = [
   "Toronto ON Canada",
@@ -71,12 +66,12 @@ function LocationField({
         type="text"
         value={CITIES.includes(query) ? formatCity(query) : query}
         onChange={e => { setQuery(e.target.value); onCommit(""); setOpen(true) }}
-        onFocus={e => { setOpen(true); e.currentTarget.style.boxShadow = FOCUS_STYLE }}
+        onFocus={e => { setOpen(true); e.currentTarget.style.boxShadow = FOCUS_RING }}
         onBlur={e => { e.currentTarget.style.boxShadow = "" }}
         placeholder="Start typing..."
         autoComplete="off"
         className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
-        style={{ background: "#ffffff", color: INK, border: `1px solid ${BORDER}` }}
+        style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
         aria-label="Location"
         aria-expanded={open}
         aria-autocomplete="list"
@@ -84,7 +79,7 @@ function LocationField({
       {open && filtered.length > 0 && (
         <ul
           className="absolute z-30 mt-1 w-full rounded-md overflow-auto shadow-md"
-          style={{ background: "#ffffff", border: `1px solid ${BORDER}`, maxHeight: "192px" }}
+          style={{ background: C.surface, border: `1px solid ${C.border}`, maxHeight: "192px" }}
           role="listbox"
         >
           {filtered.map(city => (
@@ -93,7 +88,7 @@ function LocationField({
                 type="button"
                 onMouseDown={() => select(city)}
                 className="w-full text-left px-3 py-2 text-sm hover:bg-[#f9fafb] transition-colors"
-                style={{ color: city === query ? "#6366f1" : INK, fontWeight: city === query ? 500 : 400 }}
+                style={{ color: city === query ? C.primary : C.ink, fontWeight: city === query ? 500 : 400 }}
               >
                 {formatCity(city)}
               </button>
@@ -107,7 +102,7 @@ function LocationField({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-sm font-medium mb-1.5" style={{ color: SECONDARY }}>
+    <p className="text-sm font-medium mb-1.5" style={{ color: C.muted }}>
       {children}
     </p>
   )
@@ -133,10 +128,10 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-semibold leading-normal w-full text-balance" style={{ color: INK }}>
+        <h1 className="text-3xl font-semibold leading-normal w-full text-balance" style={{ color: C.ink }}>
           Let&apos;s get started
-        </h2>
-        <p className="text-base mt-1" style={{ color: SECONDARY }}>
+        </h1>
+        <p className="text-base mt-2" style={{ color: C.muted }}>
           Tell us a bit about yourself.
         </p>
       </div>
@@ -150,8 +145,8 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
             className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
-            style={{ background: "#ffffff", color: INK, border: `1px solid ${BORDER}` }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_STYLE)}
+            style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}
             aria-label="First name"
           />
@@ -164,8 +159,8 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
             value={lastName}
             onChange={e => setLastName(e.target.value)}
             className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
-            style={{ background: "#ffffff", color: INK, border: `1px solid ${BORDER}` }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_STYLE)}
+            style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}
             aria-label="Last name"
           />
@@ -179,7 +174,7 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
 
       <div
         className="rounded-lg px-4 py-3 text-[13px] leading-[1.55]"
-        style={{ background: "#f9fafb", border: `1px solid ${BORDER}`, color: SECONDARY }}
+        style={{ background: "#f9fafb", border: `1px solid ${C.border}`, color: C.muted }}
       >
         We never sell your data, and you can opt out from having your information used for internal research at any time in your settings.
       </div>

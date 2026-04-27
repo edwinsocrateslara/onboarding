@@ -1,4 +1,4 @@
-export type Persona = "active_jobseeker" | "career_changer" | "career_explorer"
+export type Persona = "jobseeker" | "career_switcher" | "career_explorer"
 
 export interface ClassificationResult {
   persona: Persona

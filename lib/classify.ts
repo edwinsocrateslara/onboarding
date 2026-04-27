@@ -1,108 +1,72 @@
-import type { UserType } from "@/hooks/use-onboarding"
 import type { Persona } from "@/lib/types"
 
-export const Q2_NAMED_OPTIONS: Record<UserType, { letter: string; label: string }[]> = {
-  student: [
-    { letter: "a", label: "I want to find an internship or part-time job" },
-    { letter: "b", label: "I want to build skills for my future career" },
-    { letter: "c", label: "I'm not sure yet — I'd like to explore what careers are out there for me" },
-  ],
-  recently_graduated: [
-    { letter: "a", label: "I want to find a job as soon as possible" },
-    { letter: "b", label: "I'm not sure yet — I'd like to explore what careers are out there for me" },
-    { letter: "c", label: "I want to build skills to become more competitive" },
-  ],
-  employed: [
-    { letter: "a", label: "I want to find a better job in my current field" },
-    { letter: "b", label: "I want to switch into a different career" },
-  ],
-  unemployed: [
-    { letter: "a", label: "I want to find a job as soon as possible" },
-    { letter: "b", label: "I want to figure out what kind of job is right for me" },
-    { letter: "c", label: "I want to switch into a new career" },
-    { letter: "d", label: "I want to build skills before I start applying" },
-  ],
-  returning_to_workforce: [
-    { letter: "a", label: "I want to find a job in my previous field" },
-    { letter: "b", label: "I want to try something new — I'm open to a change" },
-    { letter: "c", label: "I want to update my skills before jumping back in" },
-  ],
-}
+export type Q1Answer = "a" | "b" | "c" | "d"
+export type Q2Answer = "a" | "b" | "c" | "d" | "e"
 
-export const VALID_PERSONAS: Record<UserType, Persona[]> = {
-  student:                ["active_jobseeker", "career_explorer"],
-  recently_graduated:     ["active_jobseeker", "career_explorer"],
-  employed:               ["active_jobseeker", "career_changer"],
-  unemployed:             ["active_jobseeker", "career_explorer", "career_changer"],
-  returning_to_workforce: ["active_jobseeker", "career_changer"],
-}
-
-export const FALLBACK_PERSONA: Record<UserType, Persona> = {
-  student:                "career_explorer",
-  recently_graduated:     "career_explorer",
-  employed:               "active_jobseeker",
-  unemployed:             "active_jobseeker",
-  returning_to_workforce: "active_jobseeker",
-}
-
-type MatrixKey = `${UserType}|${string}`
+type DeterministicQ1 = "a" | "b" | "c"
+type DeterministicQ2 = "a" | "b" | "c" | "d"
+type MatrixKey = `${DeterministicQ1}|${DeterministicQ2}`
 
 const MATRIX: Record<MatrixKey, Persona> = {
-  "student|a":                "active_jobseeker",
-  "student|b":                "career_explorer",
-  "student|c":                "career_explorer",
-  "recently_graduated|a":     "active_jobseeker",
-  "recently_graduated|b":     "career_explorer",
-  "recently_graduated|c":     "active_jobseeker",
-  "employed|a":               "active_jobseeker",
-  "employed|b":               "career_changer",
-  "unemployed|a":             "active_jobseeker",
-  "unemployed|b":             "career_explorer",
-  "unemployed|c":             "career_changer",
-  "unemployed|d":             "active_jobseeker",
-  "returning_to_workforce|a": "active_jobseeker",
-  "returning_to_workforce|b": "career_changer",
-  "returning_to_workforce|c": "active_jobseeker",
+  "a|a": "jobseeker",
+  "a|b": "career_explorer",
+  "a|c": "career_explorer",  // students haven't started a career to switch from
+  "a|d": "jobseeker",
+  "b|a": "jobseeker",
+  "b|b": "career_explorer",
+  "b|c": "career_switcher",
+  "b|d": "jobseeker",
+  "c|a": "jobseeker",
+  "c|b": "career_explorer",
+  "c|c": "career_switcher",
+  "c|d": "jobseeker",
 }
 
-export function classifyDeterministic(userType: UserType, helpQuestionAnswer: string): Persona {
-  const key: MatrixKey = `${userType}|${helpQuestionAnswer}`
-  const persona = MATRIX[key]
-  if (!persona) throw new Error(`No matrix entry for ${key}`)
-  return persona
+export function classifyDeterministic(q1Answer: DeterministicQ1, q2Answer: DeterministicQ2): Persona {
+  return MATRIX[`${q1Answer}|${q2Answer}`] ?? "jobseeker"
 }
 
-export async function classifyOther(userType: UserType, otherText: string): Promise<Persona> {
-  const namedOptions = Q2_NAMED_OPTIONS[userType]
-  const fallback     = FALLBACK_PERSONA[userType]
+export interface ClassificationResponse {
+  persona:    Persona
+  confidence: "high" | "medium" | "low"
+  reasoning:  string
+}
 
+const VALID_PERSONAS: Persona[] = ["jobseeker", "career_explorer", "career_switcher"]
+
+const FALLBACK: ClassificationResponse = {
+  persona:    "jobseeker",
+  confidence: "low",
+  reasoning:  "Fallback due to classification error",
+}
+
+export async function classifyOther(
+  q1Answer:   Q1Answer,
+  q1FreeText: string,
+  q2Answer:   Q2Answer,
+  q2FreeText: string,
+): Promise<ClassificationResponse> {
   try {
     const controller = new AbortController()
-    const timeoutId  = setTimeout(() => controller.abort(), 10_000)
+    const timeoutId  = setTimeout(() => controller.abort(), 5_000)
 
     const res = await fetch("/api/classify", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ userType, otherText, namedOptions }),
+      body:    JSON.stringify({ q1Answer, q1FreeText, q2Answer, q2FreeText }),
       signal:  controller.signal,
     })
 
     clearTimeout(timeoutId)
 
-    if (!res.ok) return fallback
+    if (!res.ok) return FALLBACK
 
-    const data = await res.json() as { persona?: Persona; confidence?: string; reasoning?: string }
+    const data = await res.json() as ClassificationResponse
 
-    if (!data.persona) return fallback
+    if (!data.persona || !VALID_PERSONAS.includes(data.persona)) return FALLBACK
 
-    console.log("[classify]", data.reasoning)
-
-    if (data.confidence === "low") return fallback
-
-    if (!VALID_PERSONAS[userType].includes(data.persona)) return fallback
-
-    return data.persona
+    return data
   } catch {
-    return fallback
+    return FALLBACK
   }
 }

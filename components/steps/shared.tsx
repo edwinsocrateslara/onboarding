@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { ArrowLeft, Check } from "lucide-react"
 
-const C = {
+export const C = {
   ink:         "#111827",
   subtle:      "#374151",
   muted:       "#6b7280",

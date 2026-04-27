@@ -2,11 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, Check } from "lucide-react"
-import { StickyFooter, FOCUS_RING } from "./shared"
-
-const INK       = "#111827"
-const SECONDARY = "#6b7280"
-const FOCUS_STYLE = "0 0 0 2px #ffffff, 0 0 0 4px #6366f1"
+import { C, FOCUS_RING, StickyFooter } from "./shared"
 
 const COUNTRY_CODES = [
   { code: "+1",  label: "🇺🇸 +1"  },
@@ -58,14 +54,14 @@ function SelectField({ value, onChange, placeholder, ariaLabel, children }: {
         onChange={e => onChange(e.target.value)}
         aria-label={ariaLabel}
         className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
-        style={{ background: "#ffffff", color: value ? INK : SECONDARY, border: "1px solid #e5e7eb", paddingRight: "36px" }}
-        onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_STYLE)}
+        style={{ background: C.surface, color: value ? C.ink : C.muted, border: `1px solid ${C.border}`, paddingRight: "36px" }}
+        onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
         onBlur={e => (e.currentTarget.style.boxShadow = "")}
       >
         <option value="" disabled>{placeholder}</option>
         {children}
       </select>
-      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: SECONDARY }} />
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: C.muted }} />
     </div>
   )
 }
@@ -75,24 +71,35 @@ function CheckboxRow({ label, checked, onClick }: { label: string; checked: bool
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-lg px-4 py-3 text-sm leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      className="w-full text-left rounded-xl px-4 py-3 text-sm leading-[1.5] transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
       style={
         checked
-          ? { background: "#eef2ff", border: "1.5px solid rgba(99,102,241,0.6)", color: INK }
-          : { background: "#ffffff", border: "1px solid #e5e7eb", color: INK }
+          ? { background: C.accentLight, border: `1.5px solid ${C.accentBorder}`, color: C.ink }
+          : { background: C.surface, border: `1px solid ${C.border}`, color: C.ink }
       }
       aria-pressed={checked}
     >
       <span className="flex items-start gap-3">
         <span
           className="mt-[3px] h-[18px] w-[18px] shrink-0 rounded-[4px] border-2 flex items-center justify-center transition-colors"
-          style={{ borderColor: checked ? "#6366f1" : "#e5e7eb", background: checked ? "#6366f1" : "transparent" }}
+          style={{ borderColor: checked ? C.primary : C.border, background: checked ? C.primary : "transparent" }}
         >
           {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
         </span>
         {label}
       </span>
     </button>
+  )
+}
+
+function FieldQuestion({ question, helper }: { question: string; helper: string }) {
+  return (
+    <div className="mb-1.5">
+      <p className="text-sm font-medium" style={{ color: C.muted }}>
+        {question}<span style={{ color: "#ef4444" }}>*</span>
+      </p>
+      <p className="text-xs mt-0.5" style={{ color: C.muted }}>{helper}</p>
+    </div>
   )
 }
 
@@ -156,17 +163,20 @@ export function Step40({ onAdvance }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-semibold leading-normal w-full text-balance" style={{ color: INK }}>
-          A few final questions
-        </h2>
-        <p className="text-base mt-1" style={{ color: SECONDARY }}>
-          Just a few things to finish setting up your account.
+        <h1 className="text-3xl font-semibold leading-normal w-full text-balance" style={{ color: C.ink }}>
+          Onboarding form
+        </h1>
+        <p className="text-base mt-2" style={{ color: C.muted }}>
+          Just a few final questions before getting started!
         </p>
       </div>
 
       {/* Phone */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium" style={{ color: SECONDARY }}>Phone number</p>
+      <div>
+        <FieldQuestion
+          question="What is your phone number? "
+          helper="Please enter in a valid phone number (+1 111 111 1111)"
+        />
         <div className="flex gap-2">
           <div className="relative w-[110px] shrink-0">
             <select
@@ -174,15 +184,15 @@ export function Step40({ onAdvance }: Props) {
               onChange={e => setCountryCode(e.target.value)}
               aria-label="Country code"
               className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
-              style={{ background: "#ffffff", color: INK, border: "1px solid #e5e7eb", paddingRight: "32px" }}
-              onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_STYLE)}
+              style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}`, paddingRight: "32px" }}
+              onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
               onBlur={e => (e.currentTarget.style.boxShadow = "")}
             >
               {COUNTRY_CODES.map(c => (
                 <option key={c.code} value={c.code}>{c.label}</option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: SECONDARY }} />
+            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: C.muted }} />
           </div>
           <input
             type="tel"
@@ -190,8 +200,8 @@ export function Step40({ onAdvance }: Props) {
             onChange={e => setPhone(e.target.value)}
             placeholder="(555) 000-0000"
             className="flex-1 rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
-            style={{ background: "#ffffff", color: INK, border: "1px solid #e5e7eb" }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_STYLE)}
+            style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}
             aria-label="Phone number"
           />
@@ -199,16 +209,22 @@ export function Step40({ onAdvance }: Props) {
       </div>
 
       {/* Location */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium" style={{ color: SECONDARY }}>Location</p>
+      <div>
+        <FieldQuestion
+          question="Where are you located? "
+          helper="Please select the location from the dropdown"
+        />
         <SelectField value={city} onChange={setCity} placeholder="Select your city" ariaLabel="City">
           {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
         </SelectField>
       </div>
 
       {/* Date of birth */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium" style={{ color: SECONDARY }}>Date of birth</p>
+      <div>
+        <FieldQuestion
+          question="What is your date of birth? "
+          helper="Please enter in the correct date of birth format"
+        />
         <div className="flex gap-2">
           <SelectField value={dobMonth} onChange={setDobMonth} placeholder="Month" ariaLabel="Birth month">
             {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
@@ -223,9 +239,11 @@ export function Step40({ onAdvance }: Props) {
       </div>
 
       {/* Ethnic group */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium" style={{ color: SECONDARY }}>Ethnic group</p>
-        <p className="text-xs" style={{ color: "#9ca3af" }}>check all that apply</p>
+      <div>
+        <FieldQuestion
+          question="What ethnic group(s) do you identify with? "
+          helper="Check all that apply"
+        />
         <div className="space-y-2">
           {ETHNIC_OPTIONS.map(opt => (
             <div key={opt.id}>
@@ -243,7 +261,7 @@ export function Step40({ onAdvance }: Props) {
                     placeholder="Please specify"
                     autoFocus
                     className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-shadow"
-                    style={{ background: "#ffffff", color: INK, border: "1px solid #e5e7eb" }}
+                    style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
                     onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
                     onBlur={e => (e.currentTarget.style.boxShadow = "none")}
                     aria-label="Please specify"
@@ -261,7 +279,7 @@ export function Step40({ onAdvance }: Props) {
       </div>
 
       <div className="h-20" aria-hidden="true" />
-      <StickyFooter onClick={handleContinue} disabled={!ready} label="Continue" />
+      <StickyFooter onClick={handleContinue} disabled={!ready} label="All done" />
     </div>
   )
 }

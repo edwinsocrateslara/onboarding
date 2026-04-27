@@ -29,7 +29,7 @@ function SelectField({ value, onChange, placeholder, ariaLabel, disabled, childr
         onChange={e => onChange(e.target.value)}
         disabled={disabled}
         aria-label={ariaLabel}
-        className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
+        className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none appearance-none transition-shadow"
         style={{
           background:   disabled ? C.disabledBg : C.surface,
           color:        disabled ? C.disabledText : (value ? C.ink : C.muted),
@@ -112,7 +112,7 @@ export function Step23Education({ onAdvance }: Props) {
           value={major}
           onChange={e => setMajor(e.target.value)}
           placeholder="e.g. Nursing, Computer Science, Business"
-          className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+          className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
           style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
           onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
           onBlur={e => (e.currentTarget.style.boxShadow = "")}

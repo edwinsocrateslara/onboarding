@@ -35,7 +35,7 @@ function SelectField({
         onChange={e => onChange(e.target.value)}
         disabled={disabled}
         aria-label={ariaLabel}
-        className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
+        className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none appearance-none transition-shadow"
         style={{
           background:   disabled ? C.disabledBg : C.surface,
           color:        disabled ? C.disabledText : (value ? C.ink : C.muted),
@@ -88,7 +88,7 @@ function TitleAutocomplete({
         }}
         placeholder="Start typing..."
         autoFocus
-        className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+        className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
         style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}`, paddingRight: value ? "36px" : "12px" }}
         aria-label="Job title"
         aria-autocomplete="list"
@@ -122,7 +122,7 @@ function TitleAutocomplete({
                 type="button"
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => { onChange(title); setOpen(false) }}
-                className="w-full text-left px-4 py-2.5 text-sm hover:bg-[#f9fafb] transition-colors"
+                className="w-full text-left px-4 py-2.5 text-base hover:bg-[#f9fafb] transition-colors"
                 style={{ color: C.ink }}
               >
                 {title}

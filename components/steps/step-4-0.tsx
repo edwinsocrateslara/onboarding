@@ -53,7 +53,7 @@ function SelectField({ value, onChange, placeholder, ariaLabel, children }: {
         value={value}
         onChange={e => onChange(e.target.value)}
         aria-label={ariaLabel}
-        className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
+        className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none appearance-none transition-shadow"
         style={{ background: C.surface, color: value ? C.ink : C.muted, border: `1px solid ${C.border}`, paddingRight: "36px" }}
         onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
         onBlur={e => (e.currentTarget.style.boxShadow = "")}
@@ -183,7 +183,7 @@ export function Step40({ onAdvance }: Props) {
               value={countryCode}
               onChange={e => setCountryCode(e.target.value)}
               aria-label="Country code"
-              className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none appearance-none transition-shadow"
+              className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none appearance-none transition-shadow"
               style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}`, paddingRight: "32px" }}
               onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
               onBlur={e => (e.currentTarget.style.boxShadow = "")}
@@ -199,7 +199,7 @@ export function Step40({ onAdvance }: Props) {
             value={phone}
             onChange={e => setPhone(e.target.value)}
             placeholder="(555) 000-0000"
-            className="flex-1 rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+            className="flex-1 rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
             style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
             onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}
@@ -260,7 +260,7 @@ export function Step40({ onAdvance }: Props) {
                     onChange={e => setEthnicOther(e.target.value)}
                     placeholder="Please specify"
                     autoFocus
-                    className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-shadow"
+                    className="w-full rounded-lg px-4 py-3 text-base focus:outline-none transition-shadow"
                     style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
                     onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
                     onBlur={e => (e.currentTarget.style.boxShadow = "none")}

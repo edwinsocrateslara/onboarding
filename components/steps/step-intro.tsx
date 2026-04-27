@@ -70,7 +70,7 @@ function LocationField({
         onBlur={e => { e.currentTarget.style.boxShadow = "" }}
         placeholder="Start typing..."
         autoComplete="off"
-        className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+        className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
         style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
         aria-label="Location"
         aria-expanded={open}
@@ -87,7 +87,7 @@ function LocationField({
               <button
                 type="button"
                 onMouseDown={() => select(city)}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-[#f9fafb] transition-colors"
+                className="w-full text-left px-3 py-2 text-base hover:bg-[#f9fafb] transition-colors"
                 style={{ color: city === query ? C.primary : C.ink, fontWeight: city === query ? 500 : 400 }}
               >
                 {formatCity(city)}
@@ -144,7 +144,7 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
             type="text"
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
-            className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+            className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
             style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
             onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}
@@ -158,7 +158,7 @@ export function StepIntro({ initialFirstName, initialLastName, initialLocation, 
             type="text"
             value={lastName}
             onChange={e => setLastName(e.target.value)}
-            className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+            className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
             style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
             onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
             onBlur={e => (e.currentTarget.style.boxShadow = "")}

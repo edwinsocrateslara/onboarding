@@ -169,7 +169,7 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
               value={q1FreeText}
               onChange={e => setQ1FreeText(e.target.value)}
               placeholder="Tell us a bit about your situation"
-              className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+              className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
               style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
               onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
               onBlur={e => (e.currentTarget.style.boxShadow = "")}

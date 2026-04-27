@@ -65,7 +65,7 @@ export function StepQ2({ initialQ2Answer, initialQ2FreeText, onAdvance }: Props)
                     value={q2FreeText}
                     onChange={e => setQ2FreeText(e.target.value)}
                     placeholder="Describe what you'd like help with"
-                    className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+                    className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
                     style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
                     onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
                     onBlur={e => (e.currentTarget.style.boxShadow = "")}

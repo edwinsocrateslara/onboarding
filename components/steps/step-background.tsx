@@ -82,7 +82,7 @@ export function StepBackground({ initialChoice, onAdvance }: Props) {
             >
               {/* Icon container */}
               <div
-                className="shrink-0 h-11 w-11 rounded-xl flex items-center justify-center"
+                className="shrink-0 h-11 w-11 rounded-full flex items-center justify-center"
                 style={{ background: iconBg }}
               >
                 <Icon className="h-5 w-5" style={{ color: iconColor }} />

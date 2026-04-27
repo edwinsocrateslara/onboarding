@@ -225,7 +225,7 @@ export function Step40({ onAdvance }: Props) {
           question="What is your date of birth? "
           helper="Please enter in the correct date of birth format"
         />
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <SelectField value={dobMonth} onChange={setDobMonth} placeholder="Month" ariaLabel="Birth month">
             {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
           </SelectField>

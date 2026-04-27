@@ -24,7 +24,7 @@ const OPTIONS: CardOption[] = [
   },
   {
     value:     "manual_entry",
-    label:     "I don't have a resume — I'll add my experience manually",
+    label:     "I don't have a resume — I'll add experience manually",
     Icon:      Briefcase,
     iconBg:    "#fff7ed",
     iconColor: "#f97316",

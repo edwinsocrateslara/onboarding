@@ -76,7 +76,7 @@ function SubOptionBlock({ visible, children }: { visible: boolean; children: Rea
     <div
       style={{
         maxHeight:  visible ? "280px" : "0",
-        overflow:   "hidden",
+        overflow:   visible ? "visible" : "hidden",
         opacity:    visible ? 1 : 0,
         transition: "max-height 0.2s ease, opacity 0.15s ease",
       }}
@@ -155,25 +155,34 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
             onClick={() => select("d")}
           />
         </div>
-        <SubOptionBlock visible={q1Answer === "d"}>
-          <input
-            type="text"
-            value={q1FreeText}
-            onChange={e => setQ1FreeText(e.target.value)}
-            placeholder="Tell us a bit about your situation"
-            className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
-            style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
-            onBlur={e => (e.currentTarget.style.boxShadow = "")}
-            aria-label="Tell us a bit about your situation"
-          />
-        </SubOptionBlock>
+        <div
+          style={{
+            maxHeight:  q1Answer === "d" ? "120px" : "0",
+            overflow:   q1Answer === "d" ? "visible" : "hidden",
+            opacity:    q1Answer === "d" ? 1 : 0,
+            transition: "max-height 0.2s ease, opacity 0.15s ease",
+          }}
+        >
+          <div className="mt-2 mb-2">
+            <input
+              type="text"
+              value={q1FreeText}
+              onChange={e => setQ1FreeText(e.target.value)}
+              placeholder="Tell us a bit about your situation"
+              className="w-full rounded-md px-3 h-10 text-sm leading-normal focus:outline-none transition-shadow"
+              style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+              onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+              onBlur={e => (e.currentTarget.style.boxShadow = "")}
+              aria-label="Tell us a bit about your situation"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="h-20" aria-hidden="true" />
       <StickyFooter
         onClick={() => onAdvance({ q1Answer: q1Answer!, q1SubOption, q1FreeText: q1FreeText.trim() })}
-        disabled={q1Answer === null}
+        disabled={q1Answer === null || (q1Answer === "d" && q1FreeText.trim() === "")}
         label="Next"
       />
     </div>

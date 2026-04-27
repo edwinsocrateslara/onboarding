@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, type ChangeEvent } from "react"
 import { Upload, Pencil, Trash2 } from "lucide-react"
 import { C, StickyFooter } from "./shared"
 
@@ -66,11 +66,23 @@ interface Props {
 
 export function Step23Resume({ onAdvance }: Props) {
   const [uploadState, setUploadState] = useState<UploadState>("idle")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleUpload = () => {
-    if (uploadState !== "idle") return
+  const startMockProcessing = () => {
     setUploadState("processing")
     setTimeout(() => setUploadState("done"), 1500)
+  }
+
+  const handleZoneClick = () => {
+    if (uploadState !== "idle") return
+    fileInputRef.current?.click()
+  }
+
+  const handleFileSelected = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      e.target.value = ""
+      startMockProcessing()
+    }
   }
 
   const ready = uploadState === "done"
@@ -88,10 +100,18 @@ export function Step23Resume({ onAdvance }: Props) {
         )}
       </div>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,application/pdf,.doc,.docx"
+        onChange={handleFileSelected}
+        style={{ display: "none" }}
+      />
+
       {uploadState === "idle" && (
         <button
           type="button"
-          onClick={handleUpload}
+          onClick={handleZoneClick}
           className="w-full rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 py-10 transition-colors hover:bg-[#f9fafb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
           style={{ borderColor: C.border }}
         >

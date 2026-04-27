@@ -230,7 +230,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         "last-job":                 "background",
         "2.3-education":            "background",
         "3.classification-pending": classificationBack,
-        "4.0":                      "3.classification-pending",
+        "4.0":                      classificationBack,
         "4.1":                      "4.0",
       }
       const prevStep = prev[state.step]

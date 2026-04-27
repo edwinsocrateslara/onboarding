@@ -58,6 +58,11 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 interface Props {
+  initialEducationLevel:    string
+  initialMajor:             string
+  initialEducationStartYear: string
+  initialEducationEndYear:  string
+  initialCurrentlyStudying: boolean
   onAdvance: (data: {
     educationLevel:      string
     major:               string
@@ -67,12 +72,19 @@ interface Props {
   }) => void
 }
 
-export function Step23Education({ onAdvance }: Props) {
-  const [level,             setLevel]             = useState("")
-  const [major,             setMajor]             = useState("")
-  const [startYear,         setStartYear]         = useState("")
-  const [endYear,           setEndYear]           = useState("")
-  const [currentlyStudying, setCurrentlyStudying] = useState(false)
+export function Step23Education({
+  initialEducationLevel,
+  initialMajor,
+  initialEducationStartYear,
+  initialEducationEndYear,
+  initialCurrentlyStudying,
+  onAdvance,
+}: Props) {
+  const [level,             setLevel]             = useState(initialEducationLevel)
+  const [major,             setMajor]             = useState(initialMajor)
+  const [startYear,         setStartYear]         = useState(initialEducationStartYear)
+  const [endYear,           setEndYear]           = useState(initialEducationEndYear)
+  const [currentlyStudying, setCurrentlyStudying] = useState(initialCurrentlyStudying)
 
   const endValid = currentlyStudying || endYear !== ""
   const ready    = level !== "" && major.trim() !== "" && startYear !== "" && endValid

@@ -82,7 +82,16 @@ export default function OnboardingPage() {
           />
         )
       case "2.3-education":
-        return <Step23Education onAdvance={advanceFromEducation} />
+        return (
+          <Step23Education
+            initialEducationLevel={state.educationLevel}
+            initialMajor={state.major}
+            initialEducationStartYear={state.educationStartYear}
+            initialEducationEndYear={state.educationEndYear}
+            initialCurrentlyStudying={state.currentlyStudying}
+            onAdvance={advanceFromEducation}
+          />
+        )
       case "2.3-resume":
         return <Step23Resume onAdvance={advanceFromResume} />
       case "last-job":
@@ -108,7 +117,19 @@ export default function OnboardingPage() {
           />
         )
       case "4.0":
-        return <Step40 onAdvance={advanceFrom40} />
+        return (
+          <Step40
+            initialCountryCode={state.tenantCountryCode}
+            initialPhone={state.tenantPhone}
+            initialCity={state.tenantCity}
+            initialDobMonth={state.tenantDobMonth}
+            initialDobDay={state.tenantDobDay}
+            initialDobYear={state.tenantDobYear}
+            initialEthnicGroups={state.tenantEthnicGroups}
+            initialEthnicOther={state.tenantEthnicOther}
+            onAdvance={advanceFrom40}
+          />
+        )
       case "4.1":
         return <Step41 persona={state.classification!.persona} />
     }

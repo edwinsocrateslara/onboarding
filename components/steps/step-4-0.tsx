@@ -104,6 +104,14 @@ function FieldQuestion({ question, helper }: { question: string; helper: string 
 }
 
 interface Props {
+  initialCountryCode:  string
+  initialPhone:        string
+  initialCity:         string
+  initialDobMonth:     string
+  initialDobDay:       string
+  initialDobYear:      string
+  initialEthnicGroups: string[]
+  initialEthnicOther:  string
   onAdvance: (data: {
     countryCode: string; phone: string; city: string
     dobMonth: string; dobDay: string; dobYear: string
@@ -111,16 +119,30 @@ interface Props {
   }) => void
 }
 
-export function Step40({ onAdvance }: Props) {
-  const [countryCode, setCountryCode] = useState("+1")
-  const [phone, setPhone]             = useState("")
-  const [city, setCity]               = useState("")
-  const [dobMonth, setDobMonth]       = useState("")
-  const [dobDay, setDobDay]           = useState("")
-  const [dobYear, setDobYear]         = useState("")
-  const [ethnicGroups, setEthnicGroups] = useState<Set<string>>(new Set())
-  const [ethnicOther, setEthnicOther]   = useState("")
-  const [preferNotToSay, setPreferNotToSay] = useState(false)
+export function Step40({
+  initialCountryCode,
+  initialPhone,
+  initialCity,
+  initialDobMonth,
+  initialDobDay,
+  initialDobYear,
+  initialEthnicGroups,
+  initialEthnicOther,
+  onAdvance,
+}: Props) {
+  const [countryCode, setCountryCode] = useState(initialCountryCode || "+1")
+  const [phone, setPhone]             = useState(initialPhone)
+  const [city, setCity]               = useState(initialCity)
+  const [dobMonth, setDobMonth]       = useState(initialDobMonth)
+  const [dobDay, setDobDay]           = useState(initialDobDay)
+  const [dobYear, setDobYear]         = useState(initialDobYear)
+  const [ethnicGroups, setEthnicGroups] = useState<Set<string>>(
+    () => new Set(initialEthnicGroups.filter(g => g !== "prefer_not_to_say"))
+  )
+  const [ethnicOther, setEthnicOther]   = useState(initialEthnicOther)
+  const [preferNotToSay, setPreferNotToSay] = useState(
+    initialEthnicGroups.includes("prefer_not_to_say")
+  )
 
   const toggleEthnic = (id: string) => {
     if (id === "prefer_not_to_say") {

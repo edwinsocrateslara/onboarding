@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
-import { C, FOCUS_RING, AssistantQuestion, StickyFooter } from "./shared"
+import { useState, useRef, useEffect } from "react"
+import { ChevronDown, Check } from "lucide-react"
+import { C, AssistantQuestion, StickyFooter } from "./shared"
 
 type Q1Answer = "a" | "b" | "c" | "d"
 
@@ -25,80 +25,131 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
   const [selectedIndex, setSelectedIndex] = useState<number | null>(() => {
     if (initialQ1Answer === null) return null
     const idx = OPTIONS.findIndex((o, i) => {
-      if (initialQ1Answer === "a") {
-        if (initialQ1FreeText === "recently_graduated") return i === 1
-        return i === 0
-      }
+      if (initialQ1Answer === "a") return i === 0
       return o.value === initialQ1Answer
     })
     return idx === -1 ? null : idx
   })
-  const [q1FreeText, setQ1FreeText] = useState(
-    initialQ1FreeText === "recently_graduated" ? "" : initialQ1FreeText
-  )
+  const [q1FreeText,    setQ1FreeText]    = useState(initialQ1FreeText)
+  const [dropdownOpen,  setDropdownOpen]  = useState(false)
+  const [containerFocused, setContainerFocused] = useState(false)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef     = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!containerRef.current?.contains(e.target as Node)) setDropdownOpen(false)
+    }
+    document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [])
 
   const selectedOption = selectedIndex !== null ? OPTIONS[selectedIndex] : null
   const q1Answer       = selectedOption?.value ?? null
-  const showFreeText   = selectedIndex !== null
+  const inputEnabled   = selectedIndex !== null
+  const showAccent     = containerFocused || dropdownOpen
 
   return (
     <div className="space-y-1">
       <AssistantQuestion text="Which best describes your current situation?" />
-      <div className="h-3" />
+      <div className="h-4" />
 
-      <div className="space-y-4">
-        {/* Dropdown */}
-        <div className="relative">
-          <select
-            value={selectedIndex !== null ? String(selectedIndex) : ""}
-            onChange={e => {
-              const val = e.target.value
-              setSelectedIndex(val === "" ? null : Number(val))
-              setQ1FreeText("")
-            }}
-            aria-label="Current situation"
-            className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none appearance-none transition-shadow"
-            style={{
-              background:   C.surface,
-              color:        selectedIndex !== null ? C.ink : C.muted,
-              border:       `1px solid ${C.border}`,
-              paddingRight: "36px",
-            }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
-            onBlur={e => (e.currentTarget.style.boxShadow = "")}
-          >
-            <option value="" disabled>Select an option</option>
-            {OPTIONS.map((opt, i) => (
-              <option key={i} value={String(i)}>{opt.label}</option>
-            ))}
-          </select>
-          <ChevronDown
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4"
-            style={{ color: C.muted }}
-          />
-        </div>
-
-        {/* Optional free-text */}
+      <div ref={containerRef} className="relative">
+        {/* Pill container */}
         <div
+          className="flex items-center h-14 rounded-full transition-all"
           style={{
-            maxHeight:  showFreeText ? "80px" : "0",
-            overflow:   showFreeText ? "visible" : "hidden",
-            opacity:    showFreeText ? 1 : 0,
-            transition: "max-height 0.2s ease, opacity 0.15s ease",
+            background: C.surface,
+            border: showAccent
+              ? `1.5px solid ${C.accentBorder}`
+              : `1px solid ${C.border}`,
           }}
         >
+          {/* Dropdown trigger */}
+          <button
+            type="button"
+            onClick={() => setDropdownOpen(prev => !prev)}
+            onFocus={() => setContainerFocused(true)}
+            onBlur={() => setContainerFocused(false)}
+            aria-haspopup="listbox"
+            aria-expanded={dropdownOpen}
+            aria-label="Select your current situation"
+            className="flex items-center gap-1.5 pl-5 pr-3 h-full shrink-0 focus:outline-none"
+            style={{ minWidth: "170px", maxWidth: "170px" }}
+          >
+            <span
+              className="text-base truncate flex-1 text-left"
+              style={{ color: selectedOption ? C.ink : C.placeholder }}
+            >
+              {selectedOption ? selectedOption.label : "Select an option"}
+            </span>
+            <ChevronDown
+              className="h-4 w-4 shrink-0 transition-transform duration-150"
+              style={{
+                color: C.muted,
+                transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+              }}
+            />
+          </button>
+
+          {/* Vertical divider */}
+          <div className="w-px h-6 shrink-0" style={{ background: C.border }} />
+
+          {/* Free-text input */}
           <input
+            ref={inputRef}
             type="text"
             value={q1FreeText}
             onChange={e => setQ1FreeText(e.target.value)}
-            placeholder="In a few words, tell us a bit more about your situation."
-            className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
-            style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
-            onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
-            onBlur={e => (e.currentTarget.style.boxShadow = "")}
+            disabled={!inputEnabled}
+            placeholder="In a few words, tell us about your situation..."
+            onFocus={() => setContainerFocused(true)}
+            onBlur={() => setContainerFocused(false)}
+            className="flex-1 px-4 h-full text-base bg-transparent focus:outline-none min-w-0"
+            style={{
+              color:  inputEnabled ? C.ink : C.placeholder,
+              cursor: inputEnabled ? "text" : "default",
+            }}
             aria-label="Tell us more about your situation"
           />
         </div>
+
+        {/* Dropdown menu */}
+        {dropdownOpen && (
+          <div
+            className="absolute z-20 left-0 right-0 mt-2 rounded-xl overflow-hidden"
+            style={{
+              background: C.surface,
+              border:     `1px solid ${C.border}`,
+              boxShadow:  "0 4px 16px rgba(0,0,0,0.08)",
+              top:        "100%",
+            }}
+            role="listbox"
+          >
+            {OPTIONS.map((opt, i) => (
+              <button
+                key={i}
+                type="button"
+                role="option"
+                aria-selected={selectedIndex === i}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => {
+                  setSelectedIndex(i)
+                  setDropdownOpen(false)
+                  inputRef.current?.focus()
+                }}
+                className="w-full flex items-center justify-between px-4 py-3 text-base text-left transition-colors hover:bg-[#f9fafb] focus:outline-none"
+                style={{ color: C.ink }}
+              >
+                {opt.label}
+                {selectedIndex === i && (
+                  <Check className="h-4 w-4 shrink-0" style={{ color: C.primary }} />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="h-20" aria-hidden="true" />

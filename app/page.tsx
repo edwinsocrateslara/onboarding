@@ -3,41 +3,20 @@
 import { ArrowLeft, User } from "lucide-react"
 import { useOnboarding, getStageForStep } from "@/hooks/use-onboarding"
 
-import { StepIntro }                  from "@/components/steps/step-intro"
-import { StepQ1 }                     from "@/components/steps/step-q1"
-import { StepQ2 }                     from "@/components/steps/step-q2"
-import { StepBackground }             from "@/components/steps/step-background"
-import { Step23Education }            from "@/components/steps/step-2-3-education"
-import { Step23Resume }               from "@/components/steps/step-2-3-resume"
-import { StepLastJob }                from "@/components/steps/step-last-job"
-import { Step3ClassificationPending } from "@/components/steps/step-3-classification-pending"
-import { Step40 }                     from "@/components/steps/step-4-0"
-import { Step41 }                     from "@/components/steps/step-4-1"
+import { StepIntro } from "@/components/steps/step-intro"
+import { StepQ1 }   from "@/components/steps/step-q1"
+import { StepDone } from "@/components/steps/step-done"
 
-const STAGE_NAMES: Record<1 | 2 | 3 | 4 | 5, string> = {
+const STAGE_NAMES: Record<1 | 2 | 3, string> = {
   1: "Let's get started",
   2: "About you",
-  3: "Goals",
-  4: "Onboarding form",
-  5: "Complete",
+  3: "Complete",
 }
 
 export default function OnboardingPage() {
-  const {
-    state,
-    advanceFromIntro,
-    advanceFromQ1,
-    advanceFromQ2,
-    advanceFromBackground,
-    advanceFromLastJob,
-    advanceFromEducation,
-    advanceFromResume,
-    setPersona,
-    advanceFrom40,
-    back,
-  } = useOnboarding()
+  const { state, advanceFromIntro, advanceFromQ1, back } = useOnboarding()
 
-  const totalStages  = 5
+  const totalStages  = 3
   const currentStage = getStageForStep(state.step)
   const stageName    = STAGE_NAMES[currentStage]
   const progressPct  = (currentStage / totalStages) * 100
@@ -66,72 +45,8 @@ export default function OnboardingPage() {
             onAdvance={advanceFromQ1}
           />
         )
-      case "q2":
-        return (
-          <StepQ2
-            initialQ2Answer={state.q2Answer}
-            initialQ2FreeText={state.q2FreeText}
-            onAdvance={advanceFromQ2}
-          />
-        )
-      case "background":
-        return (
-          <StepBackground
-            initialChoice={state.backgroundChoice}
-            onAdvance={advanceFromBackground}
-          />
-        )
-      case "2.3-education":
-        return (
-          <Step23Education
-            initialEducationLevel={state.educationLevel}
-            initialMajor={state.major}
-            initialEducationStartYear={state.educationStartYear}
-            initialEducationEndYear={state.educationEndYear}
-            initialCurrentlyStudying={state.currentlyStudying}
-            onAdvance={advanceFromEducation}
-          />
-        )
-      case "2.3-resume":
-        return <Step23Resume onAdvance={advanceFromResume} />
-      case "last-job":
-        return (
-          <StepLastJob
-            initialLastJobTitle={state.lastJobTitle}
-            initialLastJobStartMonth={state.lastJobStartMonth}
-            initialLastJobStartYear={state.lastJobStartYear}
-            initialLastJobEndMonth={state.lastJobEndMonth}
-            initialLastJobEndYear={state.lastJobEndYear}
-            initialLastJobCurrentlyWorking={state.lastJobCurrentlyWorking}
-            onAdvance={advanceFromLastJob}
-          />
-        )
-      case "3.classification-pending":
-        return (
-          <Step3ClassificationPending
-            q1Answer={state.q1Answer!}
-            q1FreeText={state.q1FreeText}
-            q2Answer={state.q2Answer!}
-            q2FreeText={state.q2FreeText}
-            onClassified={setPersona}
-          />
-        )
-      case "4.0":
-        return (
-          <Step40
-            initialCountryCode={state.tenantCountryCode}
-            initialPhone={state.tenantPhone}
-            initialCity={state.tenantCity}
-            initialDobMonth={state.tenantDobMonth}
-            initialDobDay={state.tenantDobDay}
-            initialDobYear={state.tenantDobYear}
-            initialEthnicGroups={state.tenantEthnicGroups}
-            initialEthnicOther={state.tenantEthnicOther}
-            onAdvance={advanceFrom40}
-          />
-        )
-      case "4.1":
-        return <Step41 persona={state.classification!.persona} />
+      case "done":
+        return <StepDone />
     }
   }
 
@@ -148,6 +63,7 @@ export default function OnboardingPage() {
           zIndex: 0,
         }}
       />
+
       {/* Nav header + progress bar */}
       <>
         <div className="shrink-0 px-4 pt-3 pb-2 flex items-center gap-3 relative z-10" style={{ background: "var(--color-canvas)" }}>

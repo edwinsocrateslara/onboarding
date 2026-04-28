@@ -62,7 +62,7 @@ export default function OnboardingPage() {
       <main className="flex-1 overflow-y-auto relative z-10">
         <div
           key={state.step}
-          className={`min-h-full flex flex-col items-center justify-center px-8 py-10 ${transitionClass}`}
+          className={`mx-auto max-w-xl px-5 sm:px-6 pt-12 md:pt-16 pb-10 ${transitionClass}`}
         >
           {renderStep()}
         </div>

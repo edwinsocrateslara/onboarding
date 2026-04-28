@@ -73,6 +73,27 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
               : `1px solid ${C.border}`,
           }}
         >
+          {/* Free-text input */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={q1FreeText}
+            onChange={e => setQ1FreeText(e.target.value)}
+            disabled={!inputEnabled}
+            placeholder="In a few words, tell us about your situation..."
+            onFocus={() => setContainerFocused(true)}
+            onBlur={() => setContainerFocused(false)}
+            className="flex-1 pl-5 pr-3 h-full text-base bg-transparent focus:outline-none min-w-0"
+            style={{
+              color:  inputEnabled ? C.ink : C.placeholder,
+              cursor: inputEnabled ? "text" : "default",
+            }}
+            aria-label="Tell us more about your situation"
+          />
+
+          {/* Vertical divider */}
+          <div className="w-px h-6 shrink-0" style={{ background: C.border }} />
+
           {/* Dropdown trigger — min-width sized to longest option */}
           <button
             type="button"
@@ -82,7 +103,7 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
             aria-haspopup="listbox"
             aria-expanded={dropdownOpen}
             aria-label="Select your current situation"
-            className="flex items-center gap-1.5 pl-5 pr-3 h-full shrink-0 focus:outline-none"
+            className="flex items-center gap-1.5 pl-4 pr-5 h-full shrink-0 focus:outline-none"
             style={{ minWidth: "230px" }}
           >
             <span
@@ -99,38 +120,18 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
               }}
             />
           </button>
-
-          {/* Vertical divider */}
-          <div className="w-px h-6 shrink-0" style={{ background: C.border }} />
-
-          {/* Free-text input */}
-          <input
-            ref={inputRef}
-            type="text"
-            value={q1FreeText}
-            onChange={e => setQ1FreeText(e.target.value)}
-            disabled={!inputEnabled}
-            placeholder="In a few words, tell us about your situation..."
-            onFocus={() => setContainerFocused(true)}
-            onBlur={() => setContainerFocused(false)}
-            className="flex-1 px-4 h-full text-base bg-transparent focus:outline-none min-w-0"
-            style={{
-              color:  inputEnabled ? C.ink : C.placeholder,
-              cursor: inputEnabled ? "text" : "default",
-            }}
-            aria-label="Tell us more about your situation"
-          />
         </div>
 
         {/* Dropdown menu — full pill width */}
         {dropdownOpen && (
           <div
-            className="absolute z-20 left-0 right-0 mt-2 rounded-xl overflow-hidden"
+            className="absolute z-20 right-0 mt-2 rounded-xl overflow-hidden"
             style={{
               background: C.surface,
               border:     `1px solid ${C.border}`,
               boxShadow:  "0 4px 16px rgba(0,0,0,0.08)",
               top:        "100%",
+              minWidth:   "230px",
             }}
             role="listbox"
           >

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { ChevronDown, Check } from "lucide-react"
-import { C, AssistantQuestion, StickyFooter } from "./shared"
+import { C, StickyFooter } from "./shared"
 
 type Q1Answer = "a" | "b" | "c" | "d"
 
@@ -30,8 +30,8 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
     })
     return idx === -1 ? null : idx
   })
-  const [q1FreeText,    setQ1FreeText]    = useState(initialQ1FreeText)
-  const [dropdownOpen,  setDropdownOpen]  = useState(false)
+  const [q1FreeText,       setQ1FreeText]       = useState(initialQ1FreeText)
+  const [dropdownOpen,     setDropdownOpen]     = useState(false)
   const [containerFocused, setContainerFocused] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -51,12 +51,19 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
   const showAccent     = containerFocused || dropdownOpen
 
   return (
-    <div className="space-y-1">
-      <AssistantQuestion text="Which best describes your current situation?" />
-      <div className="h-4" />
+    <div className="flex flex-col items-center w-full">
+      {/* Heading — single line, no wrap */}
+      <h1
+        className="text-3xl font-semibold leading-normal"
+        style={{ color: C.ink, whiteSpace: "nowrap" }}
+      >
+        Which best describes your current situation?
+      </h1>
 
-      <div ref={containerRef} className="relative">
-        {/* Pill container */}
+      <div className="h-10" />
+
+      {/* Pill container */}
+      <div ref={containerRef} className="relative w-full max-w-2xl">
         <div
           className="flex items-center h-14 rounded-full transition-all"
           style={{
@@ -66,7 +73,7 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
               : `1px solid ${C.border}`,
           }}
         >
-          {/* Dropdown trigger */}
+          {/* Dropdown trigger — min-width sized to longest option */}
           <button
             type="button"
             onClick={() => setDropdownOpen(prev => !prev)}
@@ -76,10 +83,10 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
             aria-expanded={dropdownOpen}
             aria-label="Select your current situation"
             className="flex items-center gap-1.5 pl-5 pr-3 h-full shrink-0 focus:outline-none"
-            style={{ minWidth: "170px", maxWidth: "170px" }}
+            style={{ minWidth: "230px" }}
           >
             <span
-              className="text-base truncate flex-1 text-left"
+              className="text-base flex-1 text-left"
               style={{ color: selectedOption ? C.ink : C.placeholder }}
             >
               {selectedOption ? selectedOption.label : "Select an option"}
@@ -115,7 +122,7 @@ export function StepQ1({ initialQ1Answer, initialQ1SubOption, initialQ1FreeText,
           />
         </div>
 
-        {/* Dropdown menu */}
+        {/* Dropdown menu — full pill width */}
         {dropdownOpen && (
           <div
             className="absolute z-20 left-0 right-0 mt-2 rounded-xl overflow-hidden"

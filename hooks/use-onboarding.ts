@@ -32,16 +32,18 @@ export interface OnboardingState {
   backgroundChoice: "has_resume" | "manual_entry" | "no_experience" | null
   // Info gathering
   lastJobTitle:            string
+  lastJobEmployer:         string
   lastJobStartMonth:       string
   lastJobStartYear:        string
   lastJobEndMonth:         string
   lastJobEndYear:          string
   lastJobCurrentlyWorking: boolean
-  educationLevel:     string
-  major:              string
-  educationStartYear: string
-  educationEndYear:   string
-  currentlyStudying:  boolean
+  educationLevel:          string
+  educationInstitution:    string
+  major:                   string
+  educationStartYear:      string
+  educationEndYear:        string
+  currentlyStudying:       boolean
   resumeUploaded:     boolean
   // Classification
   classification: ClassificationResult | null
@@ -61,8 +63,8 @@ type Action =
   | { type: "ADVANCE_Q1";          q1Answer: "a" | "b" | "c" | "d"; q1SubOption: string | null; q1FreeText: string }
   | { type: "ADVANCE_Q2_V6";       q2Answer: "a" | "b" | "c" | "d" | "e"; q2FreeText: string }
   | { type: "ADVANCE_BACKGROUND";  backgroundChoice: "has_resume" | "manual_entry" | "no_experience" }
-  | { type: "ADVANCE_LAST_JOB";    lastJobTitle: string; lastJobStartMonth: string; lastJobStartYear: string; lastJobEndMonth: string; lastJobEndYear: string; lastJobCurrentlyWorking: boolean }
-  | { type: "ADVANCE_EDUCATION";   educationLevel: string; major: string; educationStartYear: string; educationEndYear: string; currentlyStudying: boolean }
+  | { type: "ADVANCE_LAST_JOB";    lastJobTitle: string; lastJobEmployer: string; lastJobStartMonth: string; lastJobStartYear: string; lastJobEndMonth: string; lastJobEndYear: string; lastJobCurrentlyWorking: boolean }
+  | { type: "ADVANCE_EDUCATION";   educationLevel: string; educationInstitution: string; major: string; educationStartYear: string; educationEndYear: string; currentlyStudying: boolean }
   | { type: "ADVANCE_RESUME";      uploaded: boolean }
   | { type: "SET_PERSONA";         persona: Persona }
   | { type: "ADVANCE_4_0";         countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }
@@ -82,16 +84,18 @@ function initState(): OnboardingState {
     q2FreeText: "",
     backgroundChoice: null,
     lastJobTitle:            "",
+    lastJobEmployer:         "",
     lastJobStartMonth:       "",
     lastJobStartYear:        "",
     lastJobEndMonth:         "",
     lastJobEndYear:          "",
     lastJobCurrentlyWorking: false,
-    educationLevel:     "",
-    major:              "",
-    educationStartYear: "",
-    educationEndYear:   "",
-    currentlyStudying:  false,
+    educationLevel:          "",
+    educationInstitution:    "",
+    major:                   "",
+    educationStartYear:      "",
+    educationEndYear:        "",
+    currentlyStudying:       false,
     resumeUploaded:     false,
     classification:     null,
     tenantCountryCode:  "",
@@ -158,6 +162,7 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         step:                    "3.classification-pending",
         direction:               "forward",
         lastJobTitle:            action.lastJobTitle,
+        lastJobEmployer:         action.lastJobEmployer,
         lastJobStartMonth:       action.lastJobStartMonth,
         lastJobStartYear:        action.lastJobStartYear,
         lastJobEndMonth:         action.lastJobEndMonth,
@@ -169,13 +174,14 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
     case "ADVANCE_EDUCATION": {
       return {
         ...state,
-        step:               "3.classification-pending",
-        direction:          "forward",
-        educationLevel:     action.educationLevel,
-        major:              action.major,
-        educationStartYear: action.educationStartYear,
-        educationEndYear:   action.educationEndYear,
-        currentlyStudying:  action.currentlyStudying,
+        step:                 "3.classification-pending",
+        direction:            "forward",
+        educationLevel:       action.educationLevel,
+        educationInstitution: action.educationInstitution,
+        major:                action.major,
+        educationStartYear:   action.educationStartYear,
+        educationEndYear:     action.educationEndYear,
+        currentlyStudying:    action.currentlyStudying,
       }
     }
 
@@ -267,9 +273,9 @@ export function useOnboarding() {
       dispatch({ type: "ADVANCE_Q2_V6", ...data }),
     advanceFromBackground: (backgroundChoice: "has_resume" | "manual_entry" | "no_experience") =>
       dispatch({ type: "ADVANCE_BACKGROUND", backgroundChoice }),
-    advanceFromLastJob: (data: { lastJobTitle: string; lastJobStartMonth: string; lastJobStartYear: string; lastJobEndMonth: string; lastJobEndYear: string; lastJobCurrentlyWorking: boolean }) =>
+    advanceFromLastJob: (data: { lastJobTitle: string; lastJobEmployer: string; lastJobStartMonth: string; lastJobStartYear: string; lastJobEndMonth: string; lastJobEndYear: string; lastJobCurrentlyWorking: boolean }) =>
       dispatch({ type: "ADVANCE_LAST_JOB", ...data }),
-    advanceFromEducation: (data: { educationLevel: string; major: string; educationStartYear: string; educationEndYear: string; currentlyStudying: boolean }) =>
+    advanceFromEducation: (data: { educationLevel: string; educationInstitution: string; major: string; educationStartYear: string; educationEndYear: string; currentlyStudying: boolean }) =>
       dispatch({ type: "ADVANCE_EDUCATION", ...data }),
     advanceFromResume: (data: { uploaded: boolean }) =>
       dispatch({ type: "ADVANCE_RESUME", ...data }),

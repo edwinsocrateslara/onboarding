@@ -85,6 +85,7 @@ export default function OnboardingPage() {
         return (
           <Step23Education
             initialEducationLevel={state.educationLevel}
+            initialEducationInstitution={state.educationInstitution}
             initialMajor={state.major}
             initialEducationStartYear={state.educationStartYear}
             initialEducationEndYear={state.educationEndYear}
@@ -98,6 +99,7 @@ export default function OnboardingPage() {
         return (
           <StepLastJob
             initialLastJobTitle={state.lastJobTitle}
+            initialLastJobEmployer={state.lastJobEmployer}
             initialLastJobStartMonth={state.lastJobStartMonth}
             initialLastJobStartYear={state.lastJobStartYear}
             initialLastJobEndMonth={state.lastJobEndMonth}

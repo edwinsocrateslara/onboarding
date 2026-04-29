@@ -141,6 +141,7 @@ function TitleAutocomplete({
 
 interface Props {
   initialLastJobTitle:            string
+  initialLastJobEmployer:         string
   initialLastJobStartMonth:       string
   initialLastJobStartYear:        string
   initialLastJobEndMonth:         string
@@ -148,6 +149,7 @@ interface Props {
   initialLastJobCurrentlyWorking: boolean
   onAdvance: (data: {
     lastJobTitle:            string
+    lastJobEmployer:         string
     lastJobStartMonth:       string
     lastJobStartYear:        string
     lastJobEndMonth:         string
@@ -158,6 +160,7 @@ interface Props {
 
 export function StepLastJob({
   initialLastJobTitle,
+  initialLastJobEmployer,
   initialLastJobStartMonth,
   initialLastJobStartYear,
   initialLastJobEndMonth,
@@ -166,6 +169,7 @@ export function StepLastJob({
   onAdvance,
 }: Props) {
   const [title,            setTitle]            = useState(initialLastJobTitle)
+  const [employer,         setEmployer]         = useState(initialLastJobEmployer)
   const [startMonth,       setStartMonth]       = useState(initialLastJobStartMonth)
   const [startYear,        setStartYear]        = useState(initialLastJobStartYear)
   const [endMonth,         setEndMonth]         = useState(initialLastJobEndMonth)
@@ -173,12 +177,13 @@ export function StepLastJob({
   const [currentlyWorking, setCurrentlyWorking] = useState(initialLastJobCurrentlyWorking)
 
   const endValid = currentlyWorking || (endMonth !== "" && endYear !== "")
-  const ready    = title.trim() !== "" && startMonth !== "" && startYear !== "" && endValid
+  const ready    = title.trim() !== "" && employer.trim() !== "" && startMonth !== "" && startYear !== "" && endValid
 
   function handleAdvance() {
     if (!ready) return
     onAdvance({
       lastJobTitle:            title.trim(),
+      lastJobEmployer:         employer.trim(),
       lastJobStartMonth:       startMonth,
       lastJobStartYear:        startYear,
       lastJobEndMonth:         currentlyWorking ? "" : endMonth,
@@ -202,6 +207,22 @@ export function StepLastJob({
       <div>
         <FieldLabel>Job title</FieldLabel>
         <TitleAutocomplete value={title} onChange={setTitle} />
+      </div>
+
+      {/* Employer */}
+      <div>
+        <FieldLabel>Employer</FieldLabel>
+        <input
+          type="text"
+          value={employer}
+          onChange={e => setEmployer(e.target.value)}
+          placeholder="e.g. Memorial Hospital"
+          className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
+          style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+          onBlur={e => (e.currentTarget.style.boxShadow = "")}
+          aria-label="Employer or company name"
+        />
       </div>
 
       {/* Start date */}

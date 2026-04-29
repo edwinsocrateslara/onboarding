@@ -58,22 +58,25 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 interface Props {
-  initialEducationLevel:    string
-  initialMajor:             string
-  initialEducationStartYear: string
-  initialEducationEndYear:  string
-  initialCurrentlyStudying: boolean
+  initialEducationLevel:       string
+  initialEducationInstitution: string
+  initialMajor:                string
+  initialEducationStartYear:   string
+  initialEducationEndYear:     string
+  initialCurrentlyStudying:    boolean
   onAdvance: (data: {
-    educationLevel:      string
-    major:               string
-    educationStartYear:  string
-    educationEndYear:    string
-    currentlyStudying:   boolean
+    educationLevel:       string
+    educationInstitution: string
+    major:                string
+    educationStartYear:   string
+    educationEndYear:     string
+    currentlyStudying:    boolean
   }) => void
 }
 
 export function Step23Education({
   initialEducationLevel,
+  initialEducationInstitution,
   initialMajor,
   initialEducationStartYear,
   initialEducationEndYear,
@@ -81,21 +84,23 @@ export function Step23Education({
   onAdvance,
 }: Props) {
   const [level,             setLevel]             = useState(initialEducationLevel)
+  const [institution,       setInstitution]       = useState(initialEducationInstitution)
   const [major,             setMajor]             = useState(initialMajor)
   const [startYear,         setStartYear]         = useState(initialEducationStartYear)
   const [endYear,           setEndYear]           = useState(initialEducationEndYear)
   const [currentlyStudying, setCurrentlyStudying] = useState(initialCurrentlyStudying)
 
   const endValid = currentlyStudying || endYear !== ""
-  const ready    = level !== "" && major.trim() !== "" && startYear !== "" && endValid
+  const ready    = level !== "" && institution.trim() !== "" && major.trim() !== "" && startYear !== "" && endValid
 
   function handleAdvance() {
     if (!ready) return
     onAdvance({
-      educationLevel:     level,
-      major:              major.trim(),
-      educationStartYear: startYear,
-      educationEndYear:   currentlyStudying ? "" : endYear,
+      educationLevel:       level,
+      educationInstitution: institution.trim(),
+      major:                major.trim(),
+      educationStartYear:   startYear,
+      educationEndYear:     currentlyStudying ? "" : endYear,
       currentlyStudying,
     })
   }
@@ -115,6 +120,21 @@ export function Step23Education({
         <SelectField value={level} onChange={setLevel} placeholder="Select education level" ariaLabel="Education level">
           {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
         </SelectField>
+      </div>
+
+      <div>
+        <FieldLabel>Institution name</FieldLabel>
+        <input
+          type="text"
+          value={institution}
+          onChange={e => setInstitution(e.target.value)}
+          placeholder="e.g. University of Toronto"
+          className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
+          style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+          onBlur={e => (e.currentTarget.style.boxShadow = "")}
+          aria-label="Institution name"
+        />
       </div>
 
       <div>

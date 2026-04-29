@@ -117,6 +117,7 @@ export function Step23Education({
       </div>
 
       <div>
+        <FieldLabel>Education level</FieldLabel>
         <SelectField value={level} onChange={setLevel} placeholder="Select education level" ariaLabel="Education level">
           {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
         </SelectField>

@@ -60,9 +60,11 @@ function SelectField({
 function TitleAutocomplete({
   value,
   onChange,
+  onCommit,
 }: {
-  value:    string
-  onChange: (v: string) => void
+  value:     string
+  onChange:  (v: string) => void
+  onCommit?: () => void
 }) {
   const [open, setOpen] = useState(false)
 
@@ -85,6 +87,7 @@ function TitleAutocomplete({
         onBlur={e => {
           setTimeout(() => setOpen(false), 150)
           e.currentTarget.style.boxShadow = ""
+          if (e.currentTarget.value.trim()) onCommit?.()
         }}
         placeholder="Start typing..."
         autoFocus
@@ -121,7 +124,7 @@ function TitleAutocomplete({
                 key={title}
                 type="button"
                 onMouseDown={e => e.preventDefault()}
-                onClick={() => { onChange(title); setOpen(false) }}
+                onClick={() => { onChange(title); setOpen(false); onCommit?.() }}
                 className="w-full text-left px-4 py-2.5 text-base hover:bg-[#f9fafb] transition-colors"
                 style={{ color: C.ink }}
               >
@@ -175,6 +178,7 @@ export function StepLastJob({
   const [endMonth,         setEndMonth]         = useState(initialLastJobEndMonth)
   const [endYear,          setEndYear]          = useState(initialLastJobEndYear)
   const [currentlyWorking, setCurrentlyWorking] = useState(initialLastJobCurrentlyWorking)
+  const [revealed,         setRevealed]         = useState(initialLastJobTitle.trim() !== "")
 
   const endValid = currentlyWorking || (endMonth !== "" && endYear !== "")
   const ready    = title.trim() !== "" && employer.trim() !== "" && startMonth !== "" && startYear !== "" && endValid
@@ -203,95 +207,84 @@ export function StepLastJob({
         </p>
       </div>
 
-      {/* Job title */}
       <div>
         <FieldLabel>Job title</FieldLabel>
-        <TitleAutocomplete value={title} onChange={setTitle} />
-      </div>
-
-      {/* Employer */}
-      <div>
-        <FieldLabel>Employer</FieldLabel>
-        <input
-          type="text"
-          value={employer}
-          onChange={e => setEmployer(e.target.value)}
-          placeholder="e.g. Memorial Hospital"
-          className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
-          style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
-          onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
-          onBlur={e => (e.currentTarget.style.boxShadow = "")}
-          aria-label="Employer or company name"
+        <TitleAutocomplete
+          value={title}
+          onChange={setTitle}
+          onCommit={() => setRevealed(true)}
         />
       </div>
 
-      {/* Start date */}
-      <div>
-        <FieldLabel>Start date</FieldLabel>
-        <div className="flex gap-2">
-          <SelectField
-            value={startMonth}
-            onChange={setStartMonth}
-            placeholder="Month"
-            ariaLabel="Start month"
-          >
-            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-          </SelectField>
-          <SelectField
-            value={startYear}
-            onChange={setStartYear}
-            placeholder="Year"
-            ariaLabel="Start year"
-          >
-            {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-          </SelectField>
-        </div>
-      </div>
-
-      {/* End date */}
-      <div>
-        <FieldLabel>End date</FieldLabel>
-        <div className="flex gap-2">
-          <SelectField
-            value={endMonth}
-            onChange={setEndMonth}
-            placeholder="Month"
-            ariaLabel="End month"
-            disabled={currentlyWorking}
-          >
-            {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-          </SelectField>
-          <SelectField
-            value={endYear}
-            onChange={setEndYear}
-            placeholder="Year"
-            ariaLabel="End year"
-            disabled={currentlyWorking}
-          >
-            {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-          </SelectField>
-        </div>
-      </div>
-
-      {/* Currently work here */}
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={currentlyWorking}
-        onClick={() => setCurrentlyWorking(prev => !prev)}
-        className="flex items-center gap-3 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+      {/* Progressive disclosure — revealed once job title is committed */}
+      <div
+        style={{
+          maxHeight:  revealed ? "800px" : "0",
+          overflow:   revealed ? "visible" : "hidden",
+          opacity:    revealed ? 1 : 0,
+          transition: "max-height 0.3s ease, opacity 0.2s ease",
+        }}
       >
-        <span
-          className="shrink-0 h-[18px] w-[18px] rounded-[4px] border-2 flex items-center justify-center transition-colors"
-          style={{
-            borderColor: currentlyWorking ? C.primary : C.border,
-            background:  currentlyWorking ? C.primary : "transparent",
-          }}
-        >
-          {currentlyWorking && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
-        </span>
-        <span className="text-[15px]" style={{ color: C.ink }}>I currently work here</span>
-      </button>
+        <div className="space-y-6">
+          <div>
+            <FieldLabel>Employer</FieldLabel>
+            <input
+              type="text"
+              value={employer}
+              onChange={e => setEmployer(e.target.value)}
+              placeholder="e.g. Memorial Hospital"
+              className="w-full rounded-md px-3 h-10 text-base leading-normal focus:outline-none transition-shadow"
+              style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}
+              onFocus={e => (e.currentTarget.style.boxShadow = FOCUS_RING)}
+              onBlur={e => (e.currentTarget.style.boxShadow = "")}
+              aria-label="Employer or company name"
+            />
+          </div>
+
+          <div>
+            <FieldLabel>Start date</FieldLabel>
+            <div className="flex gap-2">
+              <SelectField value={startMonth} onChange={setStartMonth} placeholder="Month" ariaLabel="Start month">
+                {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+              </SelectField>
+              <SelectField value={startYear} onChange={setStartYear} placeholder="Year" ariaLabel="Start year">
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </SelectField>
+            </div>
+          </div>
+
+          <div>
+            <FieldLabel>End date</FieldLabel>
+            <div className="flex gap-2">
+              <SelectField value={endMonth} onChange={setEndMonth} placeholder="Month" ariaLabel="End month" disabled={currentlyWorking}>
+                {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+              </SelectField>
+              <SelectField value={endYear} onChange={setEndYear} placeholder="Year" ariaLabel="End year" disabled={currentlyWorking}>
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </SelectField>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            role="checkbox"
+            aria-checked={currentlyWorking}
+            onClick={() => setCurrentlyWorking(prev => !prev)}
+            className="flex items-center gap-3 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6366f1]"
+          >
+            <span
+              className="shrink-0 h-[18px] w-[18px] rounded-[4px] border-2 flex items-center justify-center transition-colors"
+              style={{
+                borderColor: currentlyWorking ? C.primary : C.border,
+                background:  currentlyWorking ? C.primary : "transparent",
+              }}
+            >
+              {currentlyWorking && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+            </span>
+            <span className="text-[15px]" style={{ color: C.ink }}>I currently work here</span>
+          </button>
+        </div>
+      </div>
 
       <div className="h-20" aria-hidden="true" />
       <StickyFooter onClick={handleAdvance} disabled={!ready} label="Next" />

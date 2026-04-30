@@ -50,7 +50,6 @@ export interface OnboardingState {
   // Tenant form
   tenantCountryCode:  string
   tenantPhone:        string
-  tenantCity:         string
   tenantDobMonth:     string
   tenantDobDay:       string
   tenantDobYear:      string
@@ -67,7 +66,7 @@ type Action =
   | { type: "ADVANCE_EDUCATION";   educationLevel: string; educationInstitution: string; major: string; educationStartYear: string; educationEndYear: string; currentlyStudying: boolean }
   | { type: "ADVANCE_RESUME";      uploaded: boolean }
   | { type: "SET_PERSONA";         persona: Persona }
-  | { type: "ADVANCE_4_0";         countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }
+  | { type: "ADVANCE_4_0";         countryCode: string; phone: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }
   | { type: "BACK" }
 
 function initState(): OnboardingState {
@@ -100,7 +99,6 @@ function initState(): OnboardingState {
     classification:     null,
     tenantCountryCode:  "",
     tenantPhone:        "",
-    tenantCity:         "",
     tenantDobMonth:     "",
     tenantDobDay:       "",
     tenantDobYear:      "",
@@ -210,7 +208,6 @@ function reducer(state: OnboardingState, action: Action): OnboardingState {
         direction:          "forward",
         tenantCountryCode:  action.countryCode,
         tenantPhone:        action.phone,
-        tenantCity:         action.city,
         tenantDobMonth:     action.dobMonth,
         tenantDobDay:       action.dobDay,
         tenantDobYear:      action.dobYear,
@@ -281,7 +278,7 @@ export function useOnboarding() {
       dispatch({ type: "ADVANCE_RESUME", ...data }),
     setPersona: (persona: Persona) =>
       dispatch({ type: "SET_PERSONA", persona }),
-    advanceFrom40: (data: { countryCode: string; phone: string; city: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }) =>
+    advanceFrom40: (data: { countryCode: string; phone: string; dobMonth: string; dobDay: string; dobYear: string; ethnicGroups: string[]; ethnicOther: string }) =>
       dispatch({ type: "ADVANCE_4_0", ...data }),
     back: () => dispatch({ type: "BACK" }),
   }

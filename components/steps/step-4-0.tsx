@@ -12,19 +12,6 @@ const COUNTRY_CODES = [
   { code: "+61", label: "🇦🇺 +61" },
 ]
 
-const CITIES = [
-  "New York, NY",
-  "Los Angeles, CA",
-  "Chicago, IL",
-  "Houston, TX",
-  "Phoenix, AZ",
-  "Philadelphia, PA",
-  "San Antonio, TX",
-  "San Diego, CA",
-  "Dallas, TX",
-  "San Jose, CA",
-]
-
 const MONTHS = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December",
@@ -106,14 +93,13 @@ function FieldQuestion({ question, helper }: { question: string; helper: string 
 interface Props {
   initialCountryCode:  string
   initialPhone:        string
-  initialCity:         string
   initialDobMonth:     string
   initialDobDay:       string
   initialDobYear:      string
   initialEthnicGroups: string[]
   initialEthnicOther:  string
   onAdvance: (data: {
-    countryCode: string; phone: string; city: string
+    countryCode: string; phone: string
     dobMonth: string; dobDay: string; dobYear: string
     ethnicGroups: string[]; ethnicOther: string
   }) => void
@@ -122,7 +108,6 @@ interface Props {
 export function Step40({
   initialCountryCode,
   initialPhone,
-  initialCity,
   initialDobMonth,
   initialDobDay,
   initialDobYear,
@@ -132,7 +117,6 @@ export function Step40({
 }: Props) {
   const [countryCode, setCountryCode] = useState(initialCountryCode || "+1")
   const [phone, setPhone]             = useState(initialPhone)
-  const [city, setCity]               = useState(initialCity)
   const [dobMonth, setDobMonth]       = useState(initialDobMonth)
   const [dobDay, setDobDay]           = useState(initialDobDay)
   const [dobYear, setDobYear]         = useState(initialDobYear)
@@ -166,7 +150,6 @@ export function Step40({
 
   const ready =
     phone.trim() !== "" &&
-    city !== "" &&
     dobMonth !== "" && dobDay !== "" && dobYear !== "" &&
     hasEthnic && otherValid
 
@@ -175,7 +158,6 @@ export function Step40({
     onAdvance({
       countryCode,
       phone: phone.trim(),
-      city,
       dobMonth, dobDay, dobYear,
       ethnicGroups: preferNotToSay ? ["prefer_not_to_say"] : Array.from(ethnicGroups),
       ethnicOther: otherChecked ? ethnicOther.trim() : "",
@@ -228,17 +210,6 @@ export function Step40({
             aria-label="Phone number"
           />
         </div>
-      </div>
-
-      {/* Location */}
-      <div>
-        <FieldQuestion
-          question="Where are you located? "
-          helper="Please select the location from the dropdown"
-        />
-        <SelectField value={city} onChange={setCity} placeholder="Select your city" ariaLabel="City">
-          {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-        </SelectField>
       </div>
 
       {/* Date of birth */}

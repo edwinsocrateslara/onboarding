@@ -123,7 +123,6 @@ export default function OnboardingPage() {
           <Step40
             initialCountryCode={state.tenantCountryCode}
             initialPhone={state.tenantPhone}
-            initialCity={state.tenantCity}
             initialDobMonth={state.tenantDobMonth}
             initialDobDay={state.tenantDobDay}
             initialDobYear={state.tenantDobYear}
